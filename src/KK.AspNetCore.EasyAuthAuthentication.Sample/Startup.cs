@@ -28,7 +28,12 @@ namespace KK.AspNetCore.EasyAuthAuthentication.Sample
                     options.DefaultAuthenticateScheme = EasyAuthAuthenticationDefaults.AuthenticationScheme;
                     options.DefaultChallengeScheme = EasyAuthAuthenticationDefaults.AuthenticationScheme;
                 }
-            ).AddEasyAuth();
+            ).AddEasyAuth(
+                options =>
+                {
+                    options.AuthEndpoint = "auth/me.json";
+                }
+            );
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
 

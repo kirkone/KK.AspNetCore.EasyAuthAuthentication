@@ -51,7 +51,7 @@ namespace KK.AspNetCore.EasyAuthAuthentication
                 }
 
                 //build up identity from json...                
-                AuthenticationTicket ticket = BuildIdentityFromJsonPayload(payload);                
+                AuthenticationTicket ticket = BuildIdentityFromJsonPayload(payload);
 
                 Logger.LogInformation("Set identity to user context object.");
                 this.Context.User = ticket.Principal;
@@ -63,7 +63,7 @@ namespace KK.AspNetCore.EasyAuthAuthentication
             {
                 Logger.LogInformation("identity already set, skipping middleware");
                 return AuthenticateResult.NoResult();
-            }            
+            }
         }
 
         private AuthenticationTicket BuildIdentityFromJsonPayload(JArray payload)
@@ -98,7 +98,7 @@ namespace KK.AspNetCore.EasyAuthAuthentication
 
         private HttpRequestMessage CreateAuthRequest(ref CookieContainer cookieContainer)
         {
-            Logger.LogInformation("identity not found, attempting to fetch from auth endpoint /.auth/me");
+            Logger.LogInformation($"identity not found, attempting to fetch from auth endpoint '/{Options.AuthEndpoint}'");
 
             var uriString = $"{Context.Request.Scheme}://{Context.Request.Host}";
 
@@ -117,7 +117,7 @@ namespace KK.AspNetCore.EasyAuthAuthentication
             }
 
             //fetch value from endpoint
-            var request = new HttpRequestMessage(HttpMethod.Get, $"{uriString}/.auth/me");
+            var request = new HttpRequestMessage(HttpMethod.Get, $"{uriString}/{Options.AuthEndpoint}");
             foreach (var header in Context.Request.Headers)
             {
                 if (header.Key.StartsWith("X-ZUMO-"))
