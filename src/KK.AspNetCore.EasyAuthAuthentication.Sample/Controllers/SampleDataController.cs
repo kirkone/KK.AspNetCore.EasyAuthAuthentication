@@ -1,14 +1,14 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Security.Claims;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Server.IISIntegration;
-
 namespace KK.AspNetCore.EasyAuthAuthentication.Sample.Controllers
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.Security.Claims;
+    using System.Threading.Tasks;
+    using Microsoft.AspNetCore.Authorization;
+    using Microsoft.AspNetCore.Mvc;
+    using Microsoft.AspNetCore.Server.IISIntegration;
+
     [Route("api/[controller]")]
     public class SampleDataController : Controller
     {
@@ -32,8 +32,10 @@ namespace KK.AspNetCore.EasyAuthAuthentication.Sample.Controllers
         [HttpGet("[action]")]
         public string UserName()
         {
+            var name = User.HasClaim(ClaimTypes.Name, "kik@tsmmscloud.onmicrosoft.de");
             var peng = User.HasClaim(ClaimTypes.Role, "SystemAdmin");
             var blubb = HttpContext.User.IsInRole("SystemAdmin");
+            var pop = User.IsInRole("SystemAdmin");
             return HttpContext.User.Identity.Name;
         }
 

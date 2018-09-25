@@ -1,9 +1,11 @@
 namespace KK.AspNetCore.EasyAuthAuthentication.Sample.Transformers
 {
     using System.Collections.Generic;
+    using System.Linq;
     using System.Security.Claims;
     using System.Security.Principal;
     using System.Threading.Tasks;
+    using KK.AspNetCore.EasyAuthAuthentication.Sample.Repositories;
     using Microsoft.AspNetCore.Authentication;
     using Microsoft.AspNetCore.Http;
     using Microsoft.Extensions.Caching.Memory;
@@ -11,15 +13,16 @@ namespace KK.AspNetCore.EasyAuthAuthentication.Sample.Transformers
     public class ClaimsTransformer : IClaimsTransformation
     {
         private readonly IMemoryCache cache;
+        private readonly IRepository repository;
         private readonly IHttpContextAccessor httpContextAccessor;
 
         public ClaimsTransformer(
-            // IRepository repository,
+            IRepository repository,
             IHttpContextAccessor httpContextAccessor,
             IMemoryCache cache
         )
         {
-            // repository = repository;
+            this.repository = repository;
             this.httpContextAccessor = httpContextAccessor;
             this.cache = cache;
         }
@@ -28,36 +31,34 @@ namespace KK.AspNetCore.EasyAuthAuthentication.Sample.Transformers
         {
             if (principal.Identity.IsAuthenticated)
             {
-                var currentPrincipal = (ClaimsIdentity)principal.Identity;
 
-                var ci = (ClaimsIdentity)principal.Identity;
-                var cacheKey = ci.Name;
 
-                if (cache.TryGetValue(cacheKey, out List<Claim> claims))
+                var claimsIdentity = (ClaimsIdentity)principal.Identity;
+                var userIdentifier = claimsIdentity.Name;
+                List<string> roles;
+
+                if (cache.TryGetValue(userIdentifier, out List<string> cachedRoles))
                 {
-                    currentPrincipal.AddClaims(claims);
+                    roles = cachedRoles;
                 }
                 else
                 {
-                    claims = new List<Claim>();
-                    // var isUserSystemAdmin = await repository.IsUserAdmin(ci.Name);
-                    // if (isUserSystemAdmin)
-                    // {
-                    var c = new Claim(ClaimTypes.Role, "SystemAdmin");
-                    claims.Add(c);
-                    // }
+                    roles = new List<string>();
+                    var dbRoles = await this.repository.GetRoles(userIdentifier);
 
-                    cache.Set(cacheKey, claims);
-                    currentPrincipal.AddClaims(claims);
+                    roles.AddRange(dbRoles);
+
+
                 }
 
-                //foreach (var claim in ci.Claims)
-                //{
-                //    currentPrincipal.AddClaim(claim);
-                //}
+                roles.AddRange(claimsIdentity.Claims.Where(c => c.Type == ClaimTypes.Role).Select(c => c.Value));
+                roles = roles.Distinct().ToList();
+                cache.Set(userIdentifier, roles);
+
+                return (new GenericPrincipal(claimsIdentity, roles.ToArray()));
             }
 
-            return await Task.FromResult(principal);
+            return principal;
         }
     }
 }

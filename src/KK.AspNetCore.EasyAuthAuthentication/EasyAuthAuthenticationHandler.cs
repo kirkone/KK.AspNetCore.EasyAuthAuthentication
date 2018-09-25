@@ -37,7 +37,7 @@ namespace KK.AspNetCore.EasyAuthAuthentication
             )
             {
                 var cookieContainer = new CookieContainer();
-                HttpClientHandler handler = createHanlder(ref cookieContainer);
+                HttpClientHandler handler = createHandler(ref cookieContainer);
                 HttpRequestMessage httpRequest = CreateAuthRequest(ref cookieContainer);
 
                 JArray payload = null;
@@ -128,7 +128,7 @@ namespace KK.AspNetCore.EasyAuthAuthentication
             return request;
         }
 
-        private static HttpClientHandler createHanlder(ref CookieContainer container)
+        private static HttpClientHandler createHandler(ref CookieContainer container)
         {
             var handler = new HttpClientHandler()
             {

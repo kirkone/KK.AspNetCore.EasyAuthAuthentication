@@ -12,6 +12,8 @@ namespace KK.AspNetCore.EasyAuthAuthentication.Sample
     using Microsoft.AspNetCore.Http;
     using Microsoft.AspNetCore.Authentication;
     using KK.AspNetCore.EasyAuthAuthentication.Sample.Transformers;
+    using KK.AspNetCore.EasyAuthAuthentication.Sample.Repositories;
+
     public class Startup
     {
         public Startup(
@@ -29,7 +31,7 @@ namespace KK.AspNetCore.EasyAuthAuthentication.Sample
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
-            services.AddTransient<IClaimsTransformation, ClaimsTransformer>();
+            services.AddScoped<IClaimsTransformation, ClaimsTransformer>();
 
             services.AddAuthentication(
                 options =>
@@ -46,6 +48,8 @@ namespace KK.AspNetCore.EasyAuthAuthentication.Sample
                     }
                 }
             );
+
+            services.AddSingleton<IRepository, Repository>();
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
 
