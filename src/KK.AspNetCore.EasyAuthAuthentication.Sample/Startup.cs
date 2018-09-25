@@ -20,7 +20,9 @@ namespace KK.AspNetCore.EasyAuthAuthentication.Sample
         public IConfiguration Configuration { get; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
-        public void ConfigureServices(IServiceCollection services)
+        public void ConfigureServices(
+            IServiceCollection services,
+            IHostingEnvironment env)
         {
             services.AddAuthentication(
                 options =>
@@ -31,7 +33,10 @@ namespace KK.AspNetCore.EasyAuthAuthentication.Sample
             ).AddEasyAuth(
                 options =>
                 {
-                    options.AuthEndpoint = "auth/me.json";
+                    if (env.IsDevelopment())
+                    {
+                        options.AuthEndpoint = "auth/me.json";
+                    }
                 }
             );
 
