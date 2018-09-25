@@ -1,29 +1,36 @@
-using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Server.IISIntegration;
-using Microsoft.AspNetCore.SpaServices.AngularCli;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
-using KK.AspNetCore.EasyAuthAuthentication;
 
 namespace KK.AspNetCore.EasyAuthAuthentication.Sample
 {
+    using Microsoft.AspNetCore.Builder;
+    using Microsoft.AspNetCore.Hosting;
+    using Microsoft.AspNetCore.Mvc;
+    using Microsoft.AspNetCore.SpaServices.AngularCli;
+    using Microsoft.Extensions.Configuration;
+    using Microsoft.Extensions.DependencyInjection;
+    using KK.AspNetCore.EasyAuthAuthentication;
+    using Microsoft.AspNetCore.Identity;
+    using Microsoft.AspNetCore.Http;
+    using Microsoft.AspNetCore.Authentication;
+    using KK.AspNetCore.EasyAuthAuthentication.Sample.Transformers;
     public class Startup
     {
-        public Startup(IConfiguration configuration)
+        public Startup(
+            IConfiguration configuration,
+            IHostingEnvironment environment)
         {
             Configuration = configuration;
+            Environment = environment;
         }
 
         public IConfiguration Configuration { get; }
+        public IHostingEnvironment Environment { get; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
-        public void ConfigureServices(
-            IServiceCollection services,
-            IHostingEnvironment env)
+        public void ConfigureServices(IServiceCollection services)
         {
+            services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+            services.AddTransient<IClaimsTransformation, ClaimsTransformer>();
+
             services.AddAuthentication(
                 options =>
                 {
@@ -33,7 +40,7 @@ namespace KK.AspNetCore.EasyAuthAuthentication.Sample
             ).AddEasyAuth(
                 options =>
                 {
-                    if (env.IsDevelopment())
+                    if (this.Environment.IsDevelopment())
                     {
                         options.AuthEndpoint = "auth/me.json";
                     }

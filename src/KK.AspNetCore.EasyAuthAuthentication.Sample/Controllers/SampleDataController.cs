@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -31,6 +32,8 @@ namespace KK.AspNetCore.EasyAuthAuthentication.Sample.Controllers
         [HttpGet("[action]")]
         public string UserName()
         {
+            var peng = User.HasClaim(ClaimTypes.Role, "SystemAdmin");
+            var blubb = HttpContext.User.IsInRole("SystemAdmin");
             return HttpContext.User.Identity.Name;
         }
 
