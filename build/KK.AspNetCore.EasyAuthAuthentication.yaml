@@ -1,0 +1,65 @@
+# https://docs.microsoft.com/en-us/vsts/pipelines/yaml-schema?view=vsts
+
+queue:
+  name: Hosted
+
+variables:
+  BuildConfiguration: "Release"
+
+name: $(Year:yy)$(DayOfYear)$(Rev:rr)
+
+steps:
+  - task: PowerShell@2
+    displayName: Run GitVersion
+    inputs:
+      targetType: "filePath"
+      filePath: "tools/GitVersion/Run-GitVersion.ps1"
+      workingDirectory: "src/KK.AspNetCore.EasyAuthAuthentication"
+
+  - task: DotNetCoreInstaller@0
+    displayName: Use .NET Core sdk 2.1.402
+    inputs:
+      packageType: "sdk"
+      version: 2.1.402
+
+  - task: DotNetCoreCLI@2
+    displayName: Restore
+    inputs:
+      command: "restore"
+      projects: "src/KK.AspNetCore.EasyAuthAuthentication/KK.AspNetCore.EasyAuthAuthentication.csproj"
+
+  - task: DotNetCoreCLI@2
+    displayName: Build
+    inputs:
+      command: "build"
+      projects: "src/KK.AspNetCore.EasyAuthAuthentication/KK.AspNetCore.EasyAuthAuthentication.csproj"
+      arguments: "--configuration $(buildConfiguration)"
+
+  - task: DotNetCoreCLI@2
+    displayName: Pack Internal
+    inputs:
+      command: "pack"
+      packagesToPack: "src/KK.AspNetCore.EasyAuthAuthentication/KK.AspNetCore.EasyAuthAuthentication.csproj"
+      nobuild: true
+      arguments: "--configuration $(buildConfiguration)"
+      buildProperties: "VersionPrefix=$(GitVersion.MajorMinorPatch);VersionSuffix=pre-$(Build.BuildNumber)"
+      packDirectory: "$(Build.ArtifactStagingDirectory)"
+      verbosityPack: Normal
+
+  - task: DotNetCoreCLI@2
+    displayName: Pack Release
+    inputs:
+      command: "pack"
+      packagesToPack: "src/KK.AspNetCore.EasyAuthAuthentication/KK.AspNetCore.EasyAuthAuthentication.csproj"
+      nobuild: true
+      arguments: "--configuration $(buildConfiguration)"
+      buildProperties: "VersionPrefix=$(GitVersion.MajorMinorPatch);VersionSuffix="
+      packDirectory: "$(Build.ArtifactStagingDirectory)"
+      verbosityPack: Normal
+
+  - task: PublishBuildArtifacts@1
+    displayName: Publish Artifact
+    inputs:
+      pathtoPublish: "$(Build.ArtifactStagingDirectory)"
+      artifactName: NuGet
+      parallel: true

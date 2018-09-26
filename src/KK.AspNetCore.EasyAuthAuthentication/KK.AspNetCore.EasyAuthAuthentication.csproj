@@ -4,6 +4,15 @@
     <TargetFramework>netstandard2.0</TargetFramework>
   </PropertyGroup>
 
+  <PropertyGroup>
+    <Authors>Kirsten Kluge</Authors>
+    <PackageProjectUrl>https://github.com/kirkone/KK.AspNetCore.EasyAuthAuthentication</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/kirkone/KK.AspNetCore.EasyAuthAuthentication</RepositoryUrl>
+    <Description>This helps getting azure appservice authentication working with asp.net core</Description>
+    <Copyright>MIT</Copyright>
+  </PropertyGroup>
+
+
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Authentication" Version="2.1.2" />
     <PackageReference Include="Microsoft.AspNetCore.Http.Abstractions" Version="2.1.1" />
