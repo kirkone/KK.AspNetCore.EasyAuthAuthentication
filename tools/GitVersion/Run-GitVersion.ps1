@@ -13,8 +13,10 @@ Process {
     $gitversionoutput = & "$PSScriptRoot\GitVersion.exe" $parameter1 $parameter2
     Write-Verbose "    Done"
 
+    Write-Output $gitversionoutput
+
     $jsonObj = "$gitversionoutput" | ConvertFrom-Json
-    
+
     Write-Verbose "Writing variables ..."
     foreach ($property in $jsonObj.PSObject.Properties) {
         Write-Verbose "    GitVersion.$($property.Name): $($property.Value)"
