@@ -50,8 +50,8 @@ namespace KK.AspNetCore.EasyAuthAuthentication
                     return AuthenticateResult.Fail(ex.Message);
                 }
 
-                //build up identity from json...                
-                AuthenticationTicket ticket = BuildIdentityFromJsonPayload(payload);
+                //build up identity from json...
+                AuthenticationTicket ticket = BuildIdentityFromJsonPayload((JObject)payload[0]);
 
                 Logger.LogInformation("Set identity to user context object.");
                 this.Context.User = ticket.Principal;
@@ -66,11 +66,11 @@ namespace KK.AspNetCore.EasyAuthAuthentication
             }
         }
 
-        private AuthenticationTicket BuildIdentityFromJsonPayload(JArray payload)
+        private AuthenticationTicket BuildIdentityFromJsonPayload(JObject payload)
         {
-            var id = payload[0]["user_id"].Value<string>();
-            var idToken = payload[0]["id_token"].Value<string>();
-            var providerName = payload[0]["provider_name"].Value<string>();
+            var id = payload["user_id"].Value<string>();
+            var idToken = payload["id_token"].Value<string>();
+            var providerName = payload["provider_name"].Value<string>();
 
             Logger.LogDebug("payload was fetched from endpoint. id: {0}", id);
 
@@ -79,7 +79,7 @@ namespace KK.AspNetCore.EasyAuthAuthentication
             Logger.LogInformation("building claims from payload...");
 
             List<Claim> claims = new List<Claim>();
-            foreach (var claim in payload[0]["user_claims"])
+            foreach (var claim in payload["user_claims"])
             {
                 claims.Add(new Claim(claim["typ"].ToString(), claim["val"].ToString()));
             }
