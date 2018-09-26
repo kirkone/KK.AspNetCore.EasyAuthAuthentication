@@ -1,4 +1,3 @@
-
 namespace KK.AspNetCore.EasyAuthAuthentication.Sample
 {
     using Microsoft.AspNetCore.Builder;

@@ -30,6 +30,7 @@ namespace KK.AspNetCore.EasyAuthAuthentication.Sample.Controllers
         }
 
         [HttpGet("[action]")]
+        [Authorize(Roles = "SystemAdmin")]
         public string UserName()
         {
             var name = User.HasClaim(ClaimTypes.Name, "kik@tsmmscloud.onmicrosoft.de");
