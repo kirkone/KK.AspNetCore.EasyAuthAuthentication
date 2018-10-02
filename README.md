@@ -22,7 +22,7 @@ Pre-releases of this Package are pushed to an internal feed an Azure DevOps. The
 
 ## Build
 
-The build environment for this project is on Azure DevOps and can be found here [dev.azure.com/kirkone/KK.AspNetCore.EasyAuthAuthentication](https://dev.azure.com/kirkone/KK.AspNetCore.EasyAuthAuthentication/_releases2?definitionId=1&view=mine&_a=releases)
+The build environment for this project is on Azure DevOps and can be found here [dev.azure.com/kirkone/KK.AspNetCore.EasyAuthAuthentication](https://dev.azure.com/kirkone/KK.AspNetCore.EasyAuthAuthentication/_build)
 
 ### Nuget package build
 
@@ -82,6 +82,25 @@ public string UserName()
 ### Adding custom roles
 
 If you want to add roles to the `User` property you can have a look in `Transformers/ClaimsTransformer.cs` in the Sample project. There you can see an example how to get started with this.
+
+### Local Debugging
+
+For debugging your application you can place a `me.json` in the `wwwroot/auth` folder of your web app and add some configuration to the `AddEasyAuth` call.  
+For example:
+
+```
+).AddEasyAuth(
+    options =>
+    {
+        if (this.Environment.IsDevelopment())
+        {
+            options.AuthEndpoint = "auth/me.json";
+        }
+    }
+);
+```
+
+> **Info**: You can obtain the content for this file from an Azure Web App with EasyAuth configured by requesting the `/.auth/me` endpoint.
 
 ## Authors
 
