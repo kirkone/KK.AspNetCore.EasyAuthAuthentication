@@ -33,7 +33,7 @@ namespace KK.AspNetCore.EasyAuthAuthentication.Sample.Controllers
         [Authorize(Roles = "SystemAdmin")]
         public string UserName()
         {
-            var name = User.HasClaim(ClaimTypes.Name, "kik@tsmmscloud.onmicrosoft.de");
+            var name = User.HasClaim(ClaimTypes.Name, "user@somecloud.onmicrosoft.com");
             var peng = User.HasClaim(ClaimTypes.Role, "SystemAdmin");
             var blubb = HttpContext.User.IsInRole("SystemAdmin");
             var pop = User.IsInRole("SystemAdmin");
