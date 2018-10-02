@@ -41,8 +41,12 @@ namespace KK.AspNetCore.EasyAuthAuthentication.Sample
             ).AddEasyAuth(
                 options =>
                 {
+                    // Override the AuthEndpoint while developing
                     if (this.Environment.IsDevelopment())
                     {
+                        // The me.json should be placed in 'wwwroot/auth'
+                        // The Static File Handler will not work with files without extension
+                        // so the endpoint should point to a file with extension
                         options.AuthEndpoint = "auth/me.json";
                     }
                 }
@@ -76,6 +80,7 @@ namespace KK.AspNetCore.EasyAuthAuthentication.Sample
             app.UseStaticFiles();
             app.UseSpaStaticFiles();
 
+            // Add Authentication middleware before MVC to get it working for MVC routes
             app.UseAuthentication();
 
             app.UseMvc(routes =>
