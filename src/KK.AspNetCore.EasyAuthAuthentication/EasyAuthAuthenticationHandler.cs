@@ -31,10 +31,9 @@ namespace KK.AspNetCore.EasyAuthAuthentication
             Logger.LogInformation("starting authentication handler for app service authentication");
 
             if (
-                this.Context.User == null ||
+                (this.Context.User == null ||
                 this.Context.User.Identity == null ||
-                this.Context.User.Identity.IsAuthenticated == false
-            )
+                this.Context.User.Identity.IsAuthenticated == false ) && this.Context.Request.Path != "/" + $"{Options.AuthEndpoint}")
             {
                 var cookieContainer = new CookieContainer();
                 HttpClientHandler handler = createHandler(ref cookieContainer);
@@ -50,7 +49,7 @@ namespace KK.AspNetCore.EasyAuthAuthentication
                     return AuthenticateResult.Fail(ex.Message);
                 }
 
-                //build up identity from json...
+                // build up identity from json...
                 AuthenticationTicket ticket = BuildIdentityFromJsonPayload((JObject)payload[0]);
 
                 Logger.LogInformation("Set identity to user context object.");
@@ -116,7 +115,7 @@ namespace KK.AspNetCore.EasyAuthAuthentication
                 Logger.LogDebug(cookie.Key);
             }
 
-            //fetch value from endpoint
+            // fetch value from endpoint
             var request = new HttpRequestMessage(HttpMethod.Get, $"{uriString}/{Options.AuthEndpoint}");
             foreach (var header in Context.Request.Headers)
             {
@@ -125,6 +124,7 @@ namespace KK.AspNetCore.EasyAuthAuthentication
                     request.Headers.Add(header.Key, header.Value[0]);
                 }
             }
+
             return request;
         }
 
@@ -158,8 +158,8 @@ namespace KK.AspNetCore.EasyAuthAuthentication
                 {
                     throw new JsonSerializationException("Could not retreive json from /me endpoint.");
                 }
+            }
 
-            };
             return payload;
         }
     }
