@@ -14,35 +14,45 @@ namespace KK.AspNetCore.EasyAuthAuthentication
     using Newtonsoft.Json;
     using Newtonsoft.Json.Linq;
 
+    /// <summary>
+    /// Enables the handler in an Easy Auth context.
+    /// </summary>
     public class EasyAuthAuthenticationHandler : AuthenticationHandler<EasyAuthAuthenticationOptions>
     {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="EasyAuthAuthenticationHandler"/> class.
+        /// </summary>
+        /// <param name="options">An instance of <see cref="EasyAuthAuthenticationOptions"/>.</param>
+        /// <param name="logger">An instance of <see cref="ILoggerFactory"/>.</param>
+        /// <param name="encoder">An instance of <see cref="UrlEncoder"/>.</param>
+        /// <param name="clock">An instance of <see cref="ISystemClock"/>.</param>
         public EasyAuthAuthenticationHandler(
             IOptionsMonitor<EasyAuthAuthenticationOptions> options,
             ILoggerFactory logger,
             UrlEncoder encoder,
-            ISystemClock clock
-        ) : base(options, logger, encoder, clock)
+            ISystemClock clock) : base(options, logger, encoder, clock)
         {
-
         }
 
+        /// <inheritdoc/>
         protected override async Task<AuthenticateResult> HandleAuthenticateAsync()
         {
-            Logger.LogInformation("starting authentication handler for app service authentication");
+            this.Logger.LogInformation("starting authentication handler for app service authentication");
 
             if (
                 (this.Context.User == null ||
                 this.Context.User.Identity == null ||
-                this.Context.User.Identity.IsAuthenticated == false ) && this.Context.Request.Path != "/" + $"{Options.AuthEndpoint}")
+                this.Context.User.Identity.IsAuthenticated == false)
+                && this.Context.Request.Path != "/" + $"{this.Options.AuthEndpoint}")
             {
                 var cookieContainer = new CookieContainer();
-                HttpClientHandler handler = createHandler(ref cookieContainer);
-                HttpRequestMessage httpRequest = CreateAuthRequest(ref cookieContainer);
+                var handler = this.CreateHandler(ref cookieContainer);
+                var httpRequest = this.CreateAuthRequest(ref cookieContainer);
 
                 JArray payload = null;
                 try
                 {
-                    payload = await getAuthMe(handler, httpRequest);
+                    payload = await this.GetAuthMe(handler, httpRequest);
                 }
                 catch (Exception ex)
                 {
@@ -50,17 +60,17 @@ namespace KK.AspNetCore.EasyAuthAuthentication
                 }
 
                 // build up identity from json...
-                AuthenticationTicket ticket = BuildIdentityFromJsonPayload((JObject)payload[0]);
+                var ticket = this.BuildIdentityFromJsonPayload((JObject)payload[0]);
 
-                Logger.LogInformation("Set identity to user context object.");
+                this.Logger.LogInformation("Set identity to user context object.");
                 this.Context.User = ticket.Principal;
 
-                Logger.LogInformation("identity build was a success, returning ticket");
+                this.Logger.LogInformation("identity build was a success, returning ticket");
                 return AuthenticateResult.Success(ticket);
             }
             else
             {
-                Logger.LogInformation("identity already set, skipping middleware");
+                this.Logger.LogInformation("identity already set, skipping middleware");
                 return AuthenticateResult.NoResult();
             }
         }
@@ -71,19 +81,19 @@ namespace KK.AspNetCore.EasyAuthAuthentication
             var idToken = payload["id_token"].Value<string>();
             var providerName = payload["provider_name"].Value<string>();
 
-            Logger.LogDebug("payload was fetched from endpoint. id: {0}", id);
+            this.Logger.LogDebug("payload was fetched from endpoint. id: {0}", id);
 
             var identity = new GenericIdentity(id);
 
-            Logger.LogInformation("building claims from payload...");
+            this.Logger.LogInformation("building claims from payload...");
 
-            List<Claim> claims = new List<Claim>();
+            var claims = new List<Claim>();
             foreach (var claim in payload["user_claims"])
             {
                 claims.Add(new Claim(claim["typ"].ToString(), claim["val"].ToString()));
             }
 
-            Logger.LogInformation("Add claims to new identity");
+            this.Logger.LogInformation("Add claims to new identity");
 
             identity.AddClaims(claims);
             identity.AddClaim(new Claim("id_token", idToken));
@@ -91,33 +101,32 @@ namespace KK.AspNetCore.EasyAuthAuthentication
             var p = new GenericPrincipal(identity, null);
             return new AuthenticationTicket(
                 p,
-                EasyAuthAuthenticationDefaults.AuthenticationScheme
-            );
+                EasyAuthAuthenticationDefaults.AuthenticationScheme);
         }
 
         private HttpRequestMessage CreateAuthRequest(ref CookieContainer cookieContainer)
         {
-            Logger.LogInformation($"identity not found, attempting to fetch from auth endpoint '/{Options.AuthEndpoint}'");
+            this.Logger.LogInformation($"identity not found, attempting to fetch from auth endpoint '/{this.Options.AuthEndpoint}'");
 
-            var uriString = $"{Context.Request.Scheme}://{Context.Request.Host}";
+            var uriString = $"{this.Context.Request.Scheme}://{this.Context.Request.Host}";
 
-            Logger.LogDebug("host uri: {0}", uriString);
+            this.Logger.LogDebug("host uri: {0}", uriString);
 
-            foreach (var c in Context.Request.Cookies)
+            foreach (var c in this.Context.Request.Cookies)
             {
                 cookieContainer.Add(new Uri(uriString), new Cookie(c.Key, c.Value));
             }
 
-            Logger.LogDebug("found {0} cookies in request", cookieContainer.Count);
+            this.Logger.LogDebug("found {0} cookies in request", cookieContainer.Count);
 
-            foreach (var cookie in Context.Request.Cookies)
+            foreach (var cookie in this.Context.Request.Cookies)
             {
-                Logger.LogDebug(cookie.Key);
+                this.Logger.LogDebug(cookie.Key);
             }
 
             // fetch value from endpoint
-            var request = new HttpRequestMessage(HttpMethod.Get, $"{uriString}/{Options.AuthEndpoint}");
-            foreach (var header in Context.Request.Headers)
+            var request = new HttpRequestMessage(HttpMethod.Get, $"{uriString}/{this.Options.AuthEndpoint}");
+            foreach (var header in this.Context.Request.Headers)
             {
                 if (header.Key.StartsWith("X-ZUMO-"))
                 {
@@ -128,7 +137,7 @@ namespace KK.AspNetCore.EasyAuthAuthentication
             return request;
         }
 
-        private static HttpClientHandler createHandler(ref CookieContainer container)
+        private HttpClientHandler CreateHandler(ref CookieContainer container)
         {
             var handler = new HttpClientHandler()
             {
@@ -137,15 +146,15 @@ namespace KK.AspNetCore.EasyAuthAuthentication
             return handler;
         }
 
-        private async Task<JArray> getAuthMe(HttpClientHandler handler, HttpRequestMessage httpRequest)
+        private async Task<JArray> GetAuthMe(HttpClientHandler handler, HttpRequestMessage httpRequest)
         {
             JArray payload = null;
-            using (HttpClient client = new HttpClient(handler))
+            using (var client = new HttpClient(handler))
             {
                 var response = await client.SendAsync(httpRequest);
                 if (!response.IsSuccessStatusCode)
                 {
-                    Logger.LogDebug("auth endpoint was not sucessful. Status code: {0}, reason {1}", response.StatusCode, response.ReasonPhrase);
+                    this.Logger.LogDebug("auth endpoint was not sucessful. Status code: {0}, reason {1}", response.StatusCode, response.ReasonPhrase);
                     throw new WebException("Unable to fetch user information from auth endpoint.");
                 }
 
