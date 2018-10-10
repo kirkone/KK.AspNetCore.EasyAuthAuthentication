@@ -5,9 +5,20 @@ VisualStudioVersion = 15.0.26124.0
 MinimumVisualStudioVersion = 15.0.26124.0
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{5D09A785-6509-4FA8-8394-DB761ECFC353}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KK.AspNetCore.EasyAuthAuthentication", "src\KK.AspNetCore.EasyAuthAuthentication\KK.AspNetCore.EasyAuthAuthentication.csproj", "{70FFE5C2-8F7C-49E0-9C31-DB713BA66B8B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "KK.AspNetCore.EasyAuthAuthentication", "src\KK.AspNetCore.EasyAuthAuthentication\KK.AspNetCore.EasyAuthAuthentication.csproj", "{70FFE5C2-8F7C-49E0-9C31-DB713BA66B8B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KK.AspNetCore.EasyAuthAuthentication.Sample", "src\KK.AspNetCore.EasyAuthAuthentication.Sample\KK.AspNetCore.EasyAuthAuthentication.Sample.csproj", "{B156B6B8-9427-4A72-8986-9A17F4FBC0EA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "KK.AspNetCore.EasyAuthAuthentication.Sample", "src\KK.AspNetCore.EasyAuthAuthentication.Sample\KK.AspNetCore.EasyAuthAuthentication.Sample.csproj", "{B156B6B8-9427-4A72-8986-9A17F4FBC0EA}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{215B89CF-8087-48EF-ACDE-995AEE744BF2}"
+	ProjectSection(SolutionItems) = preProject
+		.editorconfig = .editorconfig
+		.gitignore = .gitignore
+		global.json = global.json
+		LICENSE = LICENSE
+		README.md = README.md
+		StyleCop.json = StyleCop.json
+		StyleCop.ruleset = StyleCop.ruleset
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -17,9 +28,6 @@ Global
 		Release|Any CPU = Release|Any CPU
 		Release|x64 = Release|x64
 		Release|x86 = Release|x86
-	EndGlobalSection
-	GlobalSection(SolutionProperties) = preSolution
-		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{70FFE5C2-8F7C-49E0-9C31-DB713BA66B8B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
@@ -47,8 +55,14 @@ Global
 		{B156B6B8-9427-4A72-8986-9A17F4FBC0EA}.Release|x86.ActiveCfg = Release|Any CPU
 		{B156B6B8-9427-4A72-8986-9A17F4FBC0EA}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{70FFE5C2-8F7C-49E0-9C31-DB713BA66B8B} = {5D09A785-6509-4FA8-8394-DB761ECFC353}
 		{B156B6B8-9427-4A72-8986-9A17F4FBC0EA} = {5D09A785-6509-4FA8-8394-DB761ECFC353}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {44C662E3-C7A8-4358-B63F-59F3BE083C60}
 	EndGlobalSection
 EndGlobal
