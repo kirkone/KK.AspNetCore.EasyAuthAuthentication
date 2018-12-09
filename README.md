@@ -102,6 +102,8 @@ For example:
 
 > **Info**: You can obtain the content for this file from an Azure Web App with EasyAuth configured by requesting the `/.auth/me` endpoint.
 
+> **Info**: Make sure you added static file handling to your pipeline by adding `app.UseStaticFiles();` to your `public void Configure` method in the `Startup.cs`. Otherwise the file can not be found at runtime.
+
 ## Authors
 
 * **Kirsten Kluge** - *Initial work* - [kirkone](https://github.com/kirkone)
