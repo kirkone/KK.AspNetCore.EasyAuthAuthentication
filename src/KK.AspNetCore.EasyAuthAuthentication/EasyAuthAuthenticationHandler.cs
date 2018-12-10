@@ -93,8 +93,6 @@ namespace KK.AspNetCore.EasyAuthAuthentication
             var name = requestHeaders["X-MS-CLIENT-PRINCIPAL-NAME"][0];
             this.Logger.LogDebug("payload was fetched from easyauth headers, name: {0}", name);
 
-            //var identity = new GenericIdentity(name, "AuthenticationTypes.Federation"); // setting ClaimsIdentity.AuthenticationType to value that azuread non-easyauth setups use
-
             this.Logger.LogInformation("building claims from payload...");
 
             var xMsClientPrincipal = JObject.Parse(Encoding.UTF8.GetString(Convert.FromBase64String(requestHeaders["X-MS-CLIENT-PRINCIPAL"][0])));
@@ -124,16 +122,13 @@ namespace KK.AspNetCore.EasyAuthAuthentication
                 }
             }
 
-            this.Logger.LogInformation("Add claims to new identity");
-
-            //identity.AddClaims(claims);
+            this.Logger.LogInformation("building new identity from claims");
             var identity = new ClaimsIdentity(claims, "AuthenticationTypes.Federation"); // setting ClaimsIdentity.AuthenticationType to value that azuread non-easyauth setups use
 
             //identity.AddClaim(new Claim("id_token", idToken)); // don't think we should be including this
             //identity.AddClaim(new Claim("http://schemas.microsoft.com/claims/authnclassreference", 1)); // don't think we need to add this
             if (!(identity.Claims as List<Claim>).Exists(claim => claim.Type == "scp")) identity.AddClaim(new Claim("scp", "user_impersonation")); // not sure why easyauth is dropping this
             identity.AddClaim(new Claim("provider_name", requestHeaders["X-MS-CLIENT-PRINCIPAL-IDP"][0]));
-            //var principal = new GenericPrincipal(identity, null); // maybe passing valid string[] roles for second parameter would make IsInRole work but no need just use ClaimsPrincipal
             var principal = new ClaimsPrincipal(identity);
             return new AuthenticationTicket(principal, EasyAuthAuthenticationDefaults.AuthenticationScheme);
         }
@@ -142,8 +137,6 @@ namespace KK.AspNetCore.EasyAuthAuthentication
         {
             var name = payload["user_id"].Value<string>(); // X-MS-CLIENT-PRINCIPAL-NAME
             this.Logger.LogDebug("payload was fetched from easyauth me json, name: {0}", name);
-
-            //var identity = new GenericIdentity(name, "AuthenticationTypes.Federation"); // setting ClaimsIdentity.AuthenticationType to value that azuread non-easyauth setups use
 
             this.Logger.LogInformation("building claims from payload...");
 
@@ -172,16 +165,13 @@ namespace KK.AspNetCore.EasyAuthAuthentication
                 }
             }
 
-            this.Logger.LogInformation("Add claims to new identity");
-
-            //identity.AddClaims(claims);
+            this.Logger.LogInformation("building new identity from claims");
             var identity = new ClaimsIdentity(claims, "AuthenticationTypes.Federation"); // setting ClaimsIdentity.AuthenticationType to value that azuread non-easyauth setups use
 
             //identity.AddClaim(new Claim("id_token", idToken)); // don't think we should be including this
             //identity.AddClaim(new Claim("http://schemas.microsoft.com/claims/authnclassreference", 1)); // don't think we need to add this
             if (!(identity.Claims as List<Claim>).Exists(claim => claim.Type == "scp")) identity.AddClaim(new Claim("scp", "user_impersonation")); // not sure why easyauth is dropping this
             identity.AddClaim(new Claim("provider_name", payload["provider_name"].Value<string>())); // X-MS-CLIENT-PRINCIPAL-IDP
-            //var principal = new GenericPrincipal(identity, null); // maybe passing valid string[] roles for second parameter would make IsInRole work but no need just use ClaimsPrincipal
             var principal = new ClaimsPrincipal(identity);
             return new AuthenticationTicket(principal, EasyAuthAuthenticationDefaults.AuthenticationScheme);
         }
