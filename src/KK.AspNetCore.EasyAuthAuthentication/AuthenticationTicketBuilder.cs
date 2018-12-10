@@ -21,7 +21,7 @@ namespace KK.AspNetCore.EasyAuthAuthentication
             var identity = new ClaimsIdentity(createClaims(claimsPayload), AuthenticationTypesNames.Federation); // setting ClaimsIdentity.AuthenticationType to value that azuread non-easyauth setups use
             addScpClaim(identity);
             identity.AddClaim(new Claim("provider_name", providerName));
-            var genericPrincipal = new GenericPrincipal(identity, null);
+            var genericPrincipal = new ClaimsPrincipal(identity);
             return new AuthenticationTicket(genericPrincipal, EasyAuthAuthenticationDefaults.AuthenticationScheme);
         }
 
