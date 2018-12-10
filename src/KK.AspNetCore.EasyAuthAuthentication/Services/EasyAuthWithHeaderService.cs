@@ -14,16 +14,16 @@ namespace KK.AspNetCore.EasyAuthAuthentication.Services
 {
     public class EasyAuthWithHeaderService
     {
-        public const string PrincipalNameHeader = "X-MS-CLIENT-PRINCIPAL-NAME";
+        private const string PrincipalNameHeader = "X-MS-CLIENT-PRINCIPAL-NAME";
         /// <summary>
         /// JWT
         /// </summary>
-        public const string PrincipalObjectHeader = "X-MS-CLIENT-PRINCIPAL";
-        public const string PrincipalIdpHeaderName = "X-MS-CLIENT-PRINCIPAL-IDP";
-        public ILogger Logger { get; }
-        public IHeaderDictionary Headers { get; }
+        private const string PrincipalObjectHeader = "X-MS-CLIENT-PRINCIPAL";
+        private const string PrincipalIdpHeaderName = "X-MS-CLIENT-PRINCIPAL-IDP";
+        private ILogger Logger { get; }
+        private IHeaderDictionary Headers { get; }
 
-        public EasyAuthWithHeaderService(
+        private EasyAuthWithHeaderService(
             ILogger logger,
             IHeaderDictionary headers
         )
@@ -37,30 +37,35 @@ namespace KK.AspNetCore.EasyAuthAuthentication.Services
         /// </summary>
         /// <param name="logger">a logger</param>
         /// <param name="context">Http context of the request</param>
-        /// <returns>An `AuthenticationTicket`</returns>
+        /// <returns>An <see cref="AuthenticationTicket" /></returns>
         public static AuthenticateResult AuthUser(ILogger logger, HttpContext context)
         {
             var service = new EasyAuthWithHeaderService(logger, context.Request.Headers);
             var ticket = service.BuildIdentityFromEasyAuthRequestHeaders();
+
             logger.LogInformation("Set identity to user context object.");
             context.User = ticket.Principal;
             logger.LogInformation("identity build was a success, returning ticket");
+
             return AuthenticateResult.Success(ticket);
         }
 
         private AuthenticationTicket BuildIdentityFromEasyAuthRequestHeaders()
         {
             var name = this.Headers[PrincipalNameHeader][0];
-            this.Logger.LogDebug($"payload was fetched from easyauth headers, name: {name}");
-
-            var identity = new GenericIdentity(name, AuthenticationTypesNames.Federation); // setting ClaimsIdentity.AuthenticationType to value that azureAd non-easyauth setups use
+            this.Logger.LogDebug($"payload was fetched from EasyAuth headers, name: {name}");
 
             this.Logger.LogInformation("building claims from payload...");
+            var xMsClientPrincipal = JObject.Parse(
+                                        Encoding.UTF8.GetString(
+                                            Convert.FromBase64String(this.Headers[PrincipalObjectHeader][0])
+                                        )
+                                    );
 
-            var xMsClientPrincipal = JObject.Parse(Encoding.UTF8.GetString(Convert.FromBase64String(this.Headers[PrincipalObjectHeader][0])));
             var claims = xMsClientPrincipal["claims"].Children<JObject>();
-            var providerName = this.Headers["X-MS-CLIENT-PRINCIPAL-IDP"][0];
-            return AuthenticationTicketBuilder.Build(claims, name, providerName);
+            var providerName = this.Headers[PrincipalIdpHeaderName][0];
+
+            return AuthenticationTicketBuilder.Build(claims, providerName);
         }
     }
 }

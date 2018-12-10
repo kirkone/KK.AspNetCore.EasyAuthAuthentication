@@ -69,7 +69,6 @@ namespace KK.AspNetCore.EasyAuthAuthentication
             {
                 if (isContextUserNotAuthenticated(this.Context.User))
                 {
-                    // TODO: If this the only auth middleware we maybe must return a `AuthenticateResult.Fail()`
                     this.Logger.LogInformation("The identity isn't set by easy auth.");
                 }
                 else

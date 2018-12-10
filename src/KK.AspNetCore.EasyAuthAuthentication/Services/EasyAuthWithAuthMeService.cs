@@ -95,7 +95,7 @@ namespace KK.AspNetCore.EasyAuthAuthentication.Services
 
             this.Logger.LogInformation("building claims from payload...");
             var providerName = payload["provider_name"].Value<string>();
-            return AuthenticationTicketBuilder.Build(payload["user_claims"].Children<JObject>(), name, providerName);
+            return AuthenticationTicketBuilder.Build(payload["user_claims"].Children<JObject>(), providerName);
         }
 
         private async Task<JArray> GetAuthMe(HttpClientHandler handler, HttpRequestMessage httpRequest)
