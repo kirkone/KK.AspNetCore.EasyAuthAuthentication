@@ -90,13 +90,13 @@ namespace KK.AspNetCore.EasyAuthAuthentication
 
         private AuthenticationTicket BuildIdentityFromEasyAuthHeaders(Microsoft.AspNetCore.Http.IHeaderDictionary requestHeaders)
         {
-            var id = requestHeaders["X-MS-CLIENT-PRINCIPAL-NAME"].ToString();
-            var idToken = requestHeaders["X-MS-TOKEN-AAD-ID-TOKEN"].ToString();
-            var providerName = requestHeaders["X-MS-CLIENT-PRINCIPAL-IDP"].ToString();
+            var name = requestHeaders["X-MS-CLIENT-PRINCIPAL-NAME"][0];
+            var idToken = requestHeaders["X-MS-TOKEN-AAD-ID-TOKEN"][0];
+            var providerName = requestHeaders["X-MS-CLIENT-PRINCIPAL-IDP"][0];
                         
-            this.Logger.LogDebug("payload was fetched from easyauth headers, id: {0}", id);
+            this.Logger.LogDebug("payload was fetched from easyauth headers, name: {0}", name);
 
-            var identity = new GenericIdentity(id, "AuthenticationTypes.Federation"); // setting ClaimsIdentity.AuthenticationType to value that azuread non-easyauth setups use
+            var identity = new GenericIdentity(name, "AuthenticationTypes.Federation"); // setting ClaimsIdentity.AuthenticationType to value that azuread non-easyauth setups use
 
             this.Logger.LogInformation("building claims from payload...");
 
@@ -132,7 +132,7 @@ namespace KK.AspNetCore.EasyAuthAuthentication
             this.Logger.LogInformation("Add claims to new identity");
 
             identity.AddClaims(claims);
-            var xMsClientPrincipal = JObject.Parse(Encoding.UTF8.GetString(Convert.FromBase64String(requestHeaders["X-MS-CLIENT-PRINCIPAL"].ToString())));
+            var xMsClientPrincipal = JObject.Parse(Encoding.UTF8.GetString(Convert.FromBase64String(requestHeaders["X-MS-CLIENT-PRINCIPAL"][0])));
             var nameidentifier = xMsClientPrincipal["claims"].Children<JObject>().FirstOrDefault(c => c["typ"].ToString() == ClaimTypes.NameIdentifier)?["val"].ToString();
             //foreach (var claim in xMsClientPrincipal["claims"]) { if (claim["typ"].ToString() == ClaimTypes.NameIdentifier) { nameidentifier = claim["val"].ToString(); } } // line above works not required
             identity.AddClaim(new Claim(ClaimTypes.NameIdentifier, nameidentifier));
@@ -146,13 +146,13 @@ namespace KK.AspNetCore.EasyAuthAuthentication
 
         private AuthenticationTicket BuildIdentityFromEasyAuthMeJson(JObject payload)
         {
-            var id = payload["user_id"].Value<string>(); // X-MS-CLIENT-PRINCIPAL-NAME
+            var name = payload["user_id"].Value<string>(); // X-MS-CLIENT-PRINCIPAL-NAME
             var idToken = payload["id_token"].Value<string>(); // X-MS-TOKEN-AAD-ID-TOKEN
             var providerName = payload["provider_name"].Value<string>(); // X-MS-CLIENT-PRINCIPAL-IDP
 
-            this.Logger.LogDebug("payload was fetched from easyauth me json, id: {0}", id);
+            this.Logger.LogDebug("payload was fetched from easyauth me json, name: {0}", name);
 
-            var identity = new GenericIdentity(id, "AuthenticationTypes.Federation"); // setting ClaimsIdentity.AuthenticationType to value that azuread non-easyauth setups use
+            var identity = new GenericIdentity(name, "AuthenticationTypes.Federation"); // setting ClaimsIdentity.AuthenticationType to value that azuread non-easyauth setups use
 
             this.Logger.LogInformation("building claims from payload...");
 
