@@ -106,9 +106,10 @@ For example:
 
 ## Authors
 
-* **Kirsten Kluge** - *Initial work* - [kirkone](https://github.com/kirkone)
-* **paule96** - *Refactoring* - [paule96](https://github.com/paule96)
-* **Christoph Sonntag** - *Made things even more uber* - [Compufreak345](https://github.com/Compufreak345)
+-   **Kirsten Kluge** - _Initial work_ - [kirkone](https://github.com/kirkone)
+-   **paule96** - _Refactoring_ - [paule96](https://github.com/paule96)
+-   **Christoph Sonntag** - _Made things even more uber_ - [Compufreak345](https://github.com/Compufreak345)
+-   **myusrn** - _Dropped some knowledge about making IsInRoles work_ - [myusrn](https://github.com/myusrn)
 
 See also the list of [contributors](https://github.com/kirkone/KK.AspNetCore.EasyAuthAuthentication/graphs/contributors) who participated in this project.
 
@@ -118,4 +119,4 @@ This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md
 
 ## Acknowledgments
 
-* Inspired by this [StackOverflow post](https://stackoverflow.com/a/42402163/6526640) and this [GitHub](https://github.com/lpunderscore/azureappservice-authentication-middleware) repo
+-   Inspired by this [StackOverflow post](https://stackoverflow.com/a/42402163/6526640) and this [GitHub](https://github.com/lpunderscore/azureappservice-authentication-middleware) repo
