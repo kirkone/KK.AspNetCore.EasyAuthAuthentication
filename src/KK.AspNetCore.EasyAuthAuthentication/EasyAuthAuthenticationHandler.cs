@@ -2,10 +2,13 @@ namespace KK.AspNetCore.EasyAuthAuthentication
 {
     using System;
     using System.Collections.Generic;
+    using System.IdentityModel.Tokens.Jwt;
+    using System.Linq; // required by Children<JObject>.FirstOrDefault requires using System.Linq;
     using System.Net;
     using System.Net.Http;
     using System.Security.Claims;
     using System.Security.Principal;
+    using System.Text;
     using System.Text.Encodings.Web;
     using System.Threading.Tasks;
     using Microsoft.AspNetCore.Authentication;
@@ -39,11 +42,21 @@ namespace KK.AspNetCore.EasyAuthAuthentication
         {
             this.Logger.LogInformation("starting authentication handler for app service authentication");
 
-            if (
-                (this.Context.User == null ||
-                this.Context.User.Identity == null ||
-                this.Context.User.Identity.IsAuthenticated == false)
-                && this.Context.Request.Path != "/" + $"{this.Options.AuthEndpoint}")
+            if ((this.Context.User == null || this.Context.User.Identity == null || this.Context.User.Identity.IsAuthenticated == false)
+                && !string.IsNullOrEmpty(this.Context.Request.Headers["X-MS-TOKEN-AAD-ID-TOKEN"].ToString()))
+            {
+                // build up identity from X-MS-TOKEN-AAD-ID-TOKEN header set by EasyAuth filters if user openid connect session cookie or oauth bearer token authenticated ...
+                var ticket = this.BuildIdentityFromEasyAuthHeaders(this.Context.Request.Headers);
+
+                this.Logger.LogInformation("Set identity to user context object.");
+                this.Context.User = ticket.Principal;
+
+                this.Logger.LogInformation("identity build was a success, returning ticket");
+                return AuthenticateResult.Success(ticket);
+            }
+            else if ((this.Context.User == null || this.Context.User.Identity == null || this.Context.User.Identity.IsAuthenticated == false)
+                && string.IsNullOrEmpty(this.Context.Request.Headers["X-MS-TOKEN-AAD-ID-TOKEN"].ToString())
+                && (this.Context.Request.Host.Value.StartsWith("localhost") && this.Context.Request.Path != "/" + $"{this.Options.AuthEndpoint}"))
             {
                 var cookieContainer = new CookieContainer();
                 var handler = this.CreateHandler(ref cookieContainer);
@@ -60,7 +73,7 @@ namespace KK.AspNetCore.EasyAuthAuthentication
                 }
 
                 // build up identity from json...
-                var ticket = this.BuildIdentityFromJsonPayload((JObject)payload[0]);
+                var ticket = this.BuildIdentityFromEasyAuthMeJson((JObject)payload[0]);
 
                 this.Logger.LogInformation("Set identity to user context object.");
                 this.Context.User = ticket.Principal;
@@ -75,33 +88,108 @@ namespace KK.AspNetCore.EasyAuthAuthentication
             }
         }
 
-        private AuthenticationTicket BuildIdentityFromJsonPayload(JObject payload)
+        private AuthenticationTicket BuildIdentityFromEasyAuthHeaders(Microsoft.AspNetCore.Http.IHeaderDictionary requestHeaders)
         {
-            var id = payload["user_id"].Value<string>();
-            var idToken = payload["id_token"].Value<string>();
-            var providerName = payload["provider_name"].Value<string>();
+            var id = requestHeaders["X-MS-CLIENT-PRINCIPAL-NAME"].ToString();
+            var idToken = requestHeaders["X-MS-TOKEN-AAD-ID-TOKEN"].ToString();
+            var providerName = requestHeaders["X-MS-CLIENT-PRINCIPAL-IDP"].ToString();
+                        
+            this.Logger.LogDebug("payload was fetched from easyauth headers, id: {0}", id);
 
-            this.Logger.LogDebug("payload was fetched from endpoint. id: {0}", id);
+            var identity = new GenericIdentity(id, "AuthenticationTypes.Federation"); // setting ClaimsIdentity.AuthenticationType to value that azuread non-easyauth setups use
 
-            var identity = new GenericIdentity(id);
+            this.Logger.LogInformation("building claims from payload...");
+
+            // jwt token decode c# -> https://stackoverflow.com/questions/38340078/how-to-decode-jwt-token/38911599#38911599
+            // nuget.org search on "System.IdentityModel.Tokens.Jwt MicrosoftIdentityModel.Tokens" ->
+            // using System.IdentityModel.Tokens.Jwt 27.8m vs MicrosoftIdentityModel.Tokens 17.5m downloads both v5.3.0 released 10/05/2018
+            var idTokenJwt = new JwtSecurityToken(idToken);
+            var claims = new List<Claim>();
+            foreach (var claim in idTokenJwt.Claims as List<Claim>)
+            {
+                if (claim.Type == "amr")
+                {
+                    foreach (var item in claim.Value.Split(','))
+                    {
+                        claims.Add(new Claim(ClaimTypes.Authentication, item));
+                    }
+                }
+                else if (claim.Type == "roles")
+                {
+                    foreach (var item in claim.Value.Split(','))
+                    {
+                        //(User.Identity as ClaimsIdentity).RoleClaimType must match type that role claims are assigned to for Authorization and IsInRole to work
+                        claims.Add(new Claim(ClaimTypes.Role, item));
+                    }
+                }
+                else // if (claim.Type != "c_hash")
+                {
+                    //(User.Identity as ClaimsIdentity).NameClaimType must be what name claim is assigned to for User.Identity.Name to work
+                    claims.Add(new Claim(claim.Type, claim.Value));
+                }
+            }
+
+            this.Logger.LogInformation("Add claims to new identity");
+
+            identity.AddClaims(claims);
+            var xMsClientPrincipal = JObject.Parse(Encoding.UTF8.GetString(Convert.FromBase64String(requestHeaders["X-MS-CLIENT-PRINCIPAL"].ToString())));
+            var nameidentifier = xMsClientPrincipal["claims"].Children<JObject>().FirstOrDefault(c => c["typ"].ToString() == ClaimTypes.NameIdentifier)?["val"].ToString();
+            //foreach (var claim in xMsClientPrincipal["claims"]) { if (claim["typ"].ToString() == ClaimTypes.NameIdentifier) { nameidentifier = claim["val"].ToString(); } } // line above works not required
+            identity.AddClaim(new Claim(ClaimTypes.NameIdentifier, nameidentifier));
+            //identity.AddClaim(new Claim("id_token", idToken)); // don't think we should be including this
+            //identity.AddClaim(new Claim("http://schemas.microsoft.com/claims/authnclassreference", 1)); // don't think we need to add this
+            if (!(identity.Claims as List<Claim>).Exists(claim => claim.Type == "scp")) identity.AddClaim(new Claim("scp", "user_impersonation")); // not sure why easyauth not including this
+            identity.AddClaim(new Claim("provider_name", providerName));
+            var genericPrincipal = new GenericPrincipal(identity, null);
+            return new AuthenticationTicket(genericPrincipal, EasyAuthAuthenticationDefaults.AuthenticationScheme);
+        }
+
+        private AuthenticationTicket BuildIdentityFromEasyAuthMeJson(JObject payload)
+        {
+            var id = payload["user_id"].Value<string>(); // X-MS-CLIENT-PRINCIPAL-NAME
+            var idToken = payload["id_token"].Value<string>(); // X-MS-TOKEN-AAD-ID-TOKEN
+            var providerName = payload["provider_name"].Value<string>(); // X-MS-CLIENT-PRINCIPAL-IDP
+
+            this.Logger.LogDebug("payload was fetched from easyauth me json, id: {0}", id);
+
+            var identity = new GenericIdentity(id, "AuthenticationTypes.Federation"); // setting ClaimsIdentity.AuthenticationType to value that azuread non-easyauth setups use
 
             this.Logger.LogInformation("building claims from payload...");
 
             var claims = new List<Claim>();
             foreach (var claim in payload["user_claims"])
             {
-                claims.Add(new Claim(claim["typ"].ToString(), claim["val"].ToString()));
+                if (claim["typ"].ToString() == "amr")
+                {
+                    foreach (var item in claim["val"].ToString().Split(','))
+                    {
+                        claims.Add(new Claim(ClaimTypes.Authentication, item));
+                    }
+                }
+                else if (claim["typ"].ToString() == "roles")
+                {
+                    foreach (var item in claim["val"].ToString().Split(','))
+                    {
+                        //(User.Identity as ClaimsIdentity).RoleClaimType must match type that role claims are assigned to for Authorization and IsInRole to work
+                        claims.Add(new Claim(ClaimTypes.Role, item));
+                    }
+                }
+                else // if (claim["typ"].ToString() != "c_hash")
+                {
+                    //(User.Identity as ClaimsIdentity).NameClaimType must be what name claim is assigned to for User.Identity.Name to work
+                    claims.Add(new Claim(claim["typ"].ToString(), claim["val"].ToString()));
+                }
             }
 
             this.Logger.LogInformation("Add claims to new identity");
 
             identity.AddClaims(claims);
-            identity.AddClaim(new Claim("id_token", idToken));
+            //identity.AddClaim(new Claim("id_token", idToken)); // don't think we should be including this
+            //identity.AddClaim(new Claim("http://schemas.microsoft.com/claims/authnclassreference", 1)); // don't think we need to add this
+            if (!(identity.Claims as List<Claim>).Exists(claim => claim.Type == "scp")) identity.AddClaim(new Claim("scp", "user_impersonation")); // not sure why easyauth not including this
             identity.AddClaim(new Claim("provider_name", providerName));
-            var p = new GenericPrincipal(identity, null);
-            return new AuthenticationTicket(
-                p,
-                EasyAuthAuthenticationDefaults.AuthenticationScheme);
+            var genericPrincipal = new GenericPrincipal(identity, null);
+            return new AuthenticationTicket(genericPrincipal, EasyAuthAuthenticationDefaults.AuthenticationScheme);
         }
 
         private HttpRequestMessage CreateAuthRequest(ref CookieContainer cookieContainer)
@@ -125,7 +213,11 @@ namespace KK.AspNetCore.EasyAuthAuthentication
             }
 
             // fetch value from endpoint
-            var request = new HttpRequestMessage(HttpMethod.Get, $"{uriString}/{this.Options.AuthEndpoint}");
+            var authMeEndpoint = string.Empty;
+            if (this.Options.AuthEndpoint.StartsWith("http")) authMeEndpoint = this.Options.AuthEndpoint; // enable pulling from places like storage account public blob container
+            else authMeEndpoint = $"{uriString}/{this.Options.AuthEndpoint}"; // localhost relative path, e.g. wwwroot/.auth/me.json
+            
+            var request = new HttpRequestMessage(HttpMethod.Get, authMeEndpoint);
             foreach (var header in this.Context.Request.Headers)
             {
                 if (header.Key.StartsWith("X-ZUMO-"))
