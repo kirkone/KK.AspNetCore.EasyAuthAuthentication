@@ -36,7 +36,6 @@ namespace KK.AspNetCore.EasyAuthAuthentication.Services
             Headers = headers;
             AuthEndPoint = authEndPoint;
             this.Logger = logger;
-
         }
 
         /// <summary>
