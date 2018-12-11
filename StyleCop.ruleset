@@ -17,6 +17,8 @@
     <Rule Id="SA1623" Action="None" /> <!-- The property's documentation summary text should begin with : 'Gets or sets' -->
     <Rule Id="SA1650" Action="None" /> <!-- The documentation header contains invalidly spelled words. -->
     <Rule Id="SA1602" Action="None" /> <!-- Enumeration items should be documented. -->
+    <Rule Id="SA1009" Action="None" /> <!-- Closing parenthesis should not be preceded by a space. -->
+    <Rule Id="SA1111" Action="None" /> <!-- Closing Parenthesis Must Be On Line Of Last Parameter. -->
     <Rule Id="SA1128" Action="None" /> <!-- Put constructor initializers on their own line. -->
   </Rules>
 </RuleSet>

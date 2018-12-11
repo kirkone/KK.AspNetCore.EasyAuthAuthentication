@@ -2,9 +2,9 @@ namespace KK.AspNetCore.EasyAuthAuthentication
 {
     /// <summary>
     /// This class contains all Authentication type names.
-    /// Source of this is: https://docs.microsoft.com/en-us/dotnet/api/system.security.claims.authenticationtypes?view=netframework-4.7.2
+    /// Source of this is: https://docs.microsoft.com/en-us/dotnet/api/system.security.claims.authenticationtypes?view=netframework-4.7.2 .
     /// </summary>
-    public class AuthenticationTypesNames
+    internal class AuthenticationTypesNames
     {
         public const string Basic = "AuthenticationTypes.Basic";
         public const string Federation = "AuthenticationTypes.Federation";

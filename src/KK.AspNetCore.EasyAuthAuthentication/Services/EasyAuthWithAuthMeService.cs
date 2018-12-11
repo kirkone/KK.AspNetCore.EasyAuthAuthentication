@@ -1,27 +1,18 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
-using System.Net.Http;
-using System.Security.Claims;
-using System.Security.Principal;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
-
 namespace KK.AspNetCore.EasyAuthAuthentication.Services
 {
-    public class EasyAuthWithAuthMeService
+    using System;
+    using System.Net;
+    using System.Net.Http;
+    using System.Security.Principal;
+    using System.Threading.Tasks;
+    using Microsoft.AspNetCore.Authentication;
+    using Microsoft.AspNetCore.Http;
+    using Microsoft.Extensions.Logging;
+    using Newtonsoft.Json;
+    using Newtonsoft.Json.Linq;
+
+    internal class EasyAuthWithAuthMeService
     {
-        private string Host { get; }
-        private IRequestCookieCollection Cookies { get; }
-        private IHeaderDictionary Headers { get; }
-        private string AuthEndPoint { get; }
-        private ILogger Logger { get; }
-        private string HttpSchema { get; }
         private EasyAuthWithAuthMeService(
             ILogger logger,
             string httpSchema,
@@ -32,20 +23,32 @@ namespace KK.AspNetCore.EasyAuthAuthentication.Services
         {
             this.HttpSchema = httpSchema;
             this.Host = host;
-            Cookies = cookies;
-            Headers = headers;
-            AuthEndPoint = authEndPoint;
+            this.Cookies = cookies;
+            this.Headers = headers;
+            this.AuthEndPoint = authEndPoint;
             this.Logger = logger;
         }
+
+        private string Host { get; }
+
+        private IRequestCookieCollection Cookies { get; }
+
+        private IHeaderDictionary Headers { get; }
+
+        private string AuthEndPoint { get; }
+
+        private ILogger Logger { get; }
+
+        private string HttpSchema { get; }
 
         /// <summary>
         /// Use this method to authenticate a user with easy auth.
         /// This will set the `context.User` of your HttpContext.
         /// </summary>
-        /// <param name="logger"></param>
+        /// <param name="logger">An instance of <see cref="ILogger"/>.</param>
         /// <param name="context">The http context with the missing user claim.</param>
-        /// <param name="authEndpoint">The auth endpoint where we find the easy auth json</param>
-        /// <returns></returns>
+        /// <param name="authEndpoint">The auth endpoint where we find the easy auth json.</param>
+        /// <returns>An <see cref="AuthenticateResult" />.</returns>
         public static async Task<AuthenticateResult> AuthUser(ILogger logger, HttpContext context, string authEndpoint)
         {
             try
@@ -146,8 +149,14 @@ namespace KK.AspNetCore.EasyAuthAuthentication.Services
 
             // fetch value from endpoint
             var authMeEndpoint = string.Empty;
-            if (this.AuthEndPoint.StartsWith("http")) authMeEndpoint = this.AuthEndPoint; // enable pulling from places like storage account private blob container
-            else authMeEndpoint = $"{uriString}/{this.AuthEndPoint}"; // localhost relative path, e.g. wwwroot/.auth/me.json
+            if (this.AuthEndPoint.StartsWith("http"))
+            {
+                authMeEndpoint = this.AuthEndPoint; // enable pulling from places like storage account private blob container
+            }
+            else
+            {
+                authMeEndpoint = $"{uriString}/{this.AuthEndPoint}"; // localhost relative path, e.g. wwwroot/.auth/me.json
+            }
 
             var request = new HttpRequestMessage(HttpMethod.Get, authMeEndpoint);
             foreach (var header in this.Headers)
