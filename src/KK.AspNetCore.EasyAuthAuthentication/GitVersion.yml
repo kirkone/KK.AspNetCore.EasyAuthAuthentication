@@ -1,7 +1,10 @@
-mode: ContinuousDeployment
+next-version: 1.0.0
+mode: ContinuousDelivery
 branches: {}
-major-version-bump-message: '\+version:\s?(breaking|major)'
-minor-version-bump-message: '\+version:\s?(feature|minor)'
-patch-version-bump-message: '\+version:\s?(fix|patch)'
+major-version-bump-message: '\+semver:\s?(breaking|major)'
+minor-version-bump-message: '\+semver:\s?(feature|minor)'
+patch-version-bump-message: '\+semver:\s?(fix|patch)'
+no-bump-message: '\+semver:\s?(none|skip)'
+commit-message-incrementing: Enabled
 ignore:
   sha: []
