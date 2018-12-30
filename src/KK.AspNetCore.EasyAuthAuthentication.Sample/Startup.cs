@@ -44,10 +44,12 @@ namespace KK.AspNetCore.EasyAuthAuthentication.Sample
                     // Override the AuthEndpoint while developing
                     if (this.Environment.IsDevelopment())
                     {
-                        // The me.json should be placed in 'wwwroot/auth'
+                        // The me.json should be placed in 'wwwroot/.auth'
                         // The Static File Handler will not work with files without extension
-                        // so the endpoint should point to a file with extension
-                        options.AuthEndpoint = "auth/me.json";
+                        // so the endpoint should point to a file with extension. Folders that
+                        // start with '.' are considered hidden folders and do not get included
+                        // in publish site output which is desirable in this case.
+                        options.AuthEndpoint = ".auth/me.json";
                     }
                 }
             );

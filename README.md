@@ -85,7 +85,7 @@ If you want to add roles to the `User` property you can have a look in `Transfor
 
 ### Local Debugging
 
-For debugging your application you can place a `me.json` in the `wwwroot/auth` folder of your web app and add some configuration to the `AddEasyAuth` call.  
+For debugging your application you can place a `me.json` in the `wwwroot/.auth` folder of your web app and add some configuration to the `AddEasyAuth` call.  
 For example:
 
 ```
@@ -94,7 +94,7 @@ For example:
     {
         if (this.Environment.IsDevelopment())
         {
-            options.AuthEndpoint = "auth/me.json";
+            options.AuthEndpoint = ".auth/me.json";
         }
     }
 );
@@ -102,7 +102,9 @@ For example:
 
 > **Info**: You can obtain the content for this file from an Azure Web App with EasyAuth configured by requesting the `/.auth/me` endpoint.
 
-> **Info**: Make sure you added static file handling to your pipeline by adding `app.UseStaticFiles();` to your `public void Configure` method in the `Startup.cs`. Otherwise the file can not be found at runtime.
+> **Info**: Make sure you added static file handling to your pipeline by adding `app.UseStaticFiles();` to your `public void Configure` method in the `Startup.cs`, e.g. just after `app.UseHttpsRedirection();` entry. Otherwise the static file can not be found at runtime.
+
+> **Info**: Using a wwwroot sub-folder name that starts with `'.'`&nbsp;, like the suggested `.auth` folder name, is useful for content relevant only for localhost debugging as these are treated as hidden folders and are not included in publish output.
 
 ## Authors
 

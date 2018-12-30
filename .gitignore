@@ -329,5 +329,5 @@ ASALocalRun/
 # MFractors (Xamarin productivity tool) working folder
 .mfractor/
 
-**/wwwroot/auth/**/*.*
+**/wwwroot/.auth/**/*.*
 !tools/GitVersion/**/
