@@ -45,20 +45,21 @@ namespace KK.AspNetCore.EasyAuthAuthentication.Services
 
         private AuthenticationTicket BuildIdentityFromEasyAuthRequestHeaders()
         {
-            var name = this.Headers[PrincipalNameHeader][0];
-            this.Logger.LogDebug($"payload was fetched from EasyAuth headers, name: {name}");
+            var userid = this.Headers[PrincipalNameHeader][0];
+            this.Logger.LogDebug($"payload was fetched from EasyAuth headers, name: {userid}");
+            var providerName = this.Headers[PrincipalIdpHeaderName][0];
+            this.Logger.LogDebug($"payload was fetched from easyauth me json, provider: {providerName}");
 
             this.Logger.LogInformation("building claims from payload...");
             var xMsClientPrincipal = JObject.Parse(
-                                        Encoding.UTF8.GetString(
-                                            Convert.FromBase64String(this.Headers[PrincipalObjectHeader][0])
-                                        )
-                                    );
+                        Encoding.UTF8.GetString(
+                            Convert.FromBase64String(this.Headers[PrincipalObjectHeader][0])
+                        )
+                    );
 
             var claims = xMsClientPrincipal["claims"].Children<JObject>();
-            var providerName = this.Headers[PrincipalIdpHeaderName][0];
 
-            return AuthenticationTicketBuilder.Build(claims, providerName);
+            return AuthenticationTicketBuilder.Build(claims, userid, providerName);
         }
     }
 }

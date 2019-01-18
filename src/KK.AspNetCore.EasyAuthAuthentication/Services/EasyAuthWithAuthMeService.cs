@@ -91,14 +91,17 @@ namespace KK.AspNetCore.EasyAuthAuthentication.Services
 
         private AuthenticationTicket BuildIdentityFromEasyAuthMeJson(JObject payload)
         {
-            var name = payload["user_id"].Value<string>(); // X-MS-CLIENT-PRINCIPAL-NAME
-            this.Logger.LogDebug($"payload was fetched from easyauth me json, name: {name}");
-
-            var identity = new GenericIdentity(name, AuthenticationTypesNames.Federation); // setting ClaimsIdentity.AuthenticationType to value that azuread non-easyauth setups use
+            var userid = payload["user_id"].Value<string>();
+            this.Logger.LogDebug($"payload was fetched from easyauth me json, name: {userid}");
+            var providerName = payload["provider_name"].Value<string>();
+            this.Logger.LogDebug($"payload was fetched from easyauth me json, provider: {providerName}");
 
             this.Logger.LogInformation("building claims from payload...");
-            var providerName = payload["provider_name"].Value<string>();
-            return AuthenticationTicketBuilder.Build(payload["user_claims"].Children<JObject>(), providerName);
+            return AuthenticationTicketBuilder.Build(
+                    payload["user_claims"].Children<JObject>(),
+                    userid,
+                    providerName
+                );
         }
 
         private async Task<JArray> GetAuthMe(HttpClientHandler handler, HttpRequestMessage httpRequest)

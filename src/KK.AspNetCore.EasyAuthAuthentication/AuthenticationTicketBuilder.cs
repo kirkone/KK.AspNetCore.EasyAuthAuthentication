@@ -12,17 +12,21 @@ namespace KK.AspNetCore.EasyAuthAuthentication
         /// Build a `AuthenticationTicket` from the given payload, the principal name and the provider name.
         /// </summary>
         /// <param name="claimsPayload">A array of JObjects that have a `type` and a `val` property.</param>
+        /// <param name="userid">The user ID of the current user.</param>
         /// <param name="providerName">The provider name of the current auth provider.</param>
         /// <returns>A `AuthenticationTicket`.</returns>
-        public static AuthenticationTicket Build(IEnumerable<JObject> claimsPayload, string providerName)
+        public static AuthenticationTicket Build(IEnumerable<JObject> claimsPayload, string userid, string providerName)
         {
             // setting ClaimsIdentity.AuthenticationType to value that Azure AD non-EasyAuth setups use
             var identity = new ClaimsIdentity(
                 CreateClaims(claimsPayload),
-                AuthenticationTypesNames.Federation
+                AuthenticationTypesNames.Federation,
+                ClaimTypes.Upn,
+                ClaimTypes.Role
             );
 
             AddScopeClaim(identity);
+            AddUserIdClaim(identity, userid);
             AddProviderNameClaim(identity, providerName);
             var genericPrincipal = new ClaimsPrincipal(identity);
 
@@ -72,6 +76,14 @@ namespace KK.AspNetCore.EasyAuthAuthentication
             if (!identity.Claims.Any(claim => claim.Type == "provider_name"))
             {
                 identity.AddClaim(new Claim("provider_name", providerName));
+            }
+        }
+        
+        private static void AddUserIdClaim(ClaimsIdentity identity, string userid)
+        {
+            if (!identity.Claims.Any(claim => claim.Type == ClaimTypes.Upn))
+            {
+                identity.AddClaim(new Claim(ClaimTypes.Upn, userid));
             }
         }
     }
