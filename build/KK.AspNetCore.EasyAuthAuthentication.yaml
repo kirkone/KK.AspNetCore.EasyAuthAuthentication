@@ -17,10 +17,10 @@ steps:
       workingDirectory: "src/KK.AspNetCore.EasyAuthAuthentication"
 
   - task: DotNetCoreInstaller@0
-    displayName: Use .NET Core sdk 2.1.502
+    displayName: Use .NET Core sdk 2.1.503
     inputs:
       packageType: "sdk"
-      version: 2.1.502
+      version: 2.1.503
 
   - task: DotNetCoreCLI@2
     displayName: Restore
