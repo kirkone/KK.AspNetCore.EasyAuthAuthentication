@@ -12,6 +12,7 @@ namespace KK.AspNetCore.EasyAuthAuthentication.Sample
     using Microsoft.AspNetCore.Authentication;
     using KK.AspNetCore.EasyAuthAuthentication.Sample.Transformers;
     using KK.AspNetCore.EasyAuthAuthentication.Sample.Repositories;
+    using System.Security.Claims;
 
     public class Startup
     {
@@ -51,6 +52,9 @@ namespace KK.AspNetCore.EasyAuthAuthentication.Sample
                         // in publish site output which is desirable in this case.
                         options.AuthEndpoint = ".auth/me.json";
                     }
+
+                    // Override the default claim for the User.Identity.Name field 
+                    options.NameClaimType = ClaimTypes.Email;
                 }
             );
 
@@ -76,9 +80,9 @@ namespace KK.AspNetCore.EasyAuthAuthentication.Sample
             {
                 app.UseExceptionHandler("/Error");
                 app.UseHsts();
+                app.UseHttpsRedirection();
             }
 
-            app.UseHttpsRedirection();
             app.UseStaticFiles();
             app.UseSpaStaticFiles();
 

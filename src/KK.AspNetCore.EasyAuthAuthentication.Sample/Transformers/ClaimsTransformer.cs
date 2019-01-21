@@ -31,8 +31,6 @@ namespace KK.AspNetCore.EasyAuthAuthentication.Sample.Transformers
         {
             if (principal.Identity.IsAuthenticated)
             {
-
-
                 var claimsIdentity = (ClaimsIdentity)principal.Identity;
                 var userIdentifier = claimsIdentity.Name;
                 List<string> roles;
@@ -47,8 +45,6 @@ namespace KK.AspNetCore.EasyAuthAuthentication.Sample.Transformers
                     var dbRoles = await this.repository.GetRoles(userIdentifier);
 
                     roles.AddRange(dbRoles);
-
-
                 }
 
                 roles.AddRange(claimsIdentity.Claims.Where(c => c.Type == ClaimTypes.Role).Select(c => c.Value));

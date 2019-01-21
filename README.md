@@ -83,6 +83,22 @@ public string UserName()
 
 If you want to add roles to the `User` property you can have a look in `Transformers/ClaimsTransformer.cs` in the Sample project. There you can see an example how to get started with this.
 
+### Custom options
+
+You can provide additional options vor the middleware:
+
+```
+).AddEasyAuth(
+                options =>
+                {
+                    // Override the default claim for the User.Identity.Name field 
+                    options.NameClaimType = ClaimTypes.Email;
+                }
+            );
+```
+
+The `NameClaimType` is the ClaimType of the value which one will be used to fill the `User.Identity.Name` field.
+
 ### Local Debugging
 
 For debugging your application you can place a `me.json` in the `wwwroot/.auth` folder of your web app and add some configuration to the `AddEasyAuth` call.  

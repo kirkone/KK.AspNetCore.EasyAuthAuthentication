@@ -21,11 +21,11 @@ namespace KK.AspNetCore.EasyAuthAuthentication
         private static readonly Func<IHeaderDictionary, string, bool> IsHeaderSet =
             (headers, headerName) => !string.IsNullOrEmpty(headers[headerName].ToString());
 
-        private static readonly Func<IHeaderDictionary, ClaimsPrincipal, HttpRequest, string, bool> CanUseEasyAuthJson =
-            (headers, user, request, authEndpoint) =>
+        private static readonly Func<IHeaderDictionary, ClaimsPrincipal, HttpRequest, EasyAuthAuthenticationOptions, bool> CanUseEasyAuthJson =
+            (headers, user, request, options) =>
                 IsContextUserNotAuthenticated(user)
                 && !IsHeaderSet(headers, AuthTokenHeaderNames.AADIdToken)
-                && request.Path != "/" + $"{authEndpoint}";
+                && request.Path != "/" + $"{options.AuthEndpoint}";
 
         private readonly Func<IHeaderDictionary, ClaimsPrincipal, bool> canUseHeaderAuth =
             (headers, user) => IsContextUserNotAuthenticated(user) &&
@@ -53,11 +53,11 @@ namespace KK.AspNetCore.EasyAuthAuthentication
 
             if (this.canUseHeaderAuth(this.Context.Request.Headers, this.Context.User))
             {
-                return EasyAuthWithHeaderService.AuthUser(this.Logger, this.Context);
+                return EasyAuthWithHeaderService.AuthUser(this.Logger, this.Context, this.Options);
             }
-            else if (CanUseEasyAuthJson(this.Context.Request.Headers, this.Context.User, this.Context.Request, this.Options.AuthEndpoint))
+            else if (CanUseEasyAuthJson(this.Context.Request.Headers, this.Context.User, this.Context.Request, this.Options))
             {
-                return await EasyAuthWithAuthMeService.AuthUser(this.Logger, this.Context, this.Options.AuthEndpoint);
+                return await EasyAuthWithAuthMeService.AuthUser(this.Logger, this.Context, this.Options);
             }
             else
             {

@@ -19,13 +19,13 @@ namespace KK.AspNetCore.EasyAuthAuthentication.Services
             string host,
             IRequestCookieCollection cookies,
             IHeaderDictionary headers,
-            string authEndPoint)
+            EasyAuthAuthenticationOptions options)
         {
             this.HttpSchema = httpSchema;
             this.Host = host;
             this.Cookies = cookies;
             this.Headers = headers;
-            this.AuthEndPoint = authEndPoint;
+            this.Options = options;
             this.Logger = logger;
         }
 
@@ -35,7 +35,7 @@ namespace KK.AspNetCore.EasyAuthAuthentication.Services
 
         private IHeaderDictionary Headers { get; }
 
-        private string AuthEndPoint { get; }
+        private EasyAuthAuthenticationOptions Options { get; }
 
         private ILogger Logger { get; }
 
@@ -47,9 +47,9 @@ namespace KK.AspNetCore.EasyAuthAuthentication.Services
         /// </summary>
         /// <param name="logger">An instance of <see cref="ILogger"/>.</param>
         /// <param name="context">The http context with the missing user claim.</param>
-        /// <param name="authEndpoint">The auth endpoint where we find the easy auth json.</param>
+        /// <param name="options">The <c>EasyAuthAuthenticationOptions</c> to use.</param>
         /// <returns>An <see cref="AuthenticateResult" />.</returns>
-        public static async Task<AuthenticateResult> AuthUser(ILogger logger, HttpContext context, string authEndpoint)
+        public static async Task<AuthenticateResult> AuthUser(ILogger logger, HttpContext context, EasyAuthAuthenticationOptions options)
         {
             try
             {
@@ -59,7 +59,7 @@ namespace KK.AspNetCore.EasyAuthAuthentication.Services
                     context.Request.Host.ToString(),
                     context.Request.Cookies,
                     context.Request.Headers,
-                    authEndpoint);
+                    options);
 
                 var ticket = await authService.CreateUserTicket();
                 logger.LogInformation("Set identity to user context object.");
@@ -91,16 +91,14 @@ namespace KK.AspNetCore.EasyAuthAuthentication.Services
 
         private AuthenticationTicket BuildIdentityFromEasyAuthMeJson(JObject payload)
         {
-            var userid = payload["user_id"].Value<string>();
-            this.Logger.LogDebug($"payload was fetched from easyauth me json, name: {userid}");
             var providerName = payload["provider_name"].Value<string>();
             this.Logger.LogDebug($"payload was fetched from easyauth me json, provider: {providerName}");
 
             this.Logger.LogInformation("building claims from payload...");
             return AuthenticationTicketBuilder.Build(
                     payload["user_claims"].Children<JObject>(),
-                    userid,
-                    providerName
+                    providerName,
+                    this.Options
                 );
         }
 
@@ -132,7 +130,7 @@ namespace KK.AspNetCore.EasyAuthAuthentication.Services
 
         private HttpRequestMessage CreateAuthRequest(ref CookieContainer cookieContainer)
         {
-            this.Logger.LogInformation($"identity not found, attempting to fetch from auth endpoint '/{this.AuthEndPoint}'");
+            this.Logger.LogInformation($"identity not found, attempting to fetch from auth endpoint '/{this.Options.AuthEndpoint}'");
 
             var uriString = $"{this.HttpSchema}://{this.Host}";
 
@@ -152,13 +150,13 @@ namespace KK.AspNetCore.EasyAuthAuthentication.Services
 
             // fetch value from endpoint
             var authMeEndpoint = string.Empty;
-            if (this.AuthEndPoint.StartsWith("http"))
+            if (this.Options.AuthEndpoint.StartsWith("http"))
             {
-                authMeEndpoint = this.AuthEndPoint; // enable pulling from places like storage account private blob container
+                authMeEndpoint = this.Options.AuthEndpoint; // enable pulling from places like storage account private blob container
             }
             else
             {
-                authMeEndpoint = $"{uriString}/{this.AuthEndPoint}"; // localhost relative path, e.g. wwwroot/.auth/me.json
+                authMeEndpoint = $"{uriString}/{this.Options.AuthEndpoint}"; // localhost relative path, e.g. wwwroot/.auth/me.json
             }
 
             var request = new HttpRequestMessage(HttpMethod.Get, authMeEndpoint);
