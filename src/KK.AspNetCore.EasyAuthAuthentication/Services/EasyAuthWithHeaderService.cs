@@ -15,25 +15,30 @@ namespace KK.AspNetCore.EasyAuthAuthentication.Services
 
         private EasyAuthWithHeaderService(
             ILogger logger,
-            IHeaderDictionary headers)
+            IHeaderDictionary headers,
+            EasyAuthAuthenticationOptions options)
         {
             this.Logger = logger;
             this.Headers = headers;
+            this.Options = options;
         }
 
         private ILogger Logger { get; }
 
         private IHeaderDictionary Headers { get; }
 
+        private EasyAuthAuthenticationOptions Options { get; }
+
         /// <summary>
         /// build up identity from X-MS-TOKEN-AAD-ID-TOKEN header set by EasyAuth filters if user openId connect session cookie or oauth bearer token authenticated ...
         /// </summary>
         /// <param name="logger">An instance of <see cref="ILogger"/>.</param>
         /// <param name="context">Http context of the request.</param>
+        /// <param name="options">The <c>EasyAuthAuthenticationOptions</c> to use.</param>
         /// <returns>An <see cref="AuthenticateResult" />.</returns>
-        public static AuthenticateResult AuthUser(ILogger logger, HttpContext context)
+        public static AuthenticateResult AuthUser(ILogger logger, HttpContext context, EasyAuthAuthenticationOptions options)
         {
-            var service = new EasyAuthWithHeaderService(logger, context.Request.Headers);
+            var service = new EasyAuthWithHeaderService(logger, context.Request.Headers, options);
             var ticket = service.BuildIdentityFromEasyAuthRequestHeaders();
 
             logger.LogInformation("Set identity to user context object.");
@@ -45,8 +50,6 @@ namespace KK.AspNetCore.EasyAuthAuthentication.Services
 
         private AuthenticationTicket BuildIdentityFromEasyAuthRequestHeaders()
         {
-            var userid = this.Headers[PrincipalNameHeader][0];
-            this.Logger.LogDebug($"payload was fetched from EasyAuth headers, name: {userid}");
             var providerName = this.Headers[PrincipalIdpHeaderName][0];
             this.Logger.LogDebug($"payload was fetched from easyauth me json, provider: {providerName}");
 
@@ -59,7 +62,7 @@ namespace KK.AspNetCore.EasyAuthAuthentication.Services
 
             var claims = xMsClientPrincipal["claims"].Children<JObject>();
 
-            return AuthenticationTicketBuilder.Build(claims, userid, providerName);
+            return AuthenticationTicketBuilder.Build(claims, providerName, this.Options);
         }
     }
 }
