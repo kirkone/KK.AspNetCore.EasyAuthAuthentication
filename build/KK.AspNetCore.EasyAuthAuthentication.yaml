@@ -17,11 +17,11 @@ steps:
       filePath: "tools/GitVersion/Run-GitVersion.ps1"
       workingDirectory: "src/KK.AspNetCore.EasyAuthAuthentication"
 
-  - task: DotNetCoreInstaller@0
+  - task: UseDotNet@2
     displayName: Use .NET Core $(DotNetVersion)
     inputs:
       packageType: "sdk"
-      version: $(DotNetVersion)
+      version: '$(DotNetVersion)'
 
   - task: DotNetCoreCLI@2
     displayName: Restore
@@ -38,6 +38,7 @@ steps:
 
   - task: DotNetCoreCLI@2
     displayName: Pack Internal
+    condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
     inputs:
       command: "pack"
       packagesToPack: "src/KK.AspNetCore.EasyAuthAuthentication/KK.AspNetCore.EasyAuthAuthentication.csproj"
@@ -49,6 +50,7 @@ steps:
 
   - task: DotNetCoreCLI@2
     displayName: Pack Release
+    condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
     inputs:
       command: "pack"
       packagesToPack: "src/KK.AspNetCore.EasyAuthAuthentication/KK.AspNetCore.EasyAuthAuthentication.csproj"
@@ -60,6 +62,7 @@ steps:
 
   - task: PublishBuildArtifacts@1
     displayName: Publish Artifact
+    condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
     inputs:
       pathtoPublish: "$(Build.ArtifactStagingDirectory)"
       artifactName: NuGet
