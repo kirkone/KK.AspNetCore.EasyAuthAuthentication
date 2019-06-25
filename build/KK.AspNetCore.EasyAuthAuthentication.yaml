@@ -5,6 +5,7 @@ queue:
 
 variables:
   BuildConfiguration: "Release"
+  DotNetVersion: "2.2.300"
 
 name: $(Year:yy)$(DayOfYear)$(Rev:rr)
 
@@ -17,10 +18,10 @@ steps:
       workingDirectory: "src/KK.AspNetCore.EasyAuthAuthentication"
 
   - task: DotNetCoreInstaller@0
-    displayName: Use .NET Core sdk 2.1.503
+    displayName: Use .NET Core $(DotNetVersion)
     inputs:
       packageType: "sdk"
-      version: 2.1.503
+      version: $(DotNetVersion)
 
   - task: DotNetCoreCLI@2
     displayName: Restore
