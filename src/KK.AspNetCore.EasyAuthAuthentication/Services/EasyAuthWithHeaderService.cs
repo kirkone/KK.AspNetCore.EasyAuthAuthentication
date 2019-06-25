@@ -55,7 +55,7 @@ namespace KK.AspNetCore.EasyAuthAuthentication.Services
             var providerName = this.Headers[PrincipalIdpHeaderName][0];
             this.Logger.LogDebug($"payload was fetched from easyauth me json, provider: {providerName}");
             string headerContent;
-            if (this.Headers.ContainsKey("Authorization"))
+            if (this.Headers.ContainsKey("Authorization") && this.Headers[AuthorizationHeader].FirstOrDefault()?.StartsWith("Bearer ") == true)
             {
                 headerContent = this.Headers[AuthorizationHeader].FirstOrDefault();
             }
