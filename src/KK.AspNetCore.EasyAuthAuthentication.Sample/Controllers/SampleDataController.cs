@@ -4,10 +4,8 @@ namespace KK.AspNetCore.EasyAuthAuthentication.Sample.Controllers
     using System.Collections.Generic;
     using System.Linq;
     using System.Security.Claims;
-    using System.Threading.Tasks;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
-    using Microsoft.AspNetCore.Server.IISIntegration;
 
     [Route("api/[controller]")]
     public class SampleDataController : Controller
@@ -33,11 +31,11 @@ namespace KK.AspNetCore.EasyAuthAuthentication.Sample.Controllers
         [Authorize(Roles = "SystemAdmin")]
         public string UserName()
         {
-            var name = User.HasClaim(ClaimTypes.Name, "user@somecloud.onmicrosoft.com");
-            var peng = User.HasClaim(ClaimTypes.Role, "SystemAdmin");
-            var blubb = HttpContext.User.IsInRole("SystemAdmin");
-            var pop = User.IsInRole("SystemAdmin");
-            return HttpContext.User.Identity.Name;
+            var name = this.User.HasClaim(ClaimTypes.Name, "user@somecloud.onmicrosoft.com");
+            var peng = this.User.HasClaim(ClaimTypes.Role, "SystemAdmin");
+            var blubb = this.HttpContext.User.IsInRole("SystemAdmin");
+            var pop = this.User.IsInRole("SystemAdmin");
+            return this.HttpContext.User.Identity.Name;
         }
 
         public class WeatherForecast
@@ -50,7 +48,7 @@ namespace KK.AspNetCore.EasyAuthAuthentication.Sample.Controllers
             {
                 get
                 {
-                    return 32 + (int)(TemperatureC / 0.5556);
+                    return 32 + (int)( this.TemperatureC / 0.5556 );
                 }
             }
         }
