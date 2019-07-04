@@ -1,7 +1,10 @@
 namespace KK.AspNetCore.EasyAuthAuthentication
 {
     using System;
+    using KK.AspNetCore.EasyAuthAuthentication.Interfaces;
+    using KK.AspNetCore.EasyAuthAuthentication.Services;
     using Microsoft.AspNetCore.Authentication;
+    using Microsoft.Extensions.DependencyInjection;
 
     /// <summary>
     /// Extension methods for <see cref="AuthenticationBuilder"/> to add the <see cref="EasyAuthAuthenticationHandler"/> to the pipeline.
@@ -53,6 +56,11 @@ namespace KK.AspNetCore.EasyAuthAuthentication
         /// <param name="configureOptions">A callback to configure <see cref="EasyAuthAuthenticationOptions"/>.</param>
         /// <returns>A reference to this instance after the operation has completed.</returns>
         public static AuthenticationBuilder AddEasyAuth(this AuthenticationBuilder builder, string authenticationScheme, string displayName, Action<EasyAuthAuthenticationOptions> configureOptions)
-            => builder.AddScheme<EasyAuthAuthenticationOptions, EasyAuthAuthenticationHandler>(authenticationScheme, displayName, configureOptions);
+        {
+            builder.Services.AddSingleton<IEasyAuthAuthentificationService, EasyAuthForApplicationsService>();
+            builder.Services.AddSingleton<IEasyAuthAuthentificationService, EasyAuthWithHeaderService>();
+            return builder
+                .AddScheme<EasyAuthAuthenticationOptions, EasyAuthAuthenticationHandler>(authenticationScheme, displayName, configureOptions);
+        }
     }
 }

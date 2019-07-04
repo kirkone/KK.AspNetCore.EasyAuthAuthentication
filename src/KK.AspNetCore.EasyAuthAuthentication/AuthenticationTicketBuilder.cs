@@ -3,8 +3,8 @@ namespace KK.AspNetCore.EasyAuthAuthentication
     using System.Collections.Generic;
     using System.Linq;
     using System.Security.Claims;
+    using KK.AspNetCore.EasyAuthAuthentication.Models;
     using Microsoft.AspNetCore.Authentication;
-    using Newtonsoft.Json.Linq;
 
     internal static class AuthenticationTicketBuilder
     {
@@ -15,46 +15,36 @@ namespace KK.AspNetCore.EasyAuthAuthentication
         /// <param name="providerName">The provider name of the current auth provider.</param>
         /// <param name="options">The <c>EasyAuthAuthenticationOptions</c> to use.</param>
         /// <returns>A `AuthenticationTicket`.</returns>
-        public static AuthenticationTicket Build(IEnumerable<JObject> claimsPayload, string providerName, EasyAuthAuthenticationOptions options)
+        public static AuthenticationTicket Build(IEnumerable<ClaimsModel> claimsPayload, string providerName, EasyAuthAuthenticationOptions options)
         {
             // setting ClaimsIdentity.AuthenticationType to value that Azure AD non-EasyAuth setups use
             var identity = new ClaimsIdentity(
-                CreateClaims(claimsPayload),
-                AuthenticationTypesNames.Federation,
-                options.NameClaimType,
-                options.RoleClaimType
-            );
-
+                            CreateClaims(claimsPayload),
+                            AuthenticationTypesNames.Federation,
+                            options.NameClaimType,
+                            options.RoleClaimType
+                        );
             AddScopeClaim(identity);
             AddProviderNameClaim(identity, providerName);
             var genericPrincipal = new ClaimsPrincipal(identity);
-
             return new AuthenticationTicket(genericPrincipal, EasyAuthAuthenticationDefaults.AuthenticationScheme);
         }
 
-        private static IEnumerable<Claim> CreateClaims(IEnumerable<JObject> claimsAsJson)
+        private static IEnumerable<Claim> CreateClaims(IEnumerable<ClaimsModel> claimsAsJson)
         {
             foreach (var claim in claimsAsJson)
             {
-                var claimType = claim["typ"].ToString();
+                var claimType = claim.Typ;
                 switch (claimType)
                 {
                     case Schemas.AuthMethod:
-                        foreach (var item in claim["val"].ToString().Split(','))
-                        {
-                            yield return new Claim(ClaimTypes.Authentication, item);
-                        }
-
+                        yield return new Claim(ClaimTypes.Authentication, claim.Values);
                         break;
                     case "roles":
-                        foreach (var item in claim["val"].ToString().Split(','))
-                        {
-                            yield return new Claim(ClaimTypes.Role, item);
-                        }
-
+                        yield return new Claim(ClaimTypes.Role, claim.Values);
                         break;
                     default:
-                        yield return new Claim(claimType, claim["val"].ToString());
+                        yield return new Claim(claimType, claim.Values);
                         break;
                 }
             }
@@ -77,7 +67,7 @@ namespace KK.AspNetCore.EasyAuthAuthentication
                 identity.AddClaim(new Claim("provider_name", providerName));
             }
         }
-        
+
         private static void AddUserIdClaim(ClaimsIdentity identity, string claimType, string userid)
         {
             if (!identity.Claims.Any(claim => claim.Type == claimType))

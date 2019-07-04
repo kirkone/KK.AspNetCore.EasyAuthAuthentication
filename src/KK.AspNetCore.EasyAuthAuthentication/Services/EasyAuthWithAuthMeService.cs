@@ -1,10 +1,11 @@
 namespace KK.AspNetCore.EasyAuthAuthentication.Services
 {
     using System;
+    using System.Collections.Generic;
     using System.Net;
     using System.Net.Http;
-    using System.Security.Principal;
     using System.Threading.Tasks;
+    using KK.AspNetCore.EasyAuthAuthentication.Models;
     using Microsoft.AspNetCore.Authentication;
     using Microsoft.AspNetCore.Http;
     using Microsoft.Extensions.Logging;
@@ -96,7 +97,7 @@ namespace KK.AspNetCore.EasyAuthAuthentication.Services
 
             this.Logger.LogInformation("building claims from payload...");
             return AuthenticationTicketBuilder.Build(
-                    payload["user_claims"].Children<JObject>(),
+                    JsonConvert.DeserializeObject<IEnumerable<ClaimsModel>>(payload["user_claims"].ToString()),
                     providerName,
                     this.Options
                 );

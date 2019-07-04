@@ -1,6 +1,5 @@
-﻿namespace KK.AspNetCore.EasyAuthAuthentication
+namespace KK.AspNetCore.EasyAuthAuthentication
 {
-    using System;
     using System.Security.Claims;
     using Microsoft.AspNetCore.Authentication;
 
@@ -20,7 +19,7 @@
         /// </summary>
         /// <value>The Claim Type to use for the User. Default is <c>ClaimTypes.Name</c>.</value>
         public string NameClaimType { get; set; } = ClaimTypes.Name;
-        
+
         /// <summary>
         /// The <c>ClaimType</c> for the Idendity Role.
         /// </summary>
