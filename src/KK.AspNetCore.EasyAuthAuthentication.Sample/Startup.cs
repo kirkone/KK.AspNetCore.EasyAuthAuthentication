@@ -7,7 +7,6 @@ namespace KK.AspNetCore.EasyAuthAuthentication.Sample
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.DependencyInjection;
     using KK.AspNetCore.EasyAuthAuthentication;
-    using Microsoft.AspNetCore.Identity;
     using Microsoft.AspNetCore.Http;
     using Microsoft.AspNetCore.Authentication;
     using KK.AspNetCore.EasyAuthAuthentication.Sample.Transformers;
@@ -20,8 +19,8 @@ namespace KK.AspNetCore.EasyAuthAuthentication.Sample
             IConfiguration configuration,
             IHostingEnvironment environment)
         {
-            Configuration = configuration;
-            Environment = environment;
+            this.Configuration = configuration;
+            this.Environment = environment;
         }
 
         public IConfiguration Configuration { get; }
@@ -40,6 +39,7 @@ namespace KK.AspNetCore.EasyAuthAuthentication.Sample
                     options.DefaultChallengeScheme = EasyAuthAuthenticationDefaults.AuthenticationScheme;
                 }
             ).AddEasyAuth(
+                // TODO: all these settings a currently ignored.
                 options =>
                 {
                     // Override the AuthEndpoint while developing
@@ -52,8 +52,10 @@ namespace KK.AspNetCore.EasyAuthAuthentication.Sample
                         // in publish site output which is desirable in this case.
                         options.AuthEndpoint = ".auth/me.json";
                     }
-
-                    // Override the default claim for the User.Identity.Name field 
+                    // Override the default claim for the User.Identity.Name field
+                    // ToDo: never ever do this!
+                    // Why: This is bad by design, because the thing that login in to you system isn't a human it hasn't a EMail. So it's better design to let the framework choose the NameClaimTyp
+                    // (Applications for example use the service principal name)                    
                     options.NameClaimType = ClaimTypes.Email;
                 }
             );
