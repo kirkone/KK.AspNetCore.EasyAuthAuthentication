@@ -52,11 +52,8 @@ namespace KK.AspNetCore.EasyAuthAuthentication.Sample
                         // in publish site output which is desirable in this case.
                         options.AuthEndpoint = ".auth/me.json";
                     }
-                    // Override the default claim for the User.Identity.Name field
-                    // ToDo: never ever do this!
-                    // Why: This is bad by design, because the thing that login in to you system isn't a human it hasn't a EMail. So it's better design to let the framework choose the NameClaimTyp
-                    // (Applications for example use the service principal name)                    
-                    options.NameClaimType = ClaimTypes.Email;
+                    // Override the default claim for the User.Identity.Name field                  
+                    options.AddProviderOptions(new Models.ProviderOptions("testProviderName") { NameClaimType = ClaimTypes.Email, });
                 }
             );
 

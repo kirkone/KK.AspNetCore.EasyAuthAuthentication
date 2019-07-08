@@ -23,7 +23,7 @@ namespace KK.AspNetCore.EasyAuthAuthentication.Services
         private static readonly Func<IHeaderDictionary, string, bool> IsHeaderSet =
             (headers, headerName) => !string.IsNullOrEmpty(headers[headerName].ToString());
 
-        private readonly EasyAuthAuthenticationOptions defaultOptions = new EasyAuthAuthenticationOptions()
+        private readonly ProviderOptions defaultOptions = new ProviderOptions(typeof(EasyAuthWithHeaderService).Name)
         {
             NameClaimType = ClaimTypes.Email
         };
@@ -47,7 +47,7 @@ namespace KK.AspNetCore.EasyAuthAuthentication.Services
         /// <param name="context">Http context of the request.</param>
         /// <param name="options">The <c>EasyAuthAuthenticationOptions</c> to use.</param>
         /// <returns>An <see cref="AuthenticateResult" />.</returns>
-        public AuthenticateResult AuthUser(HttpContext context, EasyAuthAuthenticationOptions options = null)
+        public AuthenticateResult AuthUser(HttpContext context, ProviderOptions options = null)
         {
             if (options == null)
             {
@@ -63,7 +63,7 @@ namespace KK.AspNetCore.EasyAuthAuthentication.Services
             return AuthenticateResult.Success(ticket);
         }
 
-        private AuthenticationTicket BuildIdentityFromEasyAuthRequestHeaders(IHeaderDictionary headers, EasyAuthAuthenticationOptions options)
+        private AuthenticationTicket BuildIdentityFromEasyAuthRequestHeaders(IHeaderDictionary headers, ProviderOptions options)
         {
             var providerName = headers[PrincipalIdpHeaderName][0];
             this.Logger.LogDebug($"payload was fetched from easyauth me json, provider: {providerName}");

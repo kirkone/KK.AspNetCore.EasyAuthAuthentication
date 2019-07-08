@@ -22,7 +22,7 @@ namespace KK.AspNetCore.EasyAuthAuthentication.Services
         private static readonly Func<IHeaderDictionary, string, bool> IsHeaderSet =
            (headers, headerName) => !string.IsNullOrEmpty(headers[headerName].ToString());
 
-        private readonly EasyAuthAuthenticationOptions defaultOptions = new EasyAuthAuthenticationOptions()
+        private readonly ProviderOptions defaultOptions = new ProviderOptions(typeof(EasyAuthForApplicationsService).Name)
         {
             NameClaimType = ClaimTypes.Spn
         };
@@ -31,7 +31,7 @@ namespace KK.AspNetCore.EasyAuthAuthentication.Services
 
         public EasyAuthForApplicationsService(ILogger<EasyAuthForApplicationsService> logger) => this.logger = logger;
 
-        public AuthenticateResult AuthUser(HttpContext context, EasyAuthAuthenticationOptions options = null)
+        public AuthenticateResult AuthUser(HttpContext context, ProviderOptions options = null)
         {
             if (options == null)
             {
@@ -47,7 +47,7 @@ namespace KK.AspNetCore.EasyAuthAuthentication.Services
         public bool CanHandleAuthentification(HttpContext httpContext) => IsHeaderSet(httpContext.Request.Headers, AuthorizationHeader) &&
                 httpContext.Request.Headers[AuthorizationHeader].FirstOrDefault().Contains(JWTIdentifyer);
 
-        private IEnumerable<ClaimsModel> BuildFromApplicationAuth(JObject xMsClientPrincipal, EasyAuthAuthenticationOptions options)
+        private IEnumerable<ClaimsModel> BuildFromApplicationAuth(JObject xMsClientPrincipal, ProviderOptions options)
         {
             this.logger.LogDebug($"payload was {xMsClientPrincipal["roles"].ToString()}");
             var claims = JsonConvert.DeserializeObject<IEnumerable<string>>(xMsClientPrincipal["roles"].ToString())

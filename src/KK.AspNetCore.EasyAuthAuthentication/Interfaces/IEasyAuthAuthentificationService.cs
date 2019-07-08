@@ -1,5 +1,6 @@
 namespace KK.AspNetCore.EasyAuthAuthentication.Interfaces
 {
+    using KK.AspNetCore.EasyAuthAuthentication.Models;
     using Microsoft.AspNetCore.Authentication;
     using Microsoft.AspNetCore.Http;
 
@@ -7,6 +8,6 @@ namespace KK.AspNetCore.EasyAuthAuthentication.Interfaces
     {
         bool CanHandleAuthentification(HttpContext httpContext);
 
-        AuthenticateResult AuthUser(HttpContext context, EasyAuthAuthenticationOptions options = null);
+        AuthenticateResult AuthUser(HttpContext context, ProviderOptions options = null);
     }
 }

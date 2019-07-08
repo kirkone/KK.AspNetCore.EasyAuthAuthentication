@@ -2,6 +2,7 @@ namespace KK.AspNetCore.EasyAuthAuthentication.Services
 {
     using System;
     using System.Collections.Generic;
+    using System.Linq;
     using System.Net;
     using System.Net.Http;
     using System.Threading.Tasks;
@@ -99,7 +100,7 @@ namespace KK.AspNetCore.EasyAuthAuthentication.Services
             return AuthenticationTicketBuilder.Build(
                     JsonConvert.DeserializeObject<IEnumerable<ClaimsModel>>(payload["user_claims"].ToString()),
                     providerName,
-                    this.Options
+                    this.Options.ProviderSettings.First(d => d.ProviderName == typeof(EasyAuthWithAuthMeService).Name)
                 );
         }
 

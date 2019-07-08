@@ -53,11 +53,10 @@ namespace KK.AspNetCore.EasyAuthAuthentication
             this.Logger.LogInformation("starting authentication handler for app service authentication");
 
             var authService = this.authenticationServices.FirstOrDefault(d => d.CanHandleAuthentification(this.Context));
-            if (authService != null)
+            var enabledProviders = Options.ProviderSettings.Where(d => d.Enabled);
+            if (authService != null && enabledProviders.Any(d => d.ProviderName == authService.GetType().Name))
             {
-                // Todo: make it possible to custemize the options object for each service
-                // return authService.AuthUser(this.Context, this.Options);
-                return authService.AuthUser(this.Context);
+                return authService.AuthUser(this.Context, Options.ProviderSettings.FirstOrDefault(d => d.ProviderName == authService.GetType().Name));
             }
             else if (CanUseEasyAuthJson(this.Context.Request.Headers, this.Context.User, this.Context.Request, this.Options))
             {
