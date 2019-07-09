@@ -2,7 +2,7 @@ namespace KK.AspNetCore.EasyAuthAuthentication.Models
 {
     using Newtonsoft.Json;
 
-    internal class ClaimsModel
+    internal class AADClaimsModel
     {
         [JsonProperty("typ")]
         public string Typ { get; set; }

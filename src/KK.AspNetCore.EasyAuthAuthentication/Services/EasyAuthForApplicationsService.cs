@@ -33,27 +33,24 @@ namespace KK.AspNetCore.EasyAuthAuthentication.Services
 
         public AuthenticateResult AuthUser(HttpContext context, ProviderOptions options = null)
         {
-            if (options == null)
-            {
-                options = this.defaultOptions;
-            }
+            this.defaultOptions.ChangeModel(options);
 
             var tokenJson = this.GetTokenJson(context.Request.Headers[AuthorizationHeader].FirstOrDefault());
-            var claims = this.BuildFromApplicationAuth(tokenJson, options);
-            var ticket = AuthenticationTicketBuilder.Build(claims, tokenJson[ProviderNameKey].ToString(), options);
+            var claims = this.BuildFromApplicationAuth(tokenJson, this.defaultOptions);
+            var ticket = AuthenticationTicketBuilder.Build(claims, tokenJson[ProviderNameKey].ToString(), this.defaultOptions);
             return AuthenticateResult.Success(ticket);
         }
 
         public bool CanHandleAuthentification(HttpContext httpContext) => IsHeaderSet(httpContext.Request.Headers, AuthorizationHeader) &&
                 httpContext.Request.Headers[AuthorizationHeader].FirstOrDefault().Contains(JWTIdentifyer);
 
-        private IEnumerable<ClaimsModel> BuildFromApplicationAuth(JObject xMsClientPrincipal, ProviderOptions options)
+        private IEnumerable<AADClaimsModel> BuildFromApplicationAuth(JObject xMsClientPrincipal, ProviderOptions options)
         {
             this.logger.LogDebug($"payload was {xMsClientPrincipal["roles"].ToString()}");
             var claims = JsonConvert.DeserializeObject<IEnumerable<string>>(xMsClientPrincipal["roles"].ToString())
-                    .Select(r => new ClaimsModel() { Typ = "roles", Values = r })
+                    .Select(r => new AADClaimsModel() { Typ = "roles", Values = r })
                     .ToList();
-            claims.Add(new ClaimsModel() { Typ = options.NameClaimType, Values = xMsClientPrincipal["appid"].ToString() });
+            claims.Add(new AADClaimsModel() { Typ = options.NameClaimType, Values = xMsClientPrincipal["appid"].ToString() });
             return claims;
         }
 

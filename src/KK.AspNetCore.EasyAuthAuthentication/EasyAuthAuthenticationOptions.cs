@@ -19,7 +19,7 @@ namespace KK.AspNetCore.EasyAuthAuthentication
         /// <value>A relative path to the <c>wwwroot</c> folder.</value>
         public string AuthEndpoint { get; set; } = ".auth/me";
 
-        private IList<ProviderOptions> providerOptions = new List<ProviderOptions>();
+        public IList<ProviderOptions> providerOptions { get; set; } = new List<ProviderOptions>();
 
         public IEnumerable<ProviderOptions> ProviderSettings => this.providerOptions;
 

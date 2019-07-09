@@ -2,6 +2,7 @@ namespace KK.AspNetCore.EasyAuthAuthentication
 {
     using System.Collections.Generic;
     using System.Linq;
+    using System.Runtime;
     using System.Security.Claims;
     using KK.AspNetCore.EasyAuthAuthentication.Models;
     using Microsoft.AspNetCore.Authentication;
@@ -15,11 +16,11 @@ namespace KK.AspNetCore.EasyAuthAuthentication
         /// <param name="providerName">The provider name of the current auth provider.</param>
         /// <param name="options">The <c>EasyAuthAuthenticationOptions</c> to use.</param>
         /// <returns>A `AuthenticationTicket`.</returns>
-        public static AuthenticationTicket Build(IEnumerable<ClaimsModel> claimsPayload, string providerName, ProviderOptions options)
+        public static AuthenticationTicket Build(IEnumerable<AADClaimsModel> claimsPayload, string providerName, ProviderOptions options)
         {
             // setting ClaimsIdentity.AuthenticationType to value that Azure AD non-EasyAuth setups use
             var identity = new ClaimsIdentity(
-                            CreateClaims(claimsPayload),
+                            CreateClaims(claimsPayload, options),
                             AuthenticationTypesNames.Federation,
                             options.NameClaimType,
                             options.RoleClaimType
@@ -30,22 +31,22 @@ namespace KK.AspNetCore.EasyAuthAuthentication
             return new AuthenticationTicket(genericPrincipal, EasyAuthAuthenticationDefaults.AuthenticationScheme);
         }
 
-        private static IEnumerable<Claim> CreateClaims(IEnumerable<ClaimsModel> claimsAsJson)
+        private static IEnumerable<Claim> CreateClaims(IEnumerable<AADClaimsModel> claimsAsJson, ProviderOptions options)
         {
             foreach (var claim in claimsAsJson)
             {
                 var claimType = claim.Typ;
-                switch (claimType)
+                if (claimType == Schemas.AuthMethod)
                 {
-                    case Schemas.AuthMethod:
-                        yield return new Claim(ClaimTypes.Authentication, claim.Values);
-                        break;
-                    case "roles":
-                        yield return new Claim(ClaimTypes.Role, claim.Values);
-                        break;
-                    default:
-                        yield return new Claim(claimType, claim.Values);
-                        break;
+                    yield return new Claim(ClaimTypes.Authentication, claim.Values);
+                }
+                else if (claimType == options.RoleClaimType)
+                {
+                    yield return new Claim(ClaimTypes.Role, claim.Values);
+                }
+                else
+                {
+                    yield return new Claim(claimType, claim.Values);
                 }
             }
         }

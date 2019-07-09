@@ -5,6 +5,7 @@ namespace KK.AspNetCore.EasyAuthAuthentication.Services
     using System.Linq;
     using System.Net;
     using System.Net.Http;
+    using System.Runtime.CompilerServices;
     using System.Threading.Tasks;
     using KK.AspNetCore.EasyAuthAuthentication.Models;
     using Microsoft.AspNetCore.Authentication;
@@ -98,7 +99,7 @@ namespace KK.AspNetCore.EasyAuthAuthentication.Services
 
             this.Logger.LogInformation("building claims from payload...");
             return AuthenticationTicketBuilder.Build(
-                    JsonConvert.DeserializeObject<IEnumerable<ClaimsModel>>(payload["user_claims"].ToString()),
+                    JsonConvert.DeserializeObject<IEnumerable<AADClaimsModel>>(payload["user_claims"].ToString()),
                     providerName,
                     this.Options.ProviderSettings.First(d => d.ProviderName == typeof(EasyAuthWithAuthMeService).Name)
                 );

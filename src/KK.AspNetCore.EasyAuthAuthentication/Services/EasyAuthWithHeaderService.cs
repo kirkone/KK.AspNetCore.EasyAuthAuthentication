@@ -49,12 +49,9 @@ namespace KK.AspNetCore.EasyAuthAuthentication.Services
         /// <returns>An <see cref="AuthenticateResult" />.</returns>
         public AuthenticateResult AuthUser(HttpContext context, ProviderOptions options = null)
         {
-            if (options == null)
-            {
-                options = this.defaultOptions;
-            }
+            this.defaultOptions.ChangeModel(options);
 
-            var ticket = this.BuildIdentityFromEasyAuthRequestHeaders(context.Request.Headers, options);
+            var ticket = this.BuildIdentityFromEasyAuthRequestHeaders(context.Request.Headers, this.defaultOptions);
 
             this.Logger.LogInformation("Set identity to user context object.");
             context.User = ticket.Principal;
@@ -74,7 +71,7 @@ namespace KK.AspNetCore.EasyAuthAuthentication.Services
                             Convert.FromBase64String(headerContent)
                         )
                     );
-            var claims = JsonConvert.DeserializeObject<IEnumerable<ClaimsModel>>(xMsClientPrincipal["claims"].ToString());
+            var claims = JsonConvert.DeserializeObject<IEnumerable<AADClaimsModel>>(xMsClientPrincipal["claims"].ToString());
             return AuthenticationTicketBuilder.Build(claims, providerName, options);
         }
     }
