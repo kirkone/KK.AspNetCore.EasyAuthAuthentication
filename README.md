@@ -83,7 +83,42 @@ public string UserName()
 
 If you want to add roles to the `User` property you can have a look in `Transformers/ClaimsTransformer.cs` in the Sample project. There you can see an example how to get started with this.
 
-### Custom options
+### Configure options via configuration (recommended)
+
+You can use the default behavior of asp.net core to configure EasyAuth. You must only change in your `Startup.cs` the `.AddEasyAuth()` to `.AssEasyAuth(this.Configuration)`.
+
+> To get the property `this.Configuration` in your `Startup.cs` you must add `IConfiguration configuration` to your constructor parameters and create a property.
+
+To configure you providers you simple add the following to your appsettings.json. (or to your environment variables, or other [configuration sources](https://docs.microsoft.com/en-us/aspnet/core/fundamentals/configuration/).)
+
+```json
+"easyAuthOptions": {
+    "AuthEndpoint": ".auth/me",
+    "providerOptions": [
+      {
+        "ProviderName": "EasyAuthForApplicationsService",
+        "Enabled": true
+      },
+      {
+        "ProviderName": "EasyAuthWithHeaderService",
+        "Enabled": true
+      }
+    ]
+  }
+```
+
+Here are some notes to the json above:
+
+- each provider is disabled in default so you must enabled it
+- you can create own providers but this must implement `IEasyAuthAuthentificationService`. But you must also activate them here. (Don't but them in the DI. This package will do this by it's own.)
+- The `ProviderName` is the class name of the provider. that must be unique in your application.
+
+
+> A list of all providers can be found in the headline `Auth Provider`
+
+### Configure options via code (not recommended)
+
+#### Custom options
 
 You can provide additional options vor the middleware:
 
@@ -91,15 +126,17 @@ You can provide additional options vor the middleware:
 ).AddEasyAuth(
                 options =>
                 {
-                    // Override the default claim for the User.Identity.Name field 
-                    options.NameClaimType = ClaimTypes.Email;
+                    // Override the auth endpoint 
+                    options.AuthEndpoint = ClaimTypes.Email;
+                    // Add the EasyAuthForApplicationService auth provider and enabled it. Also Change the NameClaimType
+                    options.AddProviderOptions(new ProviderOptions("EasyAuthForApplicationsService"){Enabled = true, NameClaimType = "Test"})
                 }
             );
 ```
 
 The `NameClaimType` is the ClaimType of the value which one will be used to fill the `User.Identity.Name` field.
 
-### Local Debugging
+#### Local Debugging
 
 For debugging your application you can place a `me.json` in the `wwwroot/.auth` folder of your web app and add some configuration to the `AddEasyAuth` call.  
 For example:
@@ -122,12 +159,50 @@ For example:
 
 > **Info**: Using a wwwroot sub-folder name that starts with `'.'`&nbsp;, like the suggested `.auth` folder name, is useful for content relevant only for localhost debugging as these are treated as hidden folders and are not included in publish output.
 
+## Auth Provider
+
+There are some predefined providers in this package. If you need your own or want contribute to our existing providers you must implement the `IEasyAuthAuthentificationService`.
+
+### `EasyAuthWithAuthMeService` (always on)
+
+This is a little bit special provider. That provider can't be configured and it isn't implementing `IEasyAuthAuthentificationService`. This provider is for the development case, so a developer can create a JSON with the content of the `/.auth/me` endpoint of an EasyAuth Azure Web App. So you don't need a internet connection or azure for development and can use only local things.
+
+### `EasyAuthForApplicationsService`
+
+This provider is for the case you have a Azure Web App that is not only be used by humans. so maybe you want access your app with an Service Principal (SPN). If you enabled this provider you can access your app with Azure Ad Service Principals (SPN).
+
+To create an Service Principal (SPN) that can have access to your EasyAuth protected Application you must change the app manifest for you application in your Azure AD. Thanks to [Suzuko123](https://github.com/Suzuko123) for the following sample:
+
+```json
+"appRoles": [
+	{
+	    "allowedMemberTypes": [
+			"Application"
+		],
+	    "description": "allow a call as system admin.",
+		"displayName": "SystemAdmin",
+		"id": "dd6d2784-5fa1-4c97-9f9b-8376a85b4163",
+		"isEnabled": true,
+		"lang": null,
+		"origin": "Application",
+		"value": "SystemAdmin"
+	}
+]
+```
+
+This will allow a spn to get the role `SystemAdmin` in your protected application. The default `User.Identity.Name` of an SPN is the SPN Guid.
+
+### `EasyAuthWithHeaderService`
+
+This is the most common auth provider. This let you use Azure Active Directory Users in your easy auth application.
+
 ## Authors
 
 -   **Kirsten Kluge** - _Initial work_ - [kirkone](https://github.com/kirkone)
--   **paule96** - _Refactoring_ - [paule96](https://github.com/paule96)
+-   **paule96** - _Refactoring / implementing the new stuff_  - [paule96](https://github.com/paule96)
 -   **Christoph Sonntag** - _Made things even more uber_ - [Compufreak345](https://github.com/Compufreak345)
 -   **myusrn** - _Dropped some knowledge about making IsInRoles work_ - [myusrn](https://github.com/myusrn)
+-   **Suzuko123** - _Dropped some knowledge about Service Principals with easy auth_ - [Suzuko123](https://github.com/Suzuko123)
 
 See also the list of [contributors](https://github.com/kirkone/KK.AspNetCore.EasyAuthAuthentication/graphs/contributors) who participated in this project.
 
