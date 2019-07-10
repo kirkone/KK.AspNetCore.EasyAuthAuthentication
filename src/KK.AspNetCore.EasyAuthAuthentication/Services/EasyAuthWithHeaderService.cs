@@ -12,7 +12,7 @@ namespace KK.AspNetCore.EasyAuthAuthentication.Services
     using Newtonsoft.Json;
     using Newtonsoft.Json.Linq;
 
-    internal class EasyAuthWithHeaderService : IEasyAuthAuthentificationService
+    public class EasyAuthWithHeaderService : IEasyAuthAuthentificationService
     {
         private const string PrincipalObjectHeader = "X-MS-CLIENT-PRINCIPAL";
         private const string PrincipalIdpHeaderName = "X-MS-CLIENT-PRINCIPAL-IDP";

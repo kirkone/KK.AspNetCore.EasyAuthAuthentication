@@ -19,7 +19,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		StyleCop.ruleset = StyleCop.ruleset
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KK.AspNetCore.EasyAuthClientSample", "src\KK.AspNetCore.EasyAuthClientSample\KK.AspNetCore.EasyAuthClientSample.csproj", "{D8CDBE3B-9359-4F5E-93DD-845548356C2C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "KK.AspNetCore.EasyAuthClientSample", "src\KK.AspNetCore.EasyAuthClientSample\KK.AspNetCore.EasyAuthClientSample.csproj", "{D8CDBE3B-9359-4F5E-93DD-845548356C2C}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{61A3BCF5-B88D-4B1A-B75B-0FAAAD64B5EE}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KK.AspNetCore.EasyAuthAuthentication.Test", "test\KK.AspNetCore.EasyAuthAuthentication.Test\KK.AspNetCore.EasyAuthAuthentication.Test.csproj", "{14E614F4-F9AD-4366-8655-25BA022DF2F9}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -67,6 +71,18 @@ Global
 		{D8CDBE3B-9359-4F5E-93DD-845548356C2C}.Release|x64.Build.0 = Release|Any CPU
 		{D8CDBE3B-9359-4F5E-93DD-845548356C2C}.Release|x86.ActiveCfg = Release|Any CPU
 		{D8CDBE3B-9359-4F5E-93DD-845548356C2C}.Release|x86.Build.0 = Release|Any CPU
+		{14E614F4-F9AD-4366-8655-25BA022DF2F9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{14E614F4-F9AD-4366-8655-25BA022DF2F9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{14E614F4-F9AD-4366-8655-25BA022DF2F9}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{14E614F4-F9AD-4366-8655-25BA022DF2F9}.Debug|x64.Build.0 = Debug|Any CPU
+		{14E614F4-F9AD-4366-8655-25BA022DF2F9}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{14E614F4-F9AD-4366-8655-25BA022DF2F9}.Debug|x86.Build.0 = Debug|Any CPU
+		{14E614F4-F9AD-4366-8655-25BA022DF2F9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{14E614F4-F9AD-4366-8655-25BA022DF2F9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{14E614F4-F9AD-4366-8655-25BA022DF2F9}.Release|x64.ActiveCfg = Release|Any CPU
+		{14E614F4-F9AD-4366-8655-25BA022DF2F9}.Release|x64.Build.0 = Release|Any CPU
+		{14E614F4-F9AD-4366-8655-25BA022DF2F9}.Release|x86.ActiveCfg = Release|Any CPU
+		{14E614F4-F9AD-4366-8655-25BA022DF2F9}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -75,6 +91,7 @@ Global
 		{70FFE5C2-8F7C-49E0-9C31-DB713BA66B8B} = {5D09A785-6509-4FA8-8394-DB761ECFC353}
 		{B156B6B8-9427-4A72-8986-9A17F4FBC0EA} = {5D09A785-6509-4FA8-8394-DB761ECFC353}
 		{D8CDBE3B-9359-4F5E-93DD-845548356C2C} = {5D09A785-6509-4FA8-8394-DB761ECFC353}
+		{14E614F4-F9AD-4366-8655-25BA022DF2F9} = {61A3BCF5-B88D-4B1A-B75B-0FAAAD64B5EE}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {44C662E3-C7A8-4358-B63F-59F3BE083C60}

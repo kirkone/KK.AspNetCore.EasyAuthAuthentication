@@ -42,7 +42,7 @@ namespace KK.AspNetCore.EasyAuthAuthentication.Models
             {
                 return;
             }
-            else if(options.ProviderName != this.ProviderName)
+            else if (options.ProviderName != this.ProviderName)
             {
                 throw new ArgumentException("You can only use the method ChangeModel if you use the same provider name.");
             }

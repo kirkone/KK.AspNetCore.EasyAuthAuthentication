@@ -5,7 +5,6 @@ namespace KK.AspNetCore.EasyAuthAuthentication.Services
     using System.Linq;
     using System.Net;
     using System.Net.Http;
-    using System.Runtime.CompilerServices;
     using System.Threading.Tasks;
     using KK.AspNetCore.EasyAuthAuthentication.Models;
     using Microsoft.AspNetCore.Authentication;

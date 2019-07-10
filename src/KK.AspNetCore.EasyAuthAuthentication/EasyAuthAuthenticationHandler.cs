@@ -46,7 +46,6 @@ namespace KK.AspNetCore.EasyAuthAuthentication
             ILoggerFactory logger,
             UrlEncoder encoder,
             ISystemClock clock) : base(options, logger, encoder, clock) => this.authenticationServices = authenticationServices;
-
         /// <inheritdoc/>
         protected override async Task<AuthenticateResult> HandleAuthenticateAsync()
         {
@@ -57,7 +56,7 @@ namespace KK.AspNetCore.EasyAuthAuthentication
             if (authService != null && enabledProviders.Any(d => d.ProviderName == authService.GetType().Name))
             {
                 this.Logger.LogInformation($"use the {authService.GetType().Name} as auth handler.");
-                return authService.AuthUser(this.Context, Options.ProviderSettings.FirstOrDefault(d => d.ProviderName == authService.GetType().Name));
+                return authService.AuthUser(this.Context, this.Options.ProviderSettings.FirstOrDefault(d => d.ProviderName == authService.GetType().Name));
             }
             else if (CanUseEasyAuthJson(this.Context.Request.Headers, this.Context.User, this.Context.Request, this.Options))
             {

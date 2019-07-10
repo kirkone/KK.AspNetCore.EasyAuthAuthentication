@@ -13,7 +13,7 @@ namespace KK.AspNetCore.EasyAuthAuthentication.Services
     using Newtonsoft.Json;
     using Newtonsoft.Json.Linq;
 
-    internal class EasyAuthForApplicationsService : IEasyAuthAuthentificationService
+    public class EasyAuthForApplicationsService : IEasyAuthAuthentificationService
     {
         private const string AuthorizationHeader = "Authorization";
         private const string JWTIdentifyer = "Bearer";
@@ -41,8 +41,9 @@ namespace KK.AspNetCore.EasyAuthAuthentication.Services
             return AuthenticateResult.Success(ticket);
         }
 
-        public bool CanHandleAuthentification(HttpContext httpContext) => IsHeaderSet(httpContext.Request.Headers, AuthorizationHeader) &&
-                httpContext.Request.Headers[AuthorizationHeader].FirstOrDefault().Contains(JWTIdentifyer);
+        public bool CanHandleAuthentification(HttpContext httpContext) =>
+            IsHeaderSet(httpContext.Request.Headers, AuthorizationHeader) &&
+            httpContext.Request.Headers[AuthorizationHeader].FirstOrDefault().Contains(JWTIdentifyer);
 
         private IEnumerable<AADClaimsModel> BuildFromApplicationAuth(JObject xMsClientPrincipal, ProviderOptions options)
         {
