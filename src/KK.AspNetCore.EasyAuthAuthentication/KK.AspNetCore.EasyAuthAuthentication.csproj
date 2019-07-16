@@ -28,6 +28,6 @@
     <CodeAnalysisRuleSet>..\..\StyleCop.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="StyleCop.Analyzers" Version="1.1.1-beta.61" privateassets="all" />
+    <PackageReference Include="StyleCop.Analyzers" Version="1.1.118" privateassets="all" />
   </ItemGroup>
 </Project>

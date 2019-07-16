@@ -45,7 +45,7 @@ No build so far.
 
 Add something like this in the `public void ConfigureServices` method:
 
-```
+```csharp
 services.AddAuthentication(
     options =>
     {
@@ -57,7 +57,7 @@ services.AddAuthentication(
 
 and this to the `public void Configure` method before `app.UseMvc...`:
 
-```
+```csharp
 app.UseAuthentication();
 ```
 
@@ -67,7 +67,7 @@ This will enable the `EasyAuthAuthenticationHandler` in your app.
 
 In your controllers you can access the `User` property as usual:
 
-```
+```csharp
 [Authorize]
 public string UserName()
 {
@@ -122,7 +122,7 @@ Here are some notes to the json above:
 
 You can provide additional options vor the middleware:
 
-```
+```csharp
 ).AddEasyAuth(
                 options =>
                 {
@@ -141,7 +141,7 @@ The `NameClaimType` is the ClaimType of the value which one will be used to fill
 For debugging your application you can place a `me.json` in the `wwwroot/.auth` folder of your web app and add some configuration to the `AddEasyAuth` call.  
 For example:
 
-```
+```csharp
 ).AddEasyAuth(
     options =>
     {
