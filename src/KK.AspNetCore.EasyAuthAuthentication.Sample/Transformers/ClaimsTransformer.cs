@@ -19,7 +19,7 @@ namespace KK.AspNetCore.EasyAuthAuthentication.Sample.Transformers
         public ClaimsTransformer(
             IRepository repository,
             IHttpContextAccessor httpContextAccessor,
-            IMemoryCache cache            
+            IMemoryCache cache
         )
         {
             this.repository = repository;
@@ -31,7 +31,7 @@ namespace KK.AspNetCore.EasyAuthAuthentication.Sample.Transformers
         {
             if (principal.Identity.IsAuthenticated)
             {
-                var claimsIdentity = (ClaimsIdentity)principal.Identity;                
+                var claimsIdentity = (ClaimsIdentity)principal.Identity;
                 var userIdentifier = claimsIdentity.Name;
                 List<string> roles;
 

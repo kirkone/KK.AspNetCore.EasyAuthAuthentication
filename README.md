@@ -85,7 +85,7 @@ If you want to add roles to the `User` property you can have a look in `Transfor
 
 ### Configure options via configuration (recommended)
 
-You can use the default behavior of asp.net core to configure EasyAuth. You must only change in your `Startup.cs` the `.AddEasyAuth()` to `.AssEasyAuth(this.Configuration)`.
+You can use the default behavior of asp.net core to configure EasyAuth. You must only change in your `Startup.cs` the `.AddEasyAuth()` to `.AddEasyAuth(this.Configuration)`.
 
 > To get the property `this.Configuration` in your `Startup.cs` you must add `IConfiguration configuration` to your constructor parameters and create a property.
 
@@ -124,14 +124,13 @@ You can provide additional options vor the middleware:
 
 ```csharp
 ).AddEasyAuth(
-                options =>
-                {
-                    // Override the auth endpoint 
-                    options.AuthEndpoint = ClaimTypes.Email;
-                    // Add the EasyAuthForApplicationService auth provider and enabled it. Also Change the NameClaimType
-                    options.AddProviderOptions(new ProviderOptions("EasyAuthForApplicationsService"){Enabled = true, NameClaimType = "Test"})
-                }
-            );
+   options => {
+      // Override the auth endpoint
+      options.AuthEndpoint = ClaimTypes.Email;
+      // Add the EasyAuthForApplicationService auth provider and enabled it. Also Change the NameClaimType
+      options.AddProviderOptions(new ProviderOptions("EasyAuthForApplicationsService"){Enabled = true, NameClaimType = "Test"})
+   }
+);
 ```
 
 The `NameClaimType` is the ClaimType of the value which one will be used to fill the `User.Identity.Name` field.
