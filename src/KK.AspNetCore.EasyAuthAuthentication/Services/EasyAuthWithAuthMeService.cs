@@ -80,9 +80,7 @@ namespace KK.AspNetCore.EasyAuthAuthentication.Services
             var cookieContainer = new CookieContainer();
             var handler = this.CreateHandler(ref cookieContainer);
             var httpRequest = this.CreateAuthRequest(ref cookieContainer);
-
-            JArray payload = null;
-            payload = await this.GetAuthMe(handler, httpRequest);
+            var payload = await this.GetAuthMe(handler, httpRequest);
 
             // build up identity from json...
             var ticket = this.BuildIdentityFromEasyAuthMeJson((JObject)payload[0]);
@@ -100,7 +98,7 @@ namespace KK.AspNetCore.EasyAuthAuthentication.Services
             return AuthenticationTicketBuilder.Build(
                     JsonConvert.DeserializeObject<IEnumerable<AADClaimsModel>>(payload["user_claims"].ToString()),
                     providerName,
-                    this.Options.ProviderSettings.First(d => d.ProviderName == typeof(EasyAuthWithAuthMeService).Name)
+                    this.Options.ProviderOptions.First(d => d.ProviderName == typeof(EasyAuthWithAuthMeService).Name)
                 );
         }
 
@@ -113,10 +111,12 @@ namespace KK.AspNetCore.EasyAuthAuthentication.Services
                 if (!response.IsSuccessStatusCode)
                 {
                     this.Logger.LogDebug("auth endpoint was not successful. Status code: {0}, reason {1}", response.StatusCode, response.ReasonPhrase);
+                    response.Dispose();
                     throw new WebException("Unable to fetch user information from auth endpoint.");
                 }
 
                 var content = await response.Content.ReadAsStringAsync();
+                response.Dispose();
                 try
                 {
                     payload = JArray.Parse(content);
@@ -151,7 +151,7 @@ namespace KK.AspNetCore.EasyAuthAuthentication.Services
             }
 
             // fetch value from endpoint
-            var authMeEndpoint = string.Empty;
+            string authMeEndpoint;
             if (this.Options.AuthEndpoint.StartsWith("http"))
             {
                 authMeEndpoint = this.Options.AuthEndpoint; // enable pulling from places like storage account private blob container

@@ -1,4 +1,4 @@
-namespace KK.AspNetCore.EasyAuthAuthentication.Models
+﻿namespace KK.AspNetCore.EasyAuthAuthentication.Models
 {
     using Newtonsoft.Json;
 

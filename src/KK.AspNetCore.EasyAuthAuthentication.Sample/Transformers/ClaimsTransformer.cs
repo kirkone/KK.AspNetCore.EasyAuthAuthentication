@@ -14,16 +14,12 @@ namespace KK.AspNetCore.EasyAuthAuthentication.Sample.Transformers
     {
         private readonly IMemoryCache cache;
         private readonly IRepository repository;
-        private readonly IHttpContextAccessor httpContextAccessor;
-
         public ClaimsTransformer(
             IRepository repository,
-            IHttpContextAccessor httpContextAccessor,
             IMemoryCache cache
         )
         {
             this.repository = repository;
-            this.httpContextAccessor = httpContextAccessor;
             this.cache = cache;
         }
 
@@ -51,7 +47,7 @@ namespace KK.AspNetCore.EasyAuthAuthentication.Sample.Transformers
                 roles = roles.Distinct().ToList();
                 this.cache.Set(userIdentifier, roles);
 
-                return ( new GenericPrincipal(claimsIdentity, roles.ToArray()) );
+                return new GenericPrincipal(claimsIdentity, roles.ToArray());
             }
 
             return principal;

@@ -54,9 +54,9 @@ namespace KK.AspNetCore.EasyAuthAuthentication
         /// Adds the <see cref="EasyAuthAuthenticationHandler"/> for authentication.
         /// </summary>
         /// <param name="builder"><inheritdoc/></param>
+        /// <param name="configuration">The configuration object of the application.</param>
         /// <param name="authenticationScheme">The schema for the Easy Auth handler.</param>
         /// <param name="displayName">The display name for the Easy Auth handler.</param>
-        /// <param name="configureOptions">The configuration object of the application.</param>
         /// <returns>A reference to this instance after the operation has completed.</returns>
         public static AuthenticationBuilder AddEasyAuth(
             this AuthenticationBuilder builder,
@@ -64,9 +64,10 @@ namespace KK.AspNetCore.EasyAuthAuthentication
             string authenticationScheme = EasyAuthAuthenticationDefaults.AuthenticationScheme,
             string displayName = EasyAuthAuthenticationDefaults.DisplayName)
         {
-            var options = new EasyAuthAuthenticationOptions();
-            options.AuthEndpoint = configuration.GetValue<string>("easyAuthOptions:AuthEndpoint");
-            options.providerOptions = configuration
+            var options = new EasyAuthAuthenticationOptions
+            {
+                AuthEndpoint = configuration.GetValue<string>("easyAuthOptions:AuthEndpoint"),
+                ProviderOptions = configuration
                 .GetSection("easyAuthOptions:providerOptions")
                 .GetChildren()
                 .Select(d =>
@@ -75,11 +76,12 @@ namespace KK.AspNetCore.EasyAuthAuthentication
                     var providerOptions = new ProviderOptions(name);
                     d.Bind(providerOptions);
                     return providerOptions;
-                }).ToList();
+                }).ToList()
+            };
             return builder.AddEasyAuth(authenticationScheme, displayName, o =>
             {
                 o.AuthEndpoint = options.AuthEndpoint;
-                o.providerOptions = options.providerOptions;
+                o.ProviderOptions = options.ProviderOptions;
             });
         }
 

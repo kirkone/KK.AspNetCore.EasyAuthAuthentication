@@ -14,9 +14,7 @@ namespace KK.AspNetCore.EasyAuthAuthentication.Test.Services
 {
     public class EasyAuthWithHeaderServiceTest
     {
-        private ILoggerFactory loggerFactory = new NullLoggerFactory();
-        private readonly string TestJwt = @"eyJhdWQiOiIwN2Q2ZDE1YS1jZTg5LTQ4MmMtOTcxYi01NDMxYjc1MTkxNjciLCJpc3MiOiJodHRwczovL3N0cy53aW5kb3dzLm5ldC9lOTgxZGNhZi05MTk3LTQ3N2YtYmQwNi0wZTU3MmIwYjMzNDcvIiwiaWF0IjoxNTYyNjk4ODc2LCJuYmYiOjE1NjI2OTg4NzYsImV4cCI6MTU2MjcwMjc3NiwiYWlvIjoiNDJaZ1lPQmZzRzd0ZEg1ZVBpSHZvNU9QdDdyT0J3QT0iLCJhcHBpZCI6ImQzMTViZmFmLTYzMDQtNGY5Zi04MjFjLTU0NmJkYzAwYjViMCIsImFwcGlkYWNyIjoiMSIsImlkcCI6Imh0dHBzOi8vc3RzLndpbmRvd3MubmV0L2U5ODFkY2FmLTkxOTctNDc3Zi1iZDA2LTBlNTcyYjBiMzM0Ny8iLCJvaWQiOiJmNWY5ZmE4Ni00NDE0LTQ0YzctODBmOC1mNzgwYWUwYWJmMjEiLCJyb2xlcyI6WyJTeXN0ZW1BZG1pbiJdLCJzdWIiOiJmNWY5ZmE4Ni00NDE0LTQ0YzctODBmOC1mNzgwYWUwYWJmMjEiLCJ0aWQiOiJlOTgxZGNhZi05MTk3LTQ3N2YtYmQwNi0wZTU3MmIwYjMzNDciLCJ1dGkiOiJoQ0p1M29oN3dVZVphaTVRSk9ZQUFBIiwidmVyIjoiMS4wIn0=";
-        private readonly string TestJwtAppId = "d315bfaf-6304-4f9f-821c-546bdc00b5b0";
+        private readonly ILoggerFactory loggerFactory = new NullLoggerFactory();
 
         [Fact]
         public void IfTheAADIdTokenHeaderIsSetTheCanUseMethodMustReturnTrue()
@@ -51,10 +49,10 @@ namespace KK.AspNetCore.EasyAuthAuthentication.Test.Services
             var httpcontext = new DefaultHttpContext();
             var inputObject = new InputJson()
             {
-                claims = new List<InputClaims>()
+                Claims = new List<InputClaims>()
                 {
-                    new InputClaims() {typ=  "x", val= "y"},
-                    new InputClaims() {typ=  ClaimTypes.Email, val= "PrincipalName"}
+                    new InputClaims() {Typ=  "x", Value= "y"},
+                    new InputClaims() {Typ=  ClaimTypes.Email, Value= "PrincipalName"}
                 }
             };
             var json = JsonConvert.SerializeObject(inputObject);
@@ -76,13 +74,16 @@ namespace KK.AspNetCore.EasyAuthAuthentication.Test.Services
 
         internal class InputJson
         {
-            public IEnumerable<InputClaims> claims { get; set; }
+            [JsonProperty("claims")]
+            public IEnumerable<InputClaims> Claims { get; set; }
         }
 
         internal class InputClaims
         {
-            public string typ { get; set; }
-            public string val { get; set; }
+            [JsonProperty("typ")]
+            public string Typ { get; set; }
+            [JsonProperty("val")]
+            public string Value { get; set; }
         }
     }
 }

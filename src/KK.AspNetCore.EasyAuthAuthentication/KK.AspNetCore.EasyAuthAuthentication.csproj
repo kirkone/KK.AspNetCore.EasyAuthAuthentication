@@ -12,6 +12,10 @@
     <Copyright>MIT</Copyright>
   </PropertyGroup>
 
+  <ItemGroup>
+    <Compile Include="..\..\GlobalSuppressions.cs" Link="GlobalSuppressions.cs" />
+  </ItemGroup>
+
 
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Authentication" Version="2.1.2" />

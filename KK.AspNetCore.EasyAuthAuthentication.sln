@@ -13,6 +13,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		.editorconfig = .editorconfig
 		.gitignore = .gitignore
 		global.json = global.json
+		GlobalSuppressions.cs = GlobalSuppressions.cs
 		LICENSE = LICENSE
 		README.md = README.md
 		StyleCop.json = StyleCop.json
@@ -23,7 +24,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "KK.AspNetCore.EasyAuthClien
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{61A3BCF5-B88D-4B1A-B75B-0FAAAD64B5EE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KK.AspNetCore.EasyAuthAuthentication.Test", "test\KK.AspNetCore.EasyAuthAuthentication.Test\KK.AspNetCore.EasyAuthAuthentication.Test.csproj", "{14E614F4-F9AD-4366-8655-25BA022DF2F9}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "KK.AspNetCore.EasyAuthAuthentication.Test", "test\KK.AspNetCore.EasyAuthAuthentication.Test\KK.AspNetCore.EasyAuthAuthentication.Test.csproj", "{14E614F4-F9AD-4366-8655-25BA022DF2F9}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

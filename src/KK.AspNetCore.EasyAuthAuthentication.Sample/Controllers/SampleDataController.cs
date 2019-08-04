@@ -10,7 +10,7 @@ namespace KK.AspNetCore.EasyAuthAuthentication.Sample.Controllers
     [Route("api/[controller]")]
     public class SampleDataController : Controller
     {
-        private static string[] Summaries = new[]
+        private readonly static string[] Summaries = new[]
         {
             "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
         };
@@ -31,10 +31,12 @@ namespace KK.AspNetCore.EasyAuthAuthentication.Sample.Controllers
         [Authorize(Roles = "SystemAdmin")]
         public string UserName()
         {
+#pragma warning disable IDE0059 // Unnecessary assignment of a value because this is use for debugging.
             var name = this.User.HasClaim(ClaimTypes.Name, "user@somecloud.onmicrosoft.com");
             var peng = this.User.HasClaim(ClaimTypes.Role, "SystemAdmin");
             var blubb = this.HttpContext.User.IsInRole("SystemAdmin");
             var pop = this.User.IsInRole("SystemAdmin");
+#pragma warning restore IDE0059 // Unnecessary assignment of a value
             return this.HttpContext.User.Identity.Name;
         }
 
@@ -44,13 +46,7 @@ namespace KK.AspNetCore.EasyAuthAuthentication.Sample.Controllers
             public int TemperatureC { get; set; }
             public string Summary { get; set; }
 
-            public int TemperatureF
-            {
-                get
-                {
-                    return 32 + (int)( this.TemperatureC / 0.5556 );
-                }
-            }
+            public int TemperatureF => 32 + (int)( this.TemperatureC / 0.5556 );
         }
     }
 }

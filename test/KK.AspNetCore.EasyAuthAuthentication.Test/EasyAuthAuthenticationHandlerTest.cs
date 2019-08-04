@@ -26,10 +26,10 @@ namespace KK.AspNetCore.EasyAuthAuthentication.Test
 {
     public class EasyAuthAuthenticationHandlerTest
     {
-        private IEnumerable<IEasyAuthAuthentificationService> providers = new List<IEasyAuthAuthentificationService>() { new TestProvider() };
-        private ILoggerFactory loggerFactory = new NullLoggerFactory();
-        private UrlEncoder urlEncoder = new UrlTestEncoder();
-        private ISystemClock clock = new SystemClock();
+        private readonly IEnumerable<IEasyAuthAuthentificationService> providers = new List<IEasyAuthAuthentificationService>() { new TestProvider() };
+        private readonly ILoggerFactory loggerFactory = new NullLoggerFactory();
+        private readonly UrlEncoder urlEncoder = new UrlTestEncoder();
+        private readonly ISystemClock clock = new SystemClock();
         public EasyAuthAuthenticationHandlerTest()
         {
 
@@ -45,7 +45,7 @@ namespace KK.AspNetCore.EasyAuthAuthentication.Test
             
             var services = new ServiceCollection().AddOptions()
                 .AddSingleton<IOptionsFactory<EasyAuthAuthenticationOptions>, OptionsFactory<EasyAuthAuthenticationOptions>>()                
-                .Configure<EasyAuthAuthenticationOptions>(EasyAuthAuthenticationDefaults.AuthenticationScheme , o => o.providerOptions = options.providerOptions)
+                .Configure<EasyAuthAuthenticationOptions>(EasyAuthAuthenticationDefaults.AuthenticationScheme , o => o.ProviderOptions = options.ProviderOptions)
                 .BuildServiceProvider();
             var monitor = services.GetRequiredService<IOptionsMonitor<EasyAuthAuthenticationOptions>>();
 
@@ -74,7 +74,7 @@ namespace KK.AspNetCore.EasyAuthAuthentication.Test
 
             var services = new ServiceCollection().AddOptions()
                 .AddSingleton<IOptionsFactory<EasyAuthAuthenticationOptions>, OptionsFactory<EasyAuthAuthenticationOptions>>()                
-                .Configure<EasyAuthAuthenticationOptions>(EasyAuthAuthenticationDefaults.AuthenticationScheme, o => o.providerOptions = options.providerOptions)
+                .Configure<EasyAuthAuthenticationOptions>(EasyAuthAuthenticationDefaults.AuthenticationScheme, o => o.ProviderOptions = options.ProviderOptions)
                 .BuildServiceProvider();
             var monitor = services.GetRequiredService<IOptionsMonitor<EasyAuthAuthenticationOptions>>();
 
@@ -102,7 +102,7 @@ namespace KK.AspNetCore.EasyAuthAuthentication.Test
 
             var services = new ServiceCollection().AddOptions()
                 .AddSingleton<IOptionsFactory<EasyAuthAuthenticationOptions>, OptionsFactory<EasyAuthAuthenticationOptions>>()
-                .Configure<EasyAuthAuthenticationOptions>(EasyAuthAuthenticationDefaults.AuthenticationScheme, o => o.providerOptions = options.providerOptions)
+                .Configure<EasyAuthAuthenticationOptions>(EasyAuthAuthenticationDefaults.AuthenticationScheme, o => o.ProviderOptions = options.ProviderOptions)
                 .BuildServiceProvider();
             var monitor = services.GetRequiredService<IOptionsMonitor<EasyAuthAuthenticationOptions>>();
 
@@ -132,7 +132,7 @@ namespace KK.AspNetCore.EasyAuthAuthentication.Test
 
             var services = new ServiceCollection().AddOptions()
                 .AddSingleton<IOptionsFactory<EasyAuthAuthenticationOptions>, OptionsFactory<EasyAuthAuthenticationOptions>>()
-                .Configure<EasyAuthAuthenticationOptions>(EasyAuthAuthenticationDefaults.AuthenticationScheme, o => o.providerOptions = options.providerOptions)
+                .Configure<EasyAuthAuthenticationOptions>(EasyAuthAuthenticationDefaults.AuthenticationScheme, o => o.ProviderOptions = options.ProviderOptions)
                 .BuildServiceProvider();
             var monitor = services.GetRequiredService<IOptionsMonitor<EasyAuthAuthenticationOptions>>();
 
@@ -159,7 +159,7 @@ namespace KK.AspNetCore.EasyAuthAuthentication.Test
 
             var services = new ServiceCollection().AddOptions()
                 .AddSingleton<IOptionsFactory<EasyAuthAuthenticationOptions>, OptionsFactory<EasyAuthAuthenticationOptions>>()
-                .Configure<EasyAuthAuthenticationOptions>(EasyAuthAuthenticationDefaults.AuthenticationScheme, o => o.providerOptions = options.providerOptions)
+                .Configure<EasyAuthAuthenticationOptions>(EasyAuthAuthenticationDefaults.AuthenticationScheme, o => o.ProviderOptions = options.ProviderOptions)
                 .BuildServiceProvider();
             var monitor = services.GetRequiredService<IOptionsMonitor<EasyAuthAuthenticationOptions>>();
 
@@ -168,7 +168,7 @@ namespace KK.AspNetCore.EasyAuthAuthentication.Test
             var schema = new AuthenticationScheme(EasyAuthAuthenticationDefaults.AuthenticationScheme, EasyAuthAuthenticationDefaults.DisplayName, typeof(EasyAuthAuthenticationHandler));
             var context = new DefaultHttpContext();
 
-            context.Request.Path = String.Empty;
+            context.Request.Path = string.Empty;
             // Act
             await handler.InitializeAsync(schema, context);
             var result = await handler.AuthenticateAsync();
@@ -187,7 +187,7 @@ namespace KK.AspNetCore.EasyAuthAuthentication.Test
 
             var services = new ServiceCollection().AddOptions()
                 .AddSingleton<IOptionsFactory<EasyAuthAuthenticationOptions>, OptionsFactory<EasyAuthAuthenticationOptions>>()
-                .Configure<EasyAuthAuthenticationOptions>(EasyAuthAuthenticationDefaults.AuthenticationScheme, o => o.providerOptions = options.providerOptions)
+                .Configure<EasyAuthAuthenticationOptions>(EasyAuthAuthenticationDefaults.AuthenticationScheme, o => o.ProviderOptions = options.ProviderOptions)
                 .BuildServiceProvider();
             var monitor = services.GetRequiredService<IOptionsMonitor<EasyAuthAuthenticationOptions>>();
 

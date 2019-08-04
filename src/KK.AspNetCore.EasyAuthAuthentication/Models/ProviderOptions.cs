@@ -10,7 +10,7 @@ namespace KK.AspNetCore.EasyAuthAuthentication.Models
         /// <summary>
         /// Initializes a new instance of the <see cref="ProviderOptions"/> class.
         /// </summary>
-        /// <param name="providerName">The name of the provider</param>
+        /// <param name="providerName">The name of the provider.</param>
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0021:Use expression body for constructors", Justification = "This syntax is better for the human eyes.")]
         public ProviderOptions(string providerName)
         {
@@ -42,7 +42,7 @@ namespace KK.AspNetCore.EasyAuthAuthentication.Models
         /// <summary>
         /// That would change the defined options of the current provider options object.
         /// </summary>
-        /// <param name="options">The provider options model with the new options</param>
+        /// <param name="options">The provider options model with the new options.</param>
         public void ChangeModel(ProviderOptions options)
         {
             if (options == null)

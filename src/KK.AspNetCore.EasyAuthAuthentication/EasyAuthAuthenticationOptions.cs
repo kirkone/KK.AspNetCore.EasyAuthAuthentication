@@ -19,32 +19,33 @@ namespace KK.AspNetCore.EasyAuthAuthentication
         /// <value>A relative path to the <c>wwwroot</c> folder.</value>
         public string AuthEndpoint { get; set; } = ".auth/me";
 
-        public IList<ProviderOptions> providerOptions { get; set; } = new List<ProviderOptions>();
-
-        public IEnumerable<ProviderOptions> ProviderSettings => this.providerOptions;
+        /// <summary>
+        /// A list of all provider options that should be used by easy auth.
+        /// </summary>
+        public IList<ProviderOptions> ProviderOptions { get; set; } = new List<ProviderOptions>();
 
         /// <summary>
         /// Adds a new options object to the provider pipeline.
         /// It will replace exsisting options for the same provider. So be shure what you do.
         /// </summary>
-        /// <param name="options">The provider options object with a ProviderName</param>
+        /// <param name="options">The provider options object with a ProviderName.</param>
         public void AddProviderOptions(ProviderOptions options)
         {
             if (string.IsNullOrWhiteSpace(options.ProviderName))
             {
                 throw new ArgumentException("The ProviderName property is requiered on the ProviderOptions object.");
             }
-            var exsistingProviderOption = this.providerOptions.FirstOrDefault(d => d.ProviderName == options.ProviderName);
+
+            var exsistingProviderOption = this.ProviderOptions.FirstOrDefault(d => d.ProviderName == options.ProviderName);
             if (exsistingProviderOption == null)
             {
-                this.providerOptions.Add(options);
+                this.ProviderOptions.Add(options);
             }
             else
             {
-                this.providerOptions.Remove(exsistingProviderOption);
-                this.providerOptions.Add(options);
+                this.ProviderOptions.Remove(exsistingProviderOption);
+                this.ProviderOptions.Add(options);
             }
         }
-
     }
 }

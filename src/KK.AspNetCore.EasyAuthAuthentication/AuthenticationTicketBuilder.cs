@@ -68,13 +68,5 @@ namespace KK.AspNetCore.EasyAuthAuthentication
                 identity.AddClaim(new Claim("provider_name", providerName));
             }
         }
-
-        private static void AddUserIdClaim(ClaimsIdentity identity, string claimType, string userid)
-        {
-            if (!identity.Claims.Any(claim => claim.Type == claimType))
-            {
-                identity.AddClaim(new Claim(claimType, userid));
-            }
-        }
     }
 }

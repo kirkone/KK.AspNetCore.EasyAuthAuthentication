@@ -9,7 +9,9 @@ namespace KK.AspNetCore.EasyAuthClientSample
 {
     public class Program
     {
-        static void Main(string[] args)
+#pragma warning disable IDE0060 // Remove unused parameter, because this is .net default for console programms
+        private static void Main(string[] args)
+#pragma warning restore IDE0060 // Remove unused parameter
         {
             Work().GetAwaiter().GetResult();
         }
@@ -30,6 +32,7 @@ namespace KK.AspNetCore.EasyAuthClientSample
             {
                 stringBuilder.Append(reader.ReadLine());
             }
+            reader.Dispose();
             Console.WriteLine(stringBuilder.ToString());
             
         }
