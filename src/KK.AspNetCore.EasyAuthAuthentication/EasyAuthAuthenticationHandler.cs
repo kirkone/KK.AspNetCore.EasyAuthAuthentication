@@ -46,6 +46,7 @@ namespace KK.AspNetCore.EasyAuthAuthentication
             ILoggerFactory logger,
             UrlEncoder encoder,
             ISystemClock clock) : base(options, logger, encoder, clock) => this.authenticationServices = authenticationServices;
+
         /// <inheritdoc/>
         protected override async Task<AuthenticateResult> HandleAuthenticateAsync()
         {

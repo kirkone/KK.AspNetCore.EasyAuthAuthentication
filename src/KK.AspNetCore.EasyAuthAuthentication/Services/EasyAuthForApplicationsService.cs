@@ -13,6 +13,9 @@ namespace KK.AspNetCore.EasyAuthAuthentication.Services
     using Newtonsoft.Json;
     using Newtonsoft.Json.Linq;
 
+    /// <summary>
+    /// A service that can be used to authentificat applications in the <see cref="EasyAuthAuthenticationHandler"/>.
+    /// </summary>
     public class EasyAuthForApplicationsService : IEasyAuthAuthentificationService
     {
         private const string AuthorizationHeader = "Authorization";
@@ -29,8 +32,13 @@ namespace KK.AspNetCore.EasyAuthAuthentication.Services
 
         private readonly ILogger<EasyAuthForApplicationsService> logger;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="EasyAuthForApplicationsService"/> class.
+        /// </summary>
+        /// <param name="logger">The logger for this service.</param>
         public EasyAuthForApplicationsService(ILogger<EasyAuthForApplicationsService> logger) => this.logger = logger;
 
+        /// <inheritdoc/>
         public AuthenticateResult AuthUser(HttpContext context, ProviderOptions options = null)
         {
             this.defaultOptions.ChangeModel(options);
@@ -41,6 +49,7 @@ namespace KK.AspNetCore.EasyAuthAuthentication.Services
             return AuthenticateResult.Success(ticket);
         }
 
+        /// <inheritdoc/>
         public bool CanHandleAuthentification(HttpContext httpContext) =>
             IsHeaderSet(httpContext.Request.Headers, AuthorizationHeader) &&
             httpContext.Request.Headers[AuthorizationHeader].FirstOrDefault().Contains(JWTIdentifyer);

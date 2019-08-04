@@ -12,6 +12,9 @@ namespace KK.AspNetCore.EasyAuthAuthentication.Services
     using Newtonsoft.Json;
     using Newtonsoft.Json.Linq;
 
+    /// <summary>
+    /// A service that can be used to authentificat a user principal in the <see cref="EasyAuthAuthenticationHandler"/>.
+    /// </summary>
     public class EasyAuthWithHeaderService : IEasyAuthAuthentificationService
     {
         private const string PrincipalObjectHeader = "X-MS-CLIENT-PRINCIPAL";
@@ -28,11 +31,16 @@ namespace KK.AspNetCore.EasyAuthAuthentication.Services
             NameClaimType = ClaimTypes.Email
         };
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="EasyAuthWithHeaderService"/> class.
+        /// </summary>
+        /// <param name="logger">The logger for this service.</param>
         public EasyAuthWithHeaderService(
             ILogger<EasyAuthWithHeaderService> logger) => this.Logger = logger;
 
         private ILogger Logger { get; }
 
+        /// <inheritdoc/>
         public bool CanHandleAuthentification(HttpContext httpContext)
         {
             var headers = httpContext.Request.Headers;
@@ -42,7 +50,7 @@ namespace KK.AspNetCore.EasyAuthAuthentication.Services
         }
 
         /// <summary>
-        /// build up identity from X-MS-TOKEN-AAD-ID-TOKEN header set by EasyAuth filters if user openId connect session cookie or oauth bearer token authenticated ...
+        /// build up identity from <see cref="PrincipalObjectHeader"/> header set by EasyAuth filters if user openId connect session cookie or oauth bearer token authenticated ...
         /// </summary>
         /// <param name="context">Http context of the request.</param>
         /// <param name="options">The <c>EasyAuthAuthenticationOptions</c> to use.</param>
