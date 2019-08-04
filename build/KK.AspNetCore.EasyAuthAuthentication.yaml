@@ -35,6 +35,17 @@ steps:
       command: "build"
       projects: "src/KK.AspNetCore.EasyAuthAuthentication/KK.AspNetCore.EasyAuthAuthentication.csproj"
       arguments: "--configuration $(buildConfiguration)"
+  - task: DotNetCoreCLI@2
+    displayName: Pack Preview
+    condition: and(succeeded(), startsWith(variables['Build.SourceBranch'], 'refs/heads/rc/'))
+    inputs:
+      command: "pack"
+      packagesToPack: "src/KK.AspNetCore.EasyAuthAuthentication/KK.AspNetCore.EasyAuthAuthentication.csproj"
+      nobuild: true
+      arguments: "--configuration $(buildConfiguration)"
+      buildProperties: "VersionPrefix=$(GitVersion.MajorMinorPatch);VersionSuffix=pre-$(Build.BuildNumber)"
+      packDirectory: "$(Build.ArtifactStagingDirectory)"
+      verbosityPack: Normal
 
   - task: DotNetCoreCLI@2
     displayName: Pack Internal
@@ -61,8 +72,16 @@ steps:
       verbosityPack: Normal
 
   - task: PublishBuildArtifacts@1
-    displayName: Publish Artifact
+    displayName: Publish Stable Artifact
     condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
+    inputs:
+      pathtoPublish: "$(Build.ArtifactStagingDirectory)"
+      artifactName: NuGet
+      parallel: true
+
+  - task: PublishBuildArtifacts@1
+    displayName: Publish Preview Artifact
+    condition: and(succeeded(), startsWith(variables['Build.SourceBranch'], 'refs/heads/rc/'))
     inputs:
       pathtoPublish: "$(Build.ArtifactStagingDirectory)"
       artifactName: NuGet
