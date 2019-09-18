@@ -6,8 +6,8 @@ Begin {
 }
 
 Process {
-    Write-Verbose "Running GitVersion.exe ..."
-    $gitversionoutput = & "$PSScriptRoot/GitVersion/dotnet-gitversion.exe" $PWD /updateassemblyinfo AssemblyInfo.cs /ensureassemblyinfo /output json
+    Write-Verbose "Running GitVersion ..."
+    $gitversionoutput = & "$PSScriptRoot/gitversion/dotnet-gitversion" $PWD /updateassemblyinfo AssemblyInfo.cs /ensureassemblyinfo /output json
     Write-Verbose "    Done"
 
     $jsonObj = "$gitversionoutput" | ConvertFrom-Json

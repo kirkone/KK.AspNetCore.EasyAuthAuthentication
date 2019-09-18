@@ -1,11 +1,11 @@
 # https://docs.microsoft.com/en-us/vsts/pipelines/yaml-schema?view=vsts
 
-queue:
-  name: Hosted
+pool:
+  vmImage: 'ubuntu-latest'
 
 variables:
   BuildConfiguration: "Release"
-  Project: "$(Build.SourcesDirectory)/$(Project)"
+  Project: "$(Build.SourcesDirectory)/src/KK.AspNetCore.EasyAuthAuthentication/KK.AspNetCore.EasyAuthAuthentication.csproj"
   ProjectFolder: "$(Build.SourcesDirectory)/src/KK.AspNetCore.EasyAuthAuthentication"
   GitVersion: "5.0.1"
 
@@ -23,13 +23,13 @@ steps:
     inputs:
       command: custom
       custom: 'tool'
-      arguments: 'install GitVersion.Tool --version $(GitVersion)  --tool-path .\pipelines\tools\Gitversion'
+      arguments: 'install GitVersion.Tool --version $(GitVersion)  --tool-path /pipelines/tools/gitversion'
 
   - task: PowerShell@2
     displayName: Run GitVersion
     inputs:
       targetType: "filePath"
-      filePath: "Pipelines/tools/Run-GitVersion.ps1"
+      filePath: "pipelines/tools/Run-GitVersion.ps1"
       workingDirectory: "$(ProjectFolder)"
 
   - task: DotNetCoreCLI@2
