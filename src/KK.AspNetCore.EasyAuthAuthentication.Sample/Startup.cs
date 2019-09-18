@@ -7,7 +7,6 @@ namespace KK.AspNetCore.EasyAuthAuthentication.Sample
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.DependencyInjection;
     using KK.AspNetCore.EasyAuthAuthentication;
-    using Microsoft.AspNetCore.Identity;
     using Microsoft.AspNetCore.Http;
     using Microsoft.AspNetCore.Authentication;
     using KK.AspNetCore.EasyAuthAuthentication.Sample.Transformers;
@@ -20,8 +19,8 @@ namespace KK.AspNetCore.EasyAuthAuthentication.Sample
             IConfiguration configuration,
             IHostingEnvironment environment)
         {
-            Configuration = configuration;
-            Environment = environment;
+            this.Configuration = configuration;
+            this.Environment = environment;
         }
 
         public IConfiguration Configuration { get; }
@@ -39,25 +38,8 @@ namespace KK.AspNetCore.EasyAuthAuthentication.Sample
                     options.DefaultAuthenticateScheme = EasyAuthAuthenticationDefaults.AuthenticationScheme;
                     options.DefaultChallengeScheme = EasyAuthAuthenticationDefaults.AuthenticationScheme;
                 }
-            ).AddEasyAuth(
-                options =>
-                {
-                    // Override the AuthEndpoint while developing
-                    if (this.Environment.IsDevelopment())
-                    {
-                        // The me.json should be placed in 'wwwroot/.auth'
-                        // The Static File Handler will not work with files without extension
-                        // so the endpoint should point to a file with extension. Folders that
-                        // start with '.' are considered hidden folders and do not get included
-                        // in publish site output which is desirable in this case.
-                        options.AuthEndpoint = ".auth/me.json";
-                    }
-
-                    // Override the default claim for the User.Identity.Name field 
-                    options.NameClaimType = ClaimTypes.Email;
-                }
-            );
-
+            ).AddEasyAuth(this.Configuration);
+            
             services.AddSingleton<IRepository, Repository>();
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);

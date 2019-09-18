@@ -2,9 +2,10 @@ namespace KK.AspNetCore.EasyAuthAuthentication
 {
     using System.Collections.Generic;
     using System.Linq;
+    using System.Runtime;
     using System.Security.Claims;
+    using KK.AspNetCore.EasyAuthAuthentication.Models;
     using Microsoft.AspNetCore.Authentication;
-    using Newtonsoft.Json.Linq;
 
     internal static class AuthenticationTicketBuilder
     {
@@ -15,47 +16,37 @@ namespace KK.AspNetCore.EasyAuthAuthentication
         /// <param name="providerName">The provider name of the current auth provider.</param>
         /// <param name="options">The <c>EasyAuthAuthenticationOptions</c> to use.</param>
         /// <returns>A `AuthenticationTicket`.</returns>
-        public static AuthenticationTicket Build(IEnumerable<JObject> claimsPayload, string providerName, EasyAuthAuthenticationOptions options)
+        public static AuthenticationTicket Build(IEnumerable<AADClaimsModel> claimsPayload, string providerName, ProviderOptions options)
         {
             // setting ClaimsIdentity.AuthenticationType to value that Azure AD non-EasyAuth setups use
             var identity = new ClaimsIdentity(
-                CreateClaims(claimsPayload),
-                AuthenticationTypesNames.Federation,
-                options.NameClaimType,
-                options.RoleClaimType
-            );
-
+                            CreateClaims(claimsPayload, options),
+                            AuthenticationTypesNames.Federation,
+                            options.NameClaimType,
+                            options.RoleClaimType
+                        );
             AddScopeClaim(identity);
             AddProviderNameClaim(identity, providerName);
             var genericPrincipal = new ClaimsPrincipal(identity);
-
             return new AuthenticationTicket(genericPrincipal, EasyAuthAuthenticationDefaults.AuthenticationScheme);
         }
 
-        private static IEnumerable<Claim> CreateClaims(IEnumerable<JObject> claimsAsJson)
+        private static IEnumerable<Claim> CreateClaims(IEnumerable<AADClaimsModel> claimsAsJson, ProviderOptions options)
         {
             foreach (var claim in claimsAsJson)
             {
-                var claimType = claim["typ"].ToString();
-                switch (claimType)
+                var claimType = claim.Typ;
+                if (claimType == Schemas.AuthMethod)
                 {
-                    case Schemas.AuthMethod:
-                        foreach (var item in claim["val"].ToString().Split(','))
-                        {
-                            yield return new Claim(ClaimTypes.Authentication, item);
-                        }
-
-                        break;
-                    case "roles":
-                        foreach (var item in claim["val"].ToString().Split(','))
-                        {
-                            yield return new Claim(ClaimTypes.Role, item);
-                        }
-
-                        break;
-                    default:
-                        yield return new Claim(claimType, claim["val"].ToString());
-                        break;
+                    yield return new Claim(ClaimTypes.Authentication, claim.Values);
+                }
+                else if (claimType == options.RoleClaimType)
+                {
+                    yield return new Claim(ClaimTypes.Role, claim.Values);
+                }
+                else
+                {
+                    yield return new Claim(claimType, claim.Values);
                 }
             }
         }
@@ -75,14 +66,6 @@ namespace KK.AspNetCore.EasyAuthAuthentication
             if (!identity.Claims.Any(claim => claim.Type == "provider_name"))
             {
                 identity.AddClaim(new Claim("provider_name", providerName));
-            }
-        }
-
-        private static void AddUserIdClaim(ClaimsIdentity identity, string claimType, string userid)
-        {
-            if (!identity.Claims.Any(claim => claim.Type == claimType))
-            {
-                identity.AddClaim(new Claim(claimType, userid));
             }
         }
     }
