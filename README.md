@@ -2,8 +2,6 @@
 
 This helps getting azure appservice authentication working with asp.net core
 
-> **Caution**: This project is not finished jet!
-
 ## Nuget
 
 The EasyAuth handler is provided as a nuget package and can be found on nuget.org.
@@ -32,10 +30,6 @@ The build environment for this project is on Azure DevOps and can be found here 
 | Alpha                                   | [![Alpha](https://vsrm.dev.azure.com/kirkone/_apis/public/Release/badge/b206bf59-b281-4d06-91c3-3877c3aeaaf9/1/1)](https://dev.azure.com/kirkone/KK.AspNetCore.EasyAuthAuthentication/_releases2?definitionId=1&_a=releases)                       |
 | Beta                                    | [![Beta](https://vsrm.dev.azure.com/kirkone/_apis/public/Release/badge/b206bf59-b281-4d06-91c3-3877c3aeaaf9/1/2)](https://dev.azure.com/kirkone/KK.AspNetCore.EasyAuthAuthentication/_releases2?definitionId=1&_a=releases)                        |
 | Release                                 | [![Release](https://vsrm.dev.azure.com/kirkone/_apis/public/Release/badge/b206bf59-b281-4d06-91c3-3877c3aeaaf9/1/3)](https://dev.azure.com/kirkone/KK.AspNetCore.EasyAuthAuthentication/_releases2?definitionId=1&_a=releases)                     |
-
-### Sample Web build
-
-No build so far.
 
 ## Usage
 
@@ -71,10 +65,10 @@ In your controllers you can access the `User` property as usual:
 [Authorize]
 public string UserName()
 {
-    var mulps = User.HasClaim(ClaimTypes.Name, "user@somecloud.onmicrosoft.com");
-    var peng = User.HasClaim(ClaimTypes.Role, "SystemAdmin");
-    var blubb = HttpContext.User.IsInRole("SystemAdmin");
-    var pop = User.IsInRole("SystemAdmin");
+    _ = User.HasClaim(ClaimTypes.Name, "user@somecloud.onmicrosoft.com");
+    _ = User.HasClaim(ClaimTypes.Role, "SystemAdmin");
+    _ = HttpContext.User.IsInRole("SystemAdmin");
+    _ = User.IsInRole("SystemAdmin");
     return HttpContext.User.Identity.Name;
 }
 ```
