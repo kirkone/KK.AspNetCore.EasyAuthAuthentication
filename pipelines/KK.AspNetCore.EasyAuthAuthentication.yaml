@@ -1,0 +1,78 @@
+# https://docs.microsoft.com/en-us/vsts/pipelines/yaml-schema?view=vsts
+
+queue:
+  name: Hosted
+
+variables:
+  BuildConfiguration: "Release"
+  Project: "$(Build.SourcesDirectory)/$(Project)"
+  ProjectFolder: "$(Build.SourcesDirectory)/src/KK.AspNetCore.EasyAuthAuthentication"
+  GitVersion: "5.0.1"
+
+name: $(Year:yy)$(DayOfYear)$(Rev:rr)
+
+steps:
+  - task: UseDotNet@2
+    displayName: Use .NET Core $(DotNetVersion)
+    inputs:
+      packageType: "sdk"
+      useGlobalJson: true
+
+  - task: DotNetCoreCLI@2
+    displayName: 'Install GitVersion: $(GitVersion)'
+    inputs:
+      command: custom
+      custom: 'tool'
+      arguments: 'install GitVersion.Tool --version $(GitVersion)  --tool-path .\pipelines\tools\Gitversion'
+
+  - task: PowerShell@2
+    displayName: Run GitVersion
+    inputs:
+      targetType: "filePath"
+      filePath: "Pipelines/tools/Run-GitVersion.ps1"
+      workingDirectory: "$(ProjectFolder)"
+
+  - task: DotNetCoreCLI@2
+    displayName: Restore
+    inputs:
+      command: "restore"
+      projects: "$(Project)"
+
+  - task: DotNetCoreCLI@2
+    displayName: Build
+    inputs:
+      command: "build"
+      projects: "$(Project)"
+      arguments: "--configuration $(buildConfiguration)"
+
+  - task: DotNetCoreCLI@2
+    displayName: Pack Internal
+    condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
+    inputs:
+      command: "pack"
+      packagesToPack: "$(Project)"
+      nobuild: true
+      arguments: "--configuration $(buildConfiguration)"
+      buildProperties: "VersionPrefix=$(GitVersion.MajorMinorPatch);VersionSuffix=pre-$(Build.BuildNumber)"
+      packDirectory: "$(Build.ArtifactStagingDirectory)"
+      verbosityPack: Normal
+
+  - task: DotNetCoreCLI@2
+    displayName: Pack Release
+    condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
+    inputs:
+      command: "pack"
+      packagesToPack: "$(Project)"
+      nobuild: true
+      arguments: "--configuration $(buildConfiguration)"
+      buildProperties: "VersionPrefix=$(GitVersion.MajorMinorPatch);VersionSuffix="
+      packDirectory: "$(Build.ArtifactStagingDirectory)"
+      verbosityPack: Normal
+
+  - task: PublishBuildArtifacts@1
+    displayName: Publish Artifact
+    condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
+    inputs:
+      pathtoPublish: "$(Build.ArtifactStagingDirectory)"
+      artifactName: NuGet
+      parallel: true

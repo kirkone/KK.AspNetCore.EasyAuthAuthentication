@@ -39,7 +39,7 @@ No build so far.
 
 ## Usage
 
-> **INFO**: For detailed usage information please have a look in the `KK.AspNetCore.EasyAuthAuthentication.Sample` project.
+> **INFO**: For detailed usage information please have a look in the `samples` folder.
 
 ### Startup.cs
 
