@@ -45,7 +45,7 @@ namespace KK.AspNetCore.EasyAuthAuthentication.Sample.Transformers
 
                 roles.AddRange(claimsIdentity.Claims.Where(c => c.Type == ClaimTypes.Role).Select(c => c.Value));
                 roles = roles.Distinct().ToList();
-                this.cache.Set(userIdentifier, roles);
+                _ = this.cache.Set(userIdentifier, roles);
 
                 return new GenericPrincipal(claimsIdentity, roles.ToArray());
             }

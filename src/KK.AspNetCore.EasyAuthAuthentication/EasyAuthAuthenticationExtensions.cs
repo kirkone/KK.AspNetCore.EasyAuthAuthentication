@@ -99,7 +99,7 @@ namespace KK.AspNetCore.EasyAuthAuthentication
                 .Where(x => typeof(IEasyAuthAuthentificationService).IsAssignableFrom(x) && !x.IsInterface && !x.IsAbstract);
             foreach (var authService in allAuthServicesToRegister)
             {
-                builder.Services.AddSingleton(typeof(IEasyAuthAuthentificationService), authService);
+                _ = builder.Services.AddSingleton(typeof(IEasyAuthAuthentificationService), authService);
             }
 
             return builder

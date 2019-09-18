@@ -1,29 +1,29 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
-using System.Reflection;
-using System.Security.Claims;
-using System.Text;
-using System.Text.Encodings.Web;
-using System.Threading.Tasks;
-using KK.AspNetCore.EasyAuthAuthentication.Interfaces;
-using KK.AspNetCore.EasyAuthAuthentication.Models;
-using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Http.Features;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Logging.Abstractions;
-using Microsoft.Extensions.Options;
-using Microsoft.Extensions.WebEncoders.Testing;
-using Microsoft.IdentityModel.Tokens;
-using Microsoft.VisualStudio.TestPlatform.Common.Utilities;
-using Xunit;
-
 namespace KK.AspNetCore.EasyAuthAuthentication.Test
 {
+    using System;
+    using System.Collections;
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.Net;
+    using System.Reflection;
+    using System.Security.Claims;
+    using System.Text;
+    using System.Text.Encodings.Web;
+    using System.Threading.Tasks;
+    using KK.AspNetCore.EasyAuthAuthentication.Interfaces;
+    using KK.AspNetCore.EasyAuthAuthentication.Models;
+    using Microsoft.AspNetCore.Authentication;
+    using Microsoft.AspNetCore.Http;
+    using Microsoft.AspNetCore.Http.Features;
+    using Microsoft.Extensions.DependencyInjection;
+    using Microsoft.Extensions.Logging;
+    using Microsoft.Extensions.Logging.Abstractions;
+    using Microsoft.Extensions.Options;
+    using Microsoft.Extensions.WebEncoders.Testing;
+    using Microsoft.IdentityModel.Tokens;
+    using Microsoft.VisualStudio.TestPlatform.Common.Utilities;
+    using Xunit;
+
     public class EasyAuthAuthenticationHandlerTest
     {
         private readonly IEnumerable<IEasyAuthAuthentificationService> providers = new List<IEasyAuthAuthentificationService>() { new TestProvider() };
@@ -220,10 +220,7 @@ namespace KK.AspNetCore.EasyAuthAuthentication.Test
                 return AuthenticateResult.Success(new AuthenticationTicket(new ClaimsPrincipal(identity), EasyAuthAuthenticationDefaults.AuthenticationScheme));
             }
 
-            public bool CanHandleAuthentification(HttpContext httpContext)
-            {
-                return true;
-            }
+            public bool CanHandleAuthentification(HttpContext httpContext) => true;
         }
     }
 }

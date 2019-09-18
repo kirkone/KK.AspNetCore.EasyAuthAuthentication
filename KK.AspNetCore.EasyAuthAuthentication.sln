@@ -16,8 +16,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		GlobalSuppressions.cs = GlobalSuppressions.cs
 		LICENSE = LICENSE
 		README.md = README.md
-		StyleCop.json = StyleCop.json
-		StyleCop.ruleset = StyleCop.ruleset
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "KK.AspNetCore.EasyAuthClientSample", "src\KK.AspNetCore.EasyAuthClientSample\KK.AspNetCore.EasyAuthClientSample.csproj", "{D8CDBE3B-9359-4F5E-93DD-845548356C2C}"

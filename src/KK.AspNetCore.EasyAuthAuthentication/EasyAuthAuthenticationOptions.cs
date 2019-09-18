@@ -1,4 +1,4 @@
-namespace KK.AspNetCore.EasyAuthAuthentication
+﻿namespace KK.AspNetCore.EasyAuthAuthentication
 {
     using System;
     using System.Collections;
@@ -43,7 +43,7 @@ namespace KK.AspNetCore.EasyAuthAuthentication
             }
             else
             {
-                this.ProviderOptions.Remove(exsistingProviderOption);
+                _ = this.ProviderOptions.Remove(exsistingProviderOption);
                 this.ProviderOptions.Add(options);
             }
         }

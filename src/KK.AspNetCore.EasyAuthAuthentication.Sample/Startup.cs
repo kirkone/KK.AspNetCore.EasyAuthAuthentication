@@ -29,26 +29,23 @@ namespace KK.AspNetCore.EasyAuthAuthentication.Sample
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
-            services.AddScoped<IClaimsTransformation, ClaimsTransformer>();
+            _ = services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+            _ = services.AddScoped<IClaimsTransformation, ClaimsTransformer>();
 
-            services.AddAuthentication(
+            _ = services.AddAuthentication(
                 options =>
                 {
                     options.DefaultAuthenticateScheme = EasyAuthAuthenticationDefaults.AuthenticationScheme;
                     options.DefaultChallengeScheme = EasyAuthAuthenticationDefaults.AuthenticationScheme;
                 }
             ).AddEasyAuth(this.Configuration);
-            
-            services.AddSingleton<IRepository, Repository>();
 
-            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+            _ = services.AddSingleton<IRepository, Repository>();
+
+            _ = services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
 
             // In production, the Angular files will be served from this directory
-            services.AddSpaStaticFiles(configuration =>
-            {
-                configuration.RootPath = "ClientApp/dist";
-            });
+            services.AddSpaStaticFiles(configuration => configuration.RootPath = "ClientApp/dist");
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -56,27 +53,25 @@ namespace KK.AspNetCore.EasyAuthAuthentication.Sample
         {
             if (env.IsDevelopment())
             {
-                app.UseDeveloperExceptionPage();
+                _ = app.UseDeveloperExceptionPage();
             }
             else
             {
-                app.UseExceptionHandler("/Error");
-                app.UseHsts();
-                app.UseHttpsRedirection();
+                _ = app.UseExceptionHandler("/Error");
+                _ = app.UseHsts();
+                _ = app.UseHttpsRedirection();
             }
 
-            app.UseStaticFiles();
+            _ = app.UseStaticFiles();
             app.UseSpaStaticFiles();
 
             // Add Authentication middleware before MVC to get it working for MVC routes
-            app.UseAuthentication();
+            _ = app.UseAuthentication();
 
-            app.UseMvc(routes =>
-            {
-                routes.MapRoute(
-                    name: "default",
-                    template: "{controller}/{action=Index}/{id?}");
-            });
+            _ = app.UseMvc(routes => _ = routes.MapRoute(
+                      name: "default",
+                      template: "{controller}/{action=Index}/{id?}")
+            );
 
             app.UseSpa(spa =>
             {

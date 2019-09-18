@@ -5,9 +5,6 @@ namespace KK.AspNetCore.EasyAuthAuthentication.Sample.Repositories
 
     public class Repository : IRepository
     {
-        public Task<IEnumerable<string>> GetRoles(string userIdentifier)
-        {
-            return Task.FromResult<IEnumerable<string>>(new[] { "SystemAdmin" });
-        }
+        public Task<IEnumerable<string>> GetRoles(string userIdentifier) => Task.FromResult<IEnumerable<string>>(new[] { "SystemAdmin" });
     }
 }
