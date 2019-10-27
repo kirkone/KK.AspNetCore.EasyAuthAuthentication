@@ -19,7 +19,7 @@ namespace KK.AspNetCore.EasyAuthAuthentication.Test.Services
         public void IfTheAuthorizationHeaderIsSetTheCanUseMethodMustReturnTrue()
         {
             // Arrange
-            var handler = new EasyAuthForApplicationsService(this.loggerFactory.CreateLogger<EasyAuthForApplicationsService>());
+            var handler = new EasyAuthForAuthorizationTokenService(this.loggerFactory.CreateLogger<EasyAuthForAuthorizationTokenService>());
             var httpcontext = new DefaultHttpContext();
             httpcontext.Request.Headers.Add("Authorization", "Bearer sgölkfsögölfsg");
             // Act
@@ -32,7 +32,7 @@ namespace KK.AspNetCore.EasyAuthAuthentication.Test.Services
         public void IfTheAuthorizationHeaderIsNotAJWTTokenTheCanUseMethodMustReturnFalse()
         {
             // Arrange
-            var handler = new EasyAuthForApplicationsService(this.loggerFactory.CreateLogger<EasyAuthForApplicationsService>());
+            var handler = new EasyAuthForAuthorizationTokenService(this.loggerFactory.CreateLogger<EasyAuthForAuthorizationTokenService>());
             var httpcontext = new DefaultHttpContext();
             httpcontext.Request.Headers.Add("Authorization", "sgölkfsögölfsg");
             // Act
@@ -45,7 +45,7 @@ namespace KK.AspNetCore.EasyAuthAuthentication.Test.Services
         public void IfTheAuthorizationHeaderIsNotSetTheCanUseMethodMustReturnFalse()
         {
             // Arrange
-            var handler = new EasyAuthForApplicationsService(this.loggerFactory.CreateLogger<EasyAuthForApplicationsService>());
+            var handler = new EasyAuthForAuthorizationTokenService(this.loggerFactory.CreateLogger<EasyAuthForAuthorizationTokenService>());
             var httpcontext = new DefaultHttpContext();  
             // Act
             var result = handler.CanHandleAuthentification(httpcontext);
@@ -57,7 +57,7 @@ namespace KK.AspNetCore.EasyAuthAuthentication.Test.Services
         public void IfAValidJwtTokenIsInTheHeaderTheResultIsSuccsess()
         {
             // Arrange
-            var handler = new EasyAuthForApplicationsService(this.loggerFactory.CreateLogger<EasyAuthForApplicationsService>());
+            var handler = new EasyAuthForAuthorizationTokenService(this.loggerFactory.CreateLogger<EasyAuthForAuthorizationTokenService>());
             var httpcontext = new DefaultHttpContext();
             httpcontext.Request.Headers.Add("Authorization", this.testJwt);
             // Act
