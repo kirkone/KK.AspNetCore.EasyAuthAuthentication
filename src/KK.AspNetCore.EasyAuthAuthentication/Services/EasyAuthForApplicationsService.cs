@@ -14,29 +14,31 @@ namespace KK.AspNetCore.EasyAuthAuthentication.Services
     using Newtonsoft.Json.Linq;
 
     /// <summary>
-    /// A service that can be used to authentificat applications in the <see cref="EasyAuthAuthenticationHandler"/>.
+    /// A service that can be used to authenticate applications or users in the <see cref="EasyAuthAuthenticationHandler"/>.
+    /// That is for the use case if the user doesn't authenticated on this webapp. So he has only a Authorization Header.
     /// </summary>
-    public class EasyAuthForApplicationsService : IEasyAuthAuthentificationService
+    public class EasyAuthForAuthorizationTokenService : IEasyAuthAuthentificationService
     {
         private const string AuthorizationHeader = "Authorization";
-        private const string JWTIdentifyer = "Bearer";
-        private const string ProviderNameKey = "idp";
+        private const string JWTIdentifier = "Bearer";
+        private const string ProviderNameKey = "idp";        
 
         private static readonly Func<IHeaderDictionary, string, bool> IsHeaderSet =
            (headers, headerName) => !string.IsNullOrEmpty(headers[headerName].ToString());
 
-        private readonly ProviderOptions defaultOptions = new ProviderOptions(typeof(EasyAuthForApplicationsService).Name)
+        private readonly ProviderOptions defaultOptions = new ProviderOptions(typeof(EasyAuthForAuthorizationTokenService).Name)
         {
-            NameClaimType = ClaimTypes.Spn
+            NameClaimType = ClaimTypes.Spn,
+            RoleClaimType = "roles"
         };
 
-        private readonly ILogger<EasyAuthForApplicationsService> logger;
+        private readonly ILogger<EasyAuthForAuthorizationTokenService> logger;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="EasyAuthForApplicationsService"/> class.
+        /// Initializes a new instance of the <see cref="EasyAuthForAuthorizationTokenService"/> class.
         /// </summary>
         /// <param name="logger">The logger for this service.</param>
-        public EasyAuthForApplicationsService(ILogger<EasyAuthForApplicationsService> logger) => this.logger = logger;
+        public EasyAuthForAuthorizationTokenService(ILogger<EasyAuthForAuthorizationTokenService> logger) => this.logger = logger;
 
         /// <inheritdoc/>
         public AuthenticateResult AuthUser(HttpContext context, ProviderOptions options = null)
@@ -52,14 +54,20 @@ namespace KK.AspNetCore.EasyAuthAuthentication.Services
         /// <inheritdoc/>
         public bool CanHandleAuthentification(HttpContext httpContext) =>
             IsHeaderSet(httpContext.Request.Headers, AuthorizationHeader) &&
-            httpContext.Request.Headers[AuthorizationHeader].FirstOrDefault().Contains(JWTIdentifyer);
+            httpContext.Request.Headers[AuthorizationHeader].FirstOrDefault().Contains(JWTIdentifier);
 
         private IEnumerable<AADClaimsModel> BuildFromApplicationAuth(JObject xMsClientPrincipal, ProviderOptions options)
         {
-            this.logger.LogDebug($"payload was {xMsClientPrincipal["roles"].ToString()}");
-            var claims = JsonConvert.DeserializeObject<IEnumerable<string>>(xMsClientPrincipal["roles"].ToString())
-                    .Select(r => new AADClaimsModel() { Typ = "roles", Values = r })
+            this.logger.LogDebug($"payload was {xMsClientPrincipal[this.defaultOptions.RoleClaimType].ToString()}");
+
+            var claims = JsonConvert.DeserializeObject<IEnumerable<string>>(xMsClientPrincipal[this.defaultOptions.RoleClaimType].ToString())
+                    .Select(r => new AADClaimsModel() { Typ = this.defaultOptions.RoleClaimType, Values = r })
                     .ToList();
+            var otherClaims = xMsClientPrincipal.Properties()
+                .Where(claimToken => claimToken.Name != this.defaultOptions.RoleClaimType)
+                .Select(claimToken => new AADClaimsModel() { Typ = claimToken.Name, Values = claimToken.Value.ToString() })
+                .ToList();
+            claims.AddRange(otherClaims);
             claims.Add(new AADClaimsModel() { Typ = options.NameClaimType, Values = xMsClientPrincipal["appid"].ToString() });
             return claims;
         }
@@ -67,7 +75,7 @@ namespace KK.AspNetCore.EasyAuthAuthentication.Services
         private JObject GetTokenJson(string headerContent)
         {
             var cleanupToken = headerContent
-                            .Replace("Bearer", string.Empty)
+                            .Replace(JWTIdentifier, string.Empty)
                             .Replace(" ", string.Empty)
                             .Split('.')[1];
             while (cleanupToken.Length % 4 != 0)
