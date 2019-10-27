@@ -9,9 +9,9 @@
       "type": "coreclr",
       "request": "launch",
       "preLaunchTask": "build",
-      "program": "${workspaceFolder}/src/KK.AspNetCore.EasyAuthAuthentication.Sample/bin/Debug/netcoreapp2.1/KK.AspNetCore.EasyAuthAuthentication.Sample.dll",
+      "program": "${workspaceFolder}/src/KK.AspNetCore.EasyAuthAuthentication.Samples.Web/bin/Debug/netcoreapp2.1/KK.AspNetCore.EasyAuthAuthentication.Samples.Web.dll",
       "args": [],
-      "cwd": "${workspaceFolder}/src/KK.AspNetCore.EasyAuthAuthentication.Sample",
+      "cwd": "${workspaceFolder}/src/KK.AspNetCore.EasyAuthAuthentication.Samples.Web",
       "stopAtEntry": false,
       "internalConsoleOptions": "openOnSessionStart",
       "launchBrowser": {

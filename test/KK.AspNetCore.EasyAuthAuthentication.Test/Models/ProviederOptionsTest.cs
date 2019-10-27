@@ -1,13 +1,13 @@
-using System;
-using System.Collections.Generic;
-using System.Reflection;
-using System.Security.Cryptography;
-using System.Text;
-using KK.AspNetCore.EasyAuthAuthentication.Models;
-using Xunit;
-
 namespace KK.AspNetCore.EasyAuthAuthentication.Test.Models
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Reflection;
+    using System.Security.Cryptography;
+    using System.Text;
+    using KK.AspNetCore.EasyAuthAuthentication.Models;
+    using Xunit;
+
     public class ProviederOptionsTest
     {
         [Fact]
@@ -37,7 +37,7 @@ namespace KK.AspNetCore.EasyAuthAuthentication.Test.Models
             var options = new ProviderOptions("testProviderName");
 
             // Act & Arrange
-            Assert.Throws<ArgumentException>(() => options.ChangeModel(new ProviderOptions("test")));
+            _ = Assert.Throws<ArgumentException>(() => options.ChangeModel(new ProviderOptions("test")));
         }
 
         [Fact]

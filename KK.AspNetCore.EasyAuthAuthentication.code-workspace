@@ -6,8 +6,12 @@
 			"path": "./src/KK.AspNetCore.EasyAuthAuthentication"
 		},
 		{
-			"name": "EasyAuth Middleware Sample",
-			"path": "./src/KK.AspNetCore.EasyAuthAuthentication.Sample"
+			"name": "EasyAuth Middleware Sample Web",
+			"path": "./samples/KK.AspNetCore.EasyAuthAuthentication.Samples.Web"
+		},
+		{
+			"name": "EasyAuth Middleware Sample Client",
+			"path": "./samples/KK.AspNetCore.EasyAuthAuthentication.Samples.Client"
 		},
 		{
 			"name": "Vscode Build Debug",
@@ -15,7 +19,7 @@
 		},
 		{
 			"name": "Azure DevOps Pipeline",
-			"path": "./build"
+			"path": "./pipelines"
 		},
 		{
 			"name": "Repo Root",

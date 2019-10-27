@@ -1,17 +1,17 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Security.Claims;
-using System.Text;
-using KK.AspNetCore.EasyAuthAuthentication.Services;
-using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Logging.Abstractions;
-using Newtonsoft.Json;
-using Xunit;
-
 namespace KK.AspNetCore.EasyAuthAuthentication.Test.Services
 {
+    using System;
+    using System.Collections;
+    using System.Collections.Generic;
+    using System.Security.Claims;
+    using System.Text;
+    using KK.AspNetCore.EasyAuthAuthentication.Services;
+    using Microsoft.AspNetCore.Http;
+    using Microsoft.Extensions.Logging;
+    using Microsoft.Extensions.Logging.Abstractions;
+    using Newtonsoft.Json;
+    using Xunit;
+
     public class EasyAuthWithHeaderServiceTest
     {
         private readonly ILoggerFactory loggerFactory = new NullLoggerFactory();
