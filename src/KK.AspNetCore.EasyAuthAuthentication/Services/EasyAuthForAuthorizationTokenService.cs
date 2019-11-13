@@ -21,7 +21,7 @@ namespace KK.AspNetCore.EasyAuthAuthentication.Services
     {
         private const string AuthorizationHeader = "Authorization";
         private const string JWTIdentifier = "Bearer";
-        private const string ProviderNameKey = "idp";        
+        private const string ProviderNameKey = "idp";
 
         private static readonly Func<IHeaderDictionary, string, bool> IsHeaderSet =
            (headers, headerName) => !string.IsNullOrEmpty(headers[headerName].ToString());
