@@ -21,7 +21,8 @@ namespace KK.AspNetCore.EasyAuthAuthentication.Services
     {
         private const string AuthorizationHeader = "Authorization";
         private const string JWTIdentifier = "Bearer";
-        private const string ProviderNameKey = "idp";
+        private const string IdentityProviderKey = "idp";
+        private const string IssuerKey = "iss";
 
         private static readonly Func<IHeaderDictionary, string, bool> IsHeaderSet =
            (headers, headerName) => !string.IsNullOrEmpty(headers[headerName].ToString());
@@ -47,7 +48,19 @@ namespace KK.AspNetCore.EasyAuthAuthentication.Services
 
             var tokenJson = this.GetTokenJson(context.Request.Headers[AuthorizationHeader].FirstOrDefault());
             var claims = this.BuildFromApplicationAuth(tokenJson, this.defaultOptions);
-            var ticket = AuthenticationTicketBuilder.Build(claims, tokenJson[ProviderNameKey].ToString(), this.defaultOptions);
+            var identityProviderClaim = tokenJson[IdentityProviderKey];
+            if (identityProviderClaim == null)
+            {
+                /* As stated here (https://docs.microsoft.com/en-us/azure/active-directory/develop/access-tokens), we
+                * can use issuer-claim as identity provider, if idp-claim isn't defined in the token
+                */
+                identityProviderClaim = tokenJson[IssuerKey];
+            }
+            if(string.IsNullOrWhiteSpace(identityProviderClaim?.ToString()))
+            {
+                throw new ArgumentException($"In the AAD authentification token are {IdentityProviderKey} and {IssuerKey} missing. This isn't a valid token.");
+            }
+            var ticket = AuthenticationTicketBuilder.Build(claims, identityProviderClaim.ToString(), this.defaultOptions);
             return AuthenticateResult.Success(ticket);
         }
 

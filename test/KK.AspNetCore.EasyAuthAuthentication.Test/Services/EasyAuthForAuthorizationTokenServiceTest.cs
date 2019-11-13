@@ -68,5 +68,33 @@ namespace KK.AspNetCore.EasyAuthAuthentication.Test.Services
             Assert.True(result.Principal.HasClaim(ClaimTypes.Role, "SystemAdmin"));
             Assert.Equal(this.testJwtAppId, result.Principal.Identity.Name);
         }
+
+        [Fact]
+        public void IfAValidJwtTokenWithoutIdpPropertyIsInTheHeaderTheResultIsSuccsess()
+        {
+            // Arrange
+            var handler = new EasyAuthForAuthorizationTokenService(this.loggerFactory.CreateLogger<EasyAuthForAuthorizationTokenService>());
+            var httpcontext = new DefaultHttpContext();
+            var jwtWithoutIdpProperty = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiIwN2Q2ZDE1YS1jZTg5LTQ4MmMtOTcxYi01NDMxYjc1MTkxNjciLCJpc3MiOiJodHRwczovL3N0cy53aW5kb3dzLm5ldC9lOTgxZGNhZi05MTk3LTQ3N2YtYmQwNi0wZTU3MmIwYjMzNDcvIiwiaWF0IjoxNTYyNjk4ODc2LCJuYmYiOjE1NjI2OTg4NzYsImV4cCI6MTU2MjcwMjc3NiwiYWlvIjoiNDJaZ1lPQmZzRzd0ZEg1ZVBpSHZvNU9QdDdyT0J3QT0iLCJhcHBpZCI6ImQzMTViZmFmLTYzMDQtNGY5Zi04MjFjLTU0NmJkYzAwYjViMCIsImFwcGlkYWNyIjoiMSIsIm9pZCI6ImY1ZjlmYTg2LTQ0MTQtNDRjNy04MGY4LWY3ODBhZTBhYmYyMSIsInJvbGVzIjpbIlN5c3RlbUFkbWluIl0sInN1YiI6ImY1ZjlmYTg2LTQ0MTQtNDRjNy04MGY4LWY3ODBhZTBhYmYyMSIsInRpZCI6ImU5ODFkY2FmLTkxOTctNDc3Zi1iZDA2LTBlNTcyYjBiMzM0NyIsInV0aSI6ImhDSnUzb2g3d1VlWmFpNVFKT1lBQUEiLCJ2ZXIiOiIxLjAifQ.aBHe6c3INsMsQVlANkW9b-w2IhQaiQQIoEcWfobea5A";
+            httpcontext.Request.Headers.Add("Authorization", jwtWithoutIdpProperty);
+            // Act
+            var result = handler.AuthUser(httpcontext);
+            // Arrange
+            Assert.True(result.Succeeded);
+            Assert.True(result.Principal.HasClaim(ClaimTypes.Role, "SystemAdmin"));
+            Assert.Equal(this.testJwtAppId, result.Principal.Identity.Name);
+        }
+
+        [Fact]
+        public void IfAValidJwtTokenWithoutIdpAndIssPropertyIsInTheHeaderItsThrowsAnError()
+        {
+            // Arrange
+            var handler = new EasyAuthForAuthorizationTokenService(this.loggerFactory.CreateLogger<EasyAuthForAuthorizationTokenService>());
+            var httpcontext = new DefaultHttpContext();
+            var jwtWithoutIdpProperty = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiIwN2Q2ZDE1YS1jZTg5LTQ4MmMtOTcxYi01NDMxYjc1MTkxNjciLCJpYXQiOjE1NjI2OTg4NzYsIm5iZiI6MTU2MjY5ODg3NiwiZXhwIjoxNTYyNzAyNzc2LCJhaW8iOiI0MlpnWU9CZnNHN3RkSDVlUGlIdm81T1B0N3JPQndBPSIsImFwcGlkIjoiZDMxNWJmYWYtNjMwNC00ZjlmLTgyMWMtNTQ2YmRjMDBiNWIwIiwiYXBwaWRhY3IiOiIxIiwib2lkIjoiZjVmOWZhODYtNDQxNC00NGM3LTgwZjgtZjc4MGFlMGFiZjIxIiwicm9sZXMiOlsiU3lzdGVtQWRtaW4iXSwic3ViIjoiZjVmOWZhODYtNDQxNC00NGM3LTgwZjgtZjc4MGFlMGFiZjIxIiwidGlkIjoiZTk4MWRjYWYtOTE5Ny00NzdmLWJkMDYtMGU1NzJiMGIzMzQ3IiwidXRpIjoiaENKdTNvaDd3VWVaYWk1UUpPWUFBQSIsInZlciI6IjEuMCJ9.6hcHmq8VahVMqtvA9DJdoY-NIUjkPgMEfryGuLVJMHw";
+            httpcontext.Request.Headers.Add("Authorization", jwtWithoutIdpProperty);
+            // Act && Arrange
+            Assert.Throws<ArgumentException>(() => handler.AuthUser(httpcontext));
+        }
     }
 }
