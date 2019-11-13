@@ -2,6 +2,7 @@ namespace KK.AspNetCore.EasyAuthAuthentication.Test.Services
 {
     using System;
     using System.Collections.Generic;
+    using System.Security.Claims;
     using System.Text;
     using KK.AspNetCore.EasyAuthAuthentication.Services;
     using Microsoft.AspNetCore.Http;
@@ -64,6 +65,7 @@ namespace KK.AspNetCore.EasyAuthAuthentication.Test.Services
             var result = handler.AuthUser(httpcontext);
             // Arrange
             Assert.True(result.Succeeded);
+            Assert.True(result.Principal.HasClaim(ClaimTypes.Role, "SystemAdmin"));
             Assert.Equal(this.testJwtAppId, result.Principal.Identity.Name);
         }
     }
