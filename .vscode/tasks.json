@@ -9,7 +9,7 @@
       "type": "process",
       "args": [
         "build",
-        "${workspaceFolder}/src/KK.AspNetCore.EasyAuthAuthentication.Samples.Web/KK.AspNetCore.EasyAuthAuthentication.Samples.Web.csproj"
+        "${workspaceFolder}/samples/KK.AspNetCore.EasyAuthAuthentication.Samples.Web/KK.AspNetCore.EasyAuthAuthentication.Samples.Web.csproj"
       ],
       "problemMatcher": "$msCompile",
       "group": {

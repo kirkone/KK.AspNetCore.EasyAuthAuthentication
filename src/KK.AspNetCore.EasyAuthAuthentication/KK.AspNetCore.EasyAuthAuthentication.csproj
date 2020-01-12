@@ -10,6 +10,8 @@
     <RepositoryUrl>https://github.com/kirkone/KK.AspNetCore.EasyAuthAuthentication</RepositoryUrl>
     <Description>This helps getting azure appservice authentication working with asp.net core</Description>
     <Copyright>MIT</Copyright>
+    <LangVersion>8.0</LangVersion>
+    <Nullable>enable</Nullable>
   </PropertyGroup>
 
   <ItemGroup>

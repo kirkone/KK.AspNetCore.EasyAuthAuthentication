@@ -16,7 +16,7 @@ namespace KK.AspNetCore.EasyAuthAuthentication
         /// <param name="providerName">The provider name of the current auth provider.</param>
         /// <param name="options">The <c>EasyAuthAuthenticationOptions</c> to use.</param>
         /// <returns>A `AuthenticationTicket`.</returns>
-        public static AuthenticationTicket Build(IEnumerable<AADClaimsModel> claimsPayload, string providerName, ProviderOptions options)
+        public static AuthenticationTicket Build(IEnumerable<AADClaimsModel> claimsPayload, string? providerName, ProviderOptions options)
         {
             // setting ClaimsIdentity.AuthenticationType to value that Azure AD non-EasyAuth setups use
             var identity = new ClaimsIdentity(
@@ -61,11 +61,18 @@ namespace KK.AspNetCore.EasyAuthAuthentication
             }
         }
 
-        private static void AddProviderNameClaim(ClaimsIdentity identity, string providerName)
+        private static void AddProviderNameClaim(ClaimsIdentity identity, string? providerName)
         {
-            if (!identity.Claims.Any(claim => claim.Type == "provider_name"))
+            if (providerName == null)
             {
-                identity.AddClaim(new Claim("provider_name", providerName));
+                identity.AddClaim(new Claim("provider_name", "unknow"));
+            }
+            else
+            {
+                if (!identity.Claims.Any(claim => claim.Type == "provider_name"))
+                {
+                    identity.AddClaim(new Claim("provider_name", providerName));
+                }
             }
         }
     }
