@@ -78,10 +78,10 @@ namespace KK.AspNetCore.EasyAuthAuthentication.Services
                     .ToList();
             var otherClaims = xMsClientPrincipal.Properties()
                 .Where(claimToken => claimToken.Name != this.defaultOptions.RoleClaimType)
-                .Select(claimToken => new AADClaimsModel() { Typ = claimToken.Name, Values = claimToken.Value.ToString() })
+                .Select(claimToken => new AADClaimsModel { Typ = claimToken.Name, Values = claimToken.Value.ToString() })
                 .ToList();
             claims.AddRange(otherClaims);
-            claims.Add(new AADClaimsModel() { Typ = options.NameClaimType, Values = xMsClientPrincipal["appid"].ToString() });
+            claims.Add(new AADClaimsModel { Typ = options.NameClaimType, Values = xMsClientPrincipal["appid"].ToString() });
             return claims;
         }
 
