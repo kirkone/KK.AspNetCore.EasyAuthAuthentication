@@ -1,30 +1,21 @@
 namespace KK.AspNetCore.EasyAuthAuthentication.Samples.Web
 {
+    using KK.AspNetCore.EasyAuthAuthentication.Samples.Web.Repositories;
+    using KK.AspNetCore.EasyAuthAuthentication.Samples.Web.Transformers;
+    using Microsoft.AspNetCore.Authentication;
     using Microsoft.AspNetCore.Builder;
     using Microsoft.AspNetCore.Hosting;
-    using Microsoft.AspNetCore.Mvc;
+    using Microsoft.AspNetCore.Http;
     using Microsoft.AspNetCore.SpaServices.AngularCli;
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.DependencyInjection;
-    using KK.AspNetCore.EasyAuthAuthentication;
-    using Microsoft.AspNetCore.Http;
-    using Microsoft.AspNetCore.Authentication;
-    using KK.AspNetCore.EasyAuthAuthentication.Samples.Web.Transformers;
-    using KK.AspNetCore.EasyAuthAuthentication.Samples.Web.Repositories;
-    using System.Security.Claims;
+    using Microsoft.Extensions.Hosting;
 
     public class Startup
     {
-        public Startup(
-            IConfiguration configuration,
-            IHostingEnvironment environment)
-        {
-            this.Configuration = configuration;
-            this.Environment = environment;
-        }
+        public Startup(IConfiguration configuration) => this.Configuration = configuration;
 
         public IConfiguration Configuration { get; }
-        public IHostingEnvironment Environment { get; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
@@ -42,14 +33,15 @@ namespace KK.AspNetCore.EasyAuthAuthentication.Samples.Web
 
             _ = services.AddSingleton<IRepository, Repository>();
 
-            _ = services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
-
+            _ = services.AddControllersWithViews();
             // In production, the Angular files will be served from this directory
-            services.AddSpaStaticFiles(configuration => configuration.RootPath = "ClientApp/dist");
+            services.AddSpaStaticFiles(
+                configuration => configuration.RootPath = "ClientApp/dist"
+            );
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             if (env.IsDevelopment())
             {
@@ -58,19 +50,26 @@ namespace KK.AspNetCore.EasyAuthAuthentication.Samples.Web
             else
             {
                 _ = app.UseExceptionHandler("/Error");
+                // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 _ = app.UseHsts();
-                _ = app.UseHttpsRedirection();
             }
 
+            _ = app.UseHttpsRedirection();
             _ = app.UseStaticFiles();
-            app.UseSpaStaticFiles();
+            if (!env.IsDevelopment())
+            {
+                app.UseSpaStaticFiles();
+            }
 
             // Add Authentication middleware before MVC to get it working for MVC routes
             _ = app.UseAuthentication();
 
-            _ = app.UseMvc(routes => _ = routes.MapRoute(
-                      name: "default",
-                      template: "{controller}/{action=Index}/{id?}")
+            _ = app.UseRouting();
+
+            _ = app.UseEndpoints(
+                endpoints => endpoints.MapControllerRoute(
+                    name: "default",
+                    pattern: "{controller}/{action=Index}/{id?}")
             );
 
             app.UseSpa(spa =>
