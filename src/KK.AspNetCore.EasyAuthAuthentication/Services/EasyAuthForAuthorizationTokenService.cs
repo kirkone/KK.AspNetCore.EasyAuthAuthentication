@@ -74,7 +74,7 @@ namespace KK.AspNetCore.EasyAuthAuthentication.Services
             this.logger.LogDebug($"payload was {xMsClientPrincipal[this.defaultOptions.RoleClaimType].ToString()}");
 
             var claims = JsonConvert.DeserializeObject<IEnumerable<string>>(xMsClientPrincipal[this.defaultOptions.RoleClaimType].ToString())
-                    .Select(r => new AADClaimsModel() { Typ = this.defaultOptions.RoleClaimType, Values = r })
+                    .Select(r => new AADClaimsModel { Typ = this.defaultOptions.RoleClaimType, Values = r })
                     .ToList();
             var otherClaims = xMsClientPrincipal.Properties()
                 .Where(claimToken => claimToken.Name != this.defaultOptions.RoleClaimType)
