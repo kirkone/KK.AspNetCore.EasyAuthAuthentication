@@ -17,6 +17,11 @@ steps:
     inputs:
       packageType: "sdk"
       useGlobalJson: true
+  - task: UseDotNet@2
+    displayName: Install dotnet 2.1 for gitversion. That requiered it.
+    inputs:
+      packageType: "sdk"
+      version: 2.1.x
   - task: DotNetCoreCLI@2
     displayName: 'Install GitVersion: $(GitVersion)'
     inputs:
