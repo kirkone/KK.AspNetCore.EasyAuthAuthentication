@@ -17,14 +17,17 @@ steps:
     inputs:
       packageType: "sdk"
       useGlobalJson: true
-
   - task: DotNetCoreCLI@2
     displayName: 'Install GitVersion: $(GitVersion)'
     inputs:
       command: custom
       custom: 'tool'
       arguments: 'install GitVersion.Tool --version $(GitVersion)  --tool-path /pipelines/tools/gitversion'
-
+  - task: PowerShell@2
+    displayName: "Check installed tools"
+    inputs:
+      script: "Get-ChildItem -Path $PSScriptRoot/gitversion/ -Recurse"
+      workingDirectory: "$(ProjectFolder)"  
   - task: PowerShell@2
     displayName: Run GitVersion
     inputs:
