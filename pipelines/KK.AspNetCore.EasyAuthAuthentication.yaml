@@ -26,7 +26,7 @@ steps:
   - task: PowerShell@2
     displayName: "Check installed tools"
     inputs:
-      script: 'Get-ChildItem -Path "$PSScriptRoot/gitversion/" -Recurse'
+      script: 'Get-ChildItem -Path "gitversion/" -Recurse'
       targetType: inline
       workingDirectory: "$(ProjectFolder)"  
   - task: PowerShell@2
