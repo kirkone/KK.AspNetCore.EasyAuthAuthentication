@@ -29,12 +29,6 @@ steps:
       custom: 'tool'
       arguments: 'install GitVersion.Tool --version $(GitVersion)  --tool-path pipelines/tools/gitversion'
   - task: PowerShell@2
-    displayName: "Check installed tools"
-    continueOnError: true
-    inputs:
-      script: '$PWD; Get-ChildItem -Path pipelines/tools/gitversion -Recurse; pipelines/tools/gitversion/dotnet-gitversion;'
-      targetType: inline      
-  - task: PowerShell@2
     displayName: Run GitVersion
     inputs:
       targetType: "filePath"
