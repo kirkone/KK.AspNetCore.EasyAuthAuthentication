@@ -25,10 +25,11 @@ steps:
       arguments: 'install GitVersion.Tool --version $(GitVersion)  --tool-path pipelines/tools/gitversion'
   - task: PowerShell@2
     displayName: "Check installed tools"
+    continueOnError: true
     inputs:
       script: 'Get-ChildItem -Path pipelines/tools/gitversion -Recurse'
       targetType: inline
-      workingDirectory: "$(ProjectFolder)"  
+      workingDirectory: "$(ProjectFolder)"      
   - task: PowerShell@2
     displayName: Run GitVersion
     inputs:
