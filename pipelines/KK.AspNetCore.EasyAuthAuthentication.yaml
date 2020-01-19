@@ -27,7 +27,7 @@ steps:
     displayName: "Check installed tools"
     continueOnError: true
     inputs:
-      script: '$PWD; Get-ChildItem -Path pipelines/tools/gitversion -Recurse'
+      script: '$PWD; Get-ChildItem -Path pipelines/tools/gitversion -Recurse; pipelines/tools/gitversion/dotnet-gitversion;'
       targetType: inline      
   - task: PowerShell@2
     displayName: Run GitVersion
