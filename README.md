@@ -107,7 +107,6 @@ Here are some notes to the json above:
 - you can create own providers but this must implement `IEasyAuthAuthentificationService`. But you must also activate them here. (Don't but them in the DI. This package will do this by it's own.)
 - The `ProviderName` is the class name of the provider. that must be unique in your application.
 
-
 > A list of all providers can be found in the headline `Auth Provider`
 
 ### Configure options via code (not recommended)
