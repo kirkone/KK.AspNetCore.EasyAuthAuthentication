@@ -22,11 +22,11 @@ steps:
     inputs:
       command: custom
       custom: 'tool'
-      arguments: 'install GitVersion.Tool --version $(GitVersion)  --tool-path /pipelines/tools/gitversion'
+      arguments: 'install GitVersion.Tool --version $(GitVersion)  --tool-path pipelines/tools/gitversion'
   - task: PowerShell@2
     displayName: "Check installed tools"
     inputs:
-      script: 'Get-ChildItem -Path gitversion -Recurse'
+      script: 'Get-ChildItem -Path pipelines/tools/gitversion -Recurse'
       targetType: inline
       workingDirectory: "$(ProjectFolder)"  
   - task: PowerShell@2
