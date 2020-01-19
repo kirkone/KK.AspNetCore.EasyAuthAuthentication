@@ -12,6 +12,7 @@
     <Copyright>MIT</Copyright>
     <LangVersion>8.0</LangVersion>
     <Nullable>enable</Nullable>
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
   </PropertyGroup>
 
   <ItemGroup>
