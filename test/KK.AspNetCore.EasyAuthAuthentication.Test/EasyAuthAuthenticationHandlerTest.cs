@@ -30,10 +30,6 @@ namespace KK.AspNetCore.EasyAuthAuthentication.Test
         private readonly ILoggerFactory loggerFactory = new NullLoggerFactory();
         private readonly UrlEncoder urlEncoder = new UrlTestEncoder();
         private readonly ISystemClock clock = new SystemClock();
-        public EasyAuthAuthenticationHandlerTest()
-        {
-
-        }
 
         [Fact]
         public async Task IfAnProviderIsEnabledUseEnabledProvider()
