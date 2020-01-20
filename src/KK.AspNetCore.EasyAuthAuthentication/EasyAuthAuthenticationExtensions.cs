@@ -29,7 +29,7 @@ namespace KK.AspNetCore.EasyAuthAuthentication
         /// <param name="authenticationScheme">The schema for the Easy Auth handler.</param>
         /// <returns>A reference to this instance after the operation has completed.</returns>
         public static AuthenticationBuilder AddEasyAuth(this AuthenticationBuilder builder, string authenticationScheme)
-            => builder.AddEasyAuth(authenticationScheme, configureOptions: null);
+            => builder.AddEasyAuth(authenticationScheme, configureOptions: (d) => {});
 
         /// <summary>
         /// Adds the <see cref="EasyAuthAuthenticationHandler"/> for authentication.
@@ -49,6 +49,27 @@ namespace KK.AspNetCore.EasyAuthAuthentication
         /// <returns>A reference to this instance after the operation has completed.</returns>
         public static AuthenticationBuilder AddEasyAuth(this AuthenticationBuilder builder, string authenticationScheme, Action<EasyAuthAuthenticationOptions> configureOptions)
             => builder.AddEasyAuth(authenticationScheme, displayName: EasyAuthAuthenticationDefaults.DisplayName, configureOptions: configureOptions);
+        /// <summary>
+        /// Adds the <see cref="EasyAuthAuthenticationHandler"/> for authentication.
+        /// </summary>
+        /// <param name="builder"><inheritdoc/></param>
+        /// <param name="configuration">The configuration object of the application.</param>        
+        /// <param name="displayName">The display name for the Easy Auth handler.</param>
+        /// <returns>A reference to this instance after the operation has completed.</returns>
+        public static AuthenticationBuilder AddEasyAuth(
+            this AuthenticationBuilder builder,
+            IConfiguration configuration,
+            string displayName) => AddEasyAuth(builder, configuration, EasyAuthAuthenticationDefaults.AuthenticationScheme, displayName);
+
+        /// <summary>
+        /// Adds the <see cref="EasyAuthAuthenticationHandler"/> for authentication.
+        /// </summary>
+        /// <param name="builder"><inheritdoc/></param>
+        /// <param name="configuration">The configuration object of the application.</param>
+        /// <returns>A reference to this instance after the operation has completed.</returns>
+        public static AuthenticationBuilder AddEasyAuth(
+            this AuthenticationBuilder builder,
+            IConfiguration configuration) => AddEasyAuth(builder, configuration, EasyAuthAuthenticationDefaults.AuthenticationScheme, EasyAuthAuthenticationDefaults.DisplayName);
 
         /// <summary>
         /// Adds the <see cref="EasyAuthAuthenticationHandler"/> for authentication.
@@ -61,8 +82,8 @@ namespace KK.AspNetCore.EasyAuthAuthentication
         public static AuthenticationBuilder AddEasyAuth(
             this AuthenticationBuilder builder,
             IConfiguration configuration,
-            string authenticationScheme = EasyAuthAuthenticationDefaults.AuthenticationScheme,
-            string displayName = EasyAuthAuthenticationDefaults.DisplayName)
+            string authenticationScheme,
+            string displayName)
         {
             var options = new EasyAuthAuthenticationOptions
             {
@@ -93,7 +114,11 @@ namespace KK.AspNetCore.EasyAuthAuthentication
         /// <param name="displayName">The display name for the Easy Auth handler.</param>
         /// <param name="configureOptions">A callback to configure <see cref="EasyAuthAuthenticationOptions"/>.</param>
         /// <returns>A reference to this instance after the operation has completed.</returns>
-        public static AuthenticationBuilder AddEasyAuth(this AuthenticationBuilder builder, string authenticationScheme, string displayName, Action<EasyAuthAuthenticationOptions> configureOptions)
+        public static AuthenticationBuilder AddEasyAuth(
+            this AuthenticationBuilder builder, 
+            string authenticationScheme, 
+            string displayName, 
+            Action<EasyAuthAuthenticationOptions> configureOptions)
         {
             var allAuthServicesToRegister = AppDomain.CurrentDomain.GetAssemblies().SelectMany(x => x.GetTypes())
                 .Where(x => typeof(IEasyAuthAuthentificationService).IsAssignableFrom(x) && !x.IsInterface && !x.IsAbstract);
