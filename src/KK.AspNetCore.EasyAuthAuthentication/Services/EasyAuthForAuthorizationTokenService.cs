@@ -42,7 +42,10 @@ namespace KK.AspNetCore.EasyAuthAuthentication.Services
         public EasyAuthForAuthorizationTokenService(ILogger<EasyAuthForAuthorizationTokenService> logger) => this.logger = logger;
 
         /// <inheritdoc/>
-        public AuthenticateResult AuthUser(HttpContext context, ProviderOptions options = null)
+        public AuthenticateResult AuthUser(HttpContext context) => this.AuthUser(context, null);
+
+        /// <inheritdoc/>
+        public AuthenticateResult AuthUser(HttpContext context, ProviderOptions? options)
         {
             this.defaultOptions.ChangeModel(options);
 
@@ -56,7 +59,7 @@ namespace KK.AspNetCore.EasyAuthAuthentication.Services
                 */
                 identityProviderClaim = tokenJson[IssuerKey]?.ToString();
             }
-            if(string.IsNullOrWhiteSpace(identityProviderClaim?.ToString()))
+            if (string.IsNullOrWhiteSpace(identityProviderClaim?.ToString()))
             {
                 throw new ArgumentException($"In the AAD authentification token are {IdentityProviderKey} and {IssuerKey} missing. This isn't a valid token.");
             }

@@ -204,7 +204,8 @@ namespace KK.AspNetCore.EasyAuthAuthentication.Test
 
         private class TestProvider : IEasyAuthAuthentificationService
         {
-            public AuthenticateResult AuthUser(HttpContext context, ProviderOptions options = null)
+            public AuthenticateResult AuthUser(HttpContext context) => this.AuthUser(context, null);
+            public AuthenticateResult AuthUser(HttpContext context, ProviderOptions options)
             {
                 var claims = new List<Claim>()
                 {

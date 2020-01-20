@@ -43,8 +43,8 @@ namespace KK.AspNetCore.EasyAuthAuthentication.Models
         /// That would change the defined options of the current provider options object.
         /// </summary>
         /// <param name="options">The provider options model with the new options.</param>
-        public void ChangeModel(ProviderOptions options)
-        {
+        public void ChangeModel(ProviderOptions? options)
+        {            
             if (options == null)
             {
                 return;

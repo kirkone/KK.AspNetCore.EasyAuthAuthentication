@@ -52,10 +52,17 @@ namespace KK.AspNetCore.EasyAuthAuthentication.Services
         /// <summary>
         /// build up identity from <see cref="PrincipalObjectHeader"/> header set by EasyAuth filters if user openId connect session cookie or oauth bearer token authenticated ...
         /// </summary>
+        /// <param name="context">Http context of the request.</param>        
+        /// <returns>An <see cref="AuthenticateResult" />.</returns>
+        public AuthenticateResult AuthUser(HttpContext context) => this.AuthUser(context, null);
+
+        /// <summary>
+        /// build up identity from <see cref="PrincipalObjectHeader"/> header set by EasyAuth filters if user openId connect session cookie or oauth bearer token authenticated ...
+        /// </summary>
         /// <param name="context">Http context of the request.</param>
         /// <param name="options">The <c>EasyAuthAuthenticationOptions</c> to use.</param>
         /// <returns>An <see cref="AuthenticateResult" />.</returns>
-        public AuthenticateResult AuthUser(HttpContext context, ProviderOptions options = null)
+        public AuthenticateResult AuthUser(HttpContext context, ProviderOptions? options)
         {
             this.defaultOptions.ChangeModel(options);
 
