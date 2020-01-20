@@ -94,10 +94,12 @@ namespace KK.AspNetCore.EasyAuthAuthentication.Services
                             .Replace(JWTIdentifier, string.Empty)
                             .Replace(" ", string.Empty)
                             .Split('.')[1];
+            var cleanupTokenBuilder = new StringBuilder(cleanupToken);
             while (cleanupToken.Length % 4 != 0)
             {
-                cleanupToken += "=";
+                cleanupTokenBuilder.Append("=");
             }
+            cleanupToken = cleanupTokenBuilder.ToString();
 
             this.logger.LogDebug($"Cleanup token is: {cleanupToken}");
             var xMsClientPrincipal = JObject.Parse(
