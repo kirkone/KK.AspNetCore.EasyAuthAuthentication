@@ -95,7 +95,7 @@ namespace KK.AspNetCore.EasyAuthAuthentication.Services
                             .Replace(" ", string.Empty)
                             .Split('.')[1];
             var cleanupTokenBuilder = new StringBuilder(cleanupToken);
-            while (cleanupToken.Length % 4 != 0)
+            while (cleanupTokenBuilder.Length % 4 != 0)
             {
                 cleanupTokenBuilder.Append("=");
             }
