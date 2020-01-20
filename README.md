@@ -12,7 +12,7 @@ The EasyAuth handler is provided as a nuget package and can be found on nuget.or
 
 You can add the package for example with the following `dotnet` command:
 
-```
+```bash
 dotnet add package KK.AspNetCore.EasyAuthAuthentication
 ```
 
