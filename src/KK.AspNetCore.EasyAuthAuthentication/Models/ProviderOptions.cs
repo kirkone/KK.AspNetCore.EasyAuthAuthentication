@@ -37,7 +37,7 @@ namespace KK.AspNetCore.EasyAuthAuthentication.Models
         /// <summary>
         /// Define if this provide is active.
         /// </summary>
-        public bool Enabled { get; set; } = false;
+        public bool Enabled { get; set; }
 
         /// <summary>
         /// That would change the defined options of the current provider options object.
