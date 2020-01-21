@@ -90,21 +90,25 @@ To configure you providers you simple add the following to your appsettings.json
     "AuthEndpoint": ".auth/me",
     "providerOptions": [
       {
-        "ProviderName": "EasyAuthForApplicationsService",
-        "Enabled": true
+        "ProviderName": "EasyAuthForAuthorizationTokenService",
+        "Enabled": true,
+        "NameClaimType": "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/spn", // optional
+        "RoleClaimType": "roles" // optional
       },
       {
         "ProviderName": "EasyAuthWithHeaderService",
-        "Enabled": true
+        "Enabled": true,
+        "NameClaimType": "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress", //optional
+        "RoleClaimType": "http://schemas.microsoft.com/ws/2008/06/identity/claims/role" //optional
       }
     ]
   }
 ```
 
-Here are some notes to the json above:
+Here are some notes to the JSON above:
 
 - each provider is disabled in default so you must enabled it
-- you can create own providers but this must implement `IEasyAuthAuthentificationService`. But you must also activate them here. (Don't but them in the DI. This package will do this by it's own.)
+- you can create own providers but there must implement `IEasyAuthAuthentificationService`. But you must also activate them here. (Don't put them in the DI. This package will do this by it's own.)
 - The `ProviderName` is the class name of the provider. that must be unique in your application.
 
 > A list of all providers can be found in the headline `Auth Provider`
@@ -113,7 +117,7 @@ Here are some notes to the json above:
 
 #### Custom options
 
-You can provide additional options vor the middleware:
+You can provide additional options for the middleware:
 
 ```csharp
 ).AddEasyAuth(
@@ -159,7 +163,7 @@ There are some predefined providers in this package. If you need your own or wan
 
 This is a little bit special provider. That provider can't be configured and it isn't implementing `IEasyAuthAuthentificationService`. This provider is for the development case, so a developer can create a JSON with the content of the `/.auth/me` endpoint of an EasyAuth Azure Web App. So you don't need a internet connection or azure for development and can use only local things.
 
-### `EasyAuthForApplicationsService`
+### `EasyAuthForAuthorizationTokenService`
 
 This provider is for the case you have a Azure Web App that is not only be used by humans. so maybe you want access your app with an Service Principal (SPN). If you enabled this provider you can access your app with Azure Ad Service Principals (SPN).
 
