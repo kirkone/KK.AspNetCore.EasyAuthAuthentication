@@ -49,6 +49,18 @@ steps:
       arguments: "--configuration $(buildConfiguration)"
 
   - task: DotNetCoreCLI@2
+    displayName: Pack Pullrequest
+    condition: and(succeeded(), eq(variables['Build.Reason'], 'PullRequest'))
+    inputs:
+      command: "pack"
+      packagesToPack: "$(Project)"
+      nobuild: true
+      arguments: "--configuration $(buildConfiguration)"
+      buildProperties: "VersionPrefix=$(GitVersion.MajorMinorPatch);VersionSuffix=pre-$(Build.BuildNumber);PackageId=KK.AspNetCore.EasyAuthAuthentication$(System.PullRequest.PullRequestId)"
+      packDirectory: "$(Build.ArtifactStagingDirectory)"
+      verbosityPack: Normal
+
+  - task: DotNetCoreCLI@2
     displayName: Pack Internal
     condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
     inputs:
@@ -74,7 +86,7 @@ steps:
 
   - task: PublishBuildArtifacts@1
     displayName: Publish Artifact
-    condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
+    condition: and(succeeded(), or(eq(variables['Build.SourceBranch'], 'refs/heads/master'), eq(variables['Build.Reason'], 'PullRequest')))
     inputs:
       pathtoPublish: "$(Build.ArtifactStagingDirectory)"
       artifactName: NuGet
