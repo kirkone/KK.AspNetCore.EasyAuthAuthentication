@@ -52,7 +52,8 @@ namespace KK.AspNetCore.EasyAuthAuthentication.Test.Services
                 Claims = new List<InputClaims>()
                 {
                     new InputClaims() {Typ=  "x", Value= "y"},
-                    new InputClaims() {Typ=  ClaimTypes.Email, Value= "PrincipalName"}
+                    new InputClaims() {Typ=  ClaimTypes.Email, Value= "PrincipalName"},
+                    new InputClaims() {Typ = ClaimTypes.Role, Value = "Admin"}
                 }
             };
             var json = JsonConvert.SerializeObject(inputObject);
@@ -64,6 +65,7 @@ namespace KK.AspNetCore.EasyAuthAuthentication.Test.Services
             // Arrange
             Assert.True(result.Succeeded);
             Assert.Equal("PrincipalName", result.Principal.Identity.Name);
+            Assert.True(result.Principal.IsInRole("Admin"));
         }
 
         private static string Base64Encode(string plainText)

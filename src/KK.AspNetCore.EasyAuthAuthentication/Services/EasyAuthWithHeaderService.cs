@@ -28,7 +28,8 @@ namespace KK.AspNetCore.EasyAuthAuthentication.Services
 
         private readonly ProviderOptions defaultOptions = new ProviderOptions(typeof(EasyAuthWithHeaderService).Name)
         {
-            NameClaimType = ClaimTypes.Email
+            NameClaimType = ClaimTypes.Email,
+            RoleClaimType = ClaimTypes.Role
         };
 
         /// <summary>
