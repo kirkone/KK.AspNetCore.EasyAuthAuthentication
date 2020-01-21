@@ -20,13 +20,13 @@ namespace KK.AspNetCore.EasyAuthAuthentication.Models
         /// <summary>
         /// The <c>ClaimType</c> for the Idendity User.
         /// </summary>
-        /// <value>The Claim Type to use for the User. Default is <c>ClaimTypes.Name</c>.</value>
+        /// <value>The Claim Type to use for the User. Default is <c>ClaimType</c> of the auth provider.</value>
         public string NameClaimType { get; set; }
 
         /// <summary>
         /// The <c>ClaimType</c> for the Idendity Role.
         /// </summary>
-        /// <value>The Claim Type to use for the Roles. Default is <c>ClaimTypes.Role</c>.</value>
+        /// <value>The Claim Type to use for the Roles. Default is <c>ClaimType</c> of the auth provider.</value>
         public string RoleClaimType { get; set; }
 
         /// <summary>

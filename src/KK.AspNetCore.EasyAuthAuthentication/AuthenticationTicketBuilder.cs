@@ -22,8 +22,8 @@ namespace KK.AspNetCore.EasyAuthAuthentication
             var identity = new ClaimsIdentity(
                             CreateClaims(claimsPayload, options),
                             AuthenticationTypesNames.Federation,
-                            options.NameClaimType,
-                            options.RoleClaimType
+                            ClaimTypes.Name,
+                            ClaimTypes.Role
                         );
             AddScopeClaim(identity);
             AddProviderNameClaim(identity, providerName);
@@ -43,6 +43,10 @@ namespace KK.AspNetCore.EasyAuthAuthentication
                 else if (claimType == options.RoleClaimType)
                 {
                     yield return new Claim(ClaimTypes.Role, claim.Values);
+                }
+                else if (claimType == options.NameClaimType)
+                {
+                    yield return new Claim(ClaimTypes.Name, claim.Values);
                 }
                 else
                 {
