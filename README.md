@@ -1,6 +1,6 @@
 # KK.AspNetCore.EasyAuthAuthentication
 
-This helps getting azure appservice authentication working with asp.net core
+This helps getting azure appservice authentication working with asp.net core. 
 
 ## Nuget
 
@@ -20,7 +20,7 @@ Pre-releases of this Package are pushed to an internal feed an Azure DevOps. The
 
 ## Build
 
-The build environment for this project is on Azure DevOps and can be found here [dev.azure.com/kirkone/KK.AspNetCore.EasyAuthAuthentication](https://dev.azure.com/kirkone/KK.AspNetCore.EasyAuthAuthentication/_build)
+The build environment for this project is on Azure DevOps and can be found here [dev.azure.com/kirkone/KK.AspNetCore.EasyAuthAuthentication](https://dev.azure.com/kirkone/KK.AspNetCore.EasyAuthAuthentication/_build). 
 
 ### Nuget package build
 
@@ -204,8 +204,9 @@ See also the list of [contributors](https://github.com/kirkone/KK.AspNetCore.Eas
 
 ## License
 
-This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details
+This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details. 
 
 ## Acknowledgments
 
 -   Inspired by this [StackOverflow post](https://stackoverflow.com/a/42402163/6526640) and this [GitHub](https://github.com/lpunderscore/azureappservice-authentication-middleware) repo
+

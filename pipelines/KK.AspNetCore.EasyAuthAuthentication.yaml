@@ -56,7 +56,7 @@ steps:
       packagesToPack: "$(Project)"
       nobuild: true
       arguments: "--configuration $(buildConfiguration)"
-      buildProperties: "VersionPrefix=$(GitVersion.MajorMinorPatch);VersionSuffix=pre-$(Build.BuildNumber);PackageId=PR$(System.PullRequest.pullRequestNumber)-KK.AspNetCore.EasyAuthAuthentication"
+      buildProperties: "VersionPrefix=$(GitVersion.MajorMinorPatch);VersionSuffix=pre-$(Build.BuildNumber);PackageId=PR-$(System.PullRequest.pullRequestNumber)-KK.AspNetCore.EasyAuthAuthentication"
       packDirectory: "$(Build.ArtifactStagingDirectory)"
       verbosityPack: Normal
 
