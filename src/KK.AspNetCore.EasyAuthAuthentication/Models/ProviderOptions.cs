@@ -1,6 +1,7 @@
 namespace KK.AspNetCore.EasyAuthAuthentication.Models
 {
     using System;
+    using System.Security.Claims;
 
     /// <summary>
     /// All options you can set per provider.
@@ -15,6 +16,35 @@ namespace KK.AspNetCore.EasyAuthAuthentication.Models
         public ProviderOptions(string providerName)
         {
             this.ProviderName = providerName;
+            this.NameClaimType = ClaimTypes.Name;
+            this.NameClaimType = ClaimTypes.Role;
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ProviderOptions"/> class.
+        /// </summary>
+        /// <param name="providerName">The name of the provider.</param>
+        /// <param name="nameClaimType">The name of the field in the provider data, that contains the name of the user.</param>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0021:Use expression body for constructors", Justification = "This syntax is better for the human eyes.")]
+        public ProviderOptions(string providerName, string nameClaimType)
+        {
+            this.ProviderName = providerName;
+            this.NameClaimType = nameClaimType;
+            this.NameClaimType = ClaimTypes.Role;
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ProviderOptions"/> class.
+        /// </summary>
+        /// <param name="providerName">The name of the provider.</param>
+        /// <param name="nameClaimType">The name of the field in the provider data, that contains the name of the user.</param>
+        /// <param name="roleNameClaimType">The name of the field in the provider data, that contains all roles of the user.</param>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0021:Use expression body for constructors", Justification = "This syntax is better for the human eyes.")]
+        public ProviderOptions(string providerName, string nameClaimType, string roleNameClaimType)
+        {
+            this.ProviderName = providerName;
+            this.NameClaimType = nameClaimType;
+            this.NameClaimType = roleNameClaimType;
         }
 
         /// <summary>
