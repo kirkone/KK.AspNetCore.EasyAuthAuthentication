@@ -41,7 +41,7 @@ namespace KK.AspNetCore.EasyAuthAuthentication.Models
         {
             this.ProviderName = providerName;
             this.NameClaimType = nameClaimType;
-            this.NameClaimType = roleNameClaimType;
+            this.RoleClaimType  = roleNameClaimType;
         }
 
         /// <summary>
