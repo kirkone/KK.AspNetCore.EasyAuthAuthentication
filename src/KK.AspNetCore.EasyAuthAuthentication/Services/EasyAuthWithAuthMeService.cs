@@ -104,7 +104,7 @@ namespace KK.AspNetCore.EasyAuthAuthentication.Services
 
         private async Task<JArray> GetAuthMe(HttpClientHandler handler, HttpRequestMessage httpRequest)
         {
-            JArray payload = null;
+            JArray? payload = null;
             using (var client = new HttpClient(handler))
             {
                 var response = await client.SendAsync(httpRequest);
