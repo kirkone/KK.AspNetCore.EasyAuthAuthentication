@@ -13,6 +13,9 @@
     <LangVersion>8.0</LangVersion>
     <Nullable>enable</Nullable>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    <WarningsAsErrors>
+      CS8600;CS8602;CS8603<!--The identifiers are all for nullable errors. See here: https://www.tabsoverspaces.com/233764-switch-to-errors-instead-of-warnings-for-nullable-reference-types-in-csharp-8-->      
+    </WarningsAsErrors>
   </PropertyGroup>
 
   <ItemGroup>
