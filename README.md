@@ -2,7 +2,7 @@
 
 This helps getting azure appservice authentication working with asp.net core. 
 
-## Nuget
+## NuGet
 
 The EasyAuth handler is provided as a nuget package and can be found on nuget.org.
 
@@ -16,7 +16,9 @@ You can add the package for example with the following `dotnet` command:
 dotnet add package KK.AspNetCore.EasyAuthAuthentication
 ```
 
-Pre-releases of this Package are pushed to an internal feed an Azure DevOps. There is no public access to this feeds at the moment.
+Pre-releases of this Package are pushed to an internal <a href="https://dev.azure.com/kirkone/KK.AspNetCore.EasyAuthAuthentication/_packaging?_a=feed&feed=KK.AspNetCore.EasyAuthAuthentication" target="_blank">feed an Azure DevOps</a>.
+
+There are also access to packages from pull requests in another <a href="https://dev.azure.com/kirkone/KK.AspNetCore.EasyAuthAuthentication/_packaging?_a=feed&feed=KK.AspNetCore.EasyAuthAuthentication-PR" target="_blank">Azure DevOps feed</a>. All Packages in this feed has a name like this: `PR-{pull request number}-KK.AspNetCore.EasyAuthAuthentication`. So you must only pick the package of your PR to check your changes in a test project. All changes of the pull request are tracked in the pull request package version history.
 
 ## Build
 
@@ -57,7 +59,7 @@ app.UseAuthentication();
 
 This will enable the `EasyAuthAuthenticationHandler` in your app.
 
-### ...Controller.cs
+### Controller.cs
 
 In your controllers you can access the `User` property as usual:
 
@@ -107,7 +109,7 @@ To configure you providers you simple add the following to your appsettings.json
 
 Here are some notes to the JSON above:
 
-- each provider is disabled in default so you must enabled it
+- each provider is disabled by default so you must enabled it
 - you can create own providers but there must implement `IEasyAuthAuthentificationService`. But you must also activate them here. (Don't put them in the DI. This package will do this by it's own.)
 - The `ProviderName` is the class name of the provider. that must be unique in your application.
 
@@ -153,7 +155,7 @@ For example:
 
 > **Info**: Make sure you added static file handling to your pipeline by adding `app.UseStaticFiles();` to your `public void Configure` method in the `Startup.cs`, e.g. just after `app.UseHttpsRedirection();` entry. Otherwise the static file can not be found at runtime.
 
-> **Info**: Using a wwwroot sub-folder name that starts with `'.'`&nbsp;, like the suggested `.auth` folder name, is useful for content relevant only for localhost debugging as these are treated as hidden folders and are not included in publish output.
+> **Info**: Using a wwwroot sub-folder name that starts with `'.'`, like the suggested `.auth` folder name, is useful for content relevant only for localhost debugging as these are treated as hidden folders and are not included in publish output.
 
 ## Auth Provider
 
