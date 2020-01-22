@@ -26,11 +26,7 @@ namespace KK.AspNetCore.EasyAuthAuthentication.Services
         private static readonly Func<IHeaderDictionary, string, bool> IsHeaderSet =
             (headers, headerName) => !string.IsNullOrEmpty(headers[headerName].ToString());
 
-        private readonly ProviderOptions defaultOptions = new ProviderOptions(typeof(EasyAuthWithHeaderService).Name)
-        {
-            NameClaimType = ClaimTypes.Email,
-            RoleClaimType = ClaimTypes.Role
-        };
+        private readonly ProviderOptions defaultOptions = new ProviderOptions(typeof(EasyAuthWithHeaderService).Name, ClaimTypes.Email, ClaimTypes.Role);
 
         /// <summary>
         /// Initializes a new instance of the <see cref="EasyAuthWithHeaderService"/> class.

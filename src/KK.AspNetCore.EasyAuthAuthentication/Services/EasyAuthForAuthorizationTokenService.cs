@@ -27,11 +27,7 @@ namespace KK.AspNetCore.EasyAuthAuthentication.Services
         private static readonly Func<IHeaderDictionary, string, bool> IsHeaderSet =
            (headers, headerName) => !string.IsNullOrEmpty(headers[headerName].ToString());
 
-        private readonly ProviderOptions defaultOptions = new ProviderOptions(typeof(EasyAuthForAuthorizationTokenService).Name)
-        {
-            NameClaimType = ClaimTypes.Spn,
-            RoleClaimType = "roles"
-        };
+        private readonly ProviderOptions defaultOptions = new ProviderOptions(typeof(EasyAuthForAuthorizationTokenService).Name, ClaimTypes.Spn, "roles");
 
         private readonly ILogger<EasyAuthForAuthorizationTokenService> logger;
 
