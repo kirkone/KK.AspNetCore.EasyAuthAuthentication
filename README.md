@@ -192,7 +192,7 @@ This will allow a spn to get the role `SystemAdmin` in your protected applicatio
 
 ### `EasyAuthWithHeaderService`
 
-This is the most common auth provider. This let you use Azure Active Directory Users in your easy auth application.
+This is the most common auth provider. You can use it to work with Azure Active Directory Users in your easy auth application.
 
 ## Authors
 
