@@ -1,0 +1,21 @@
+parameters:
+  - name: 'name'
+    type: string
+    default: ''
+  - name: 'buildProperties'
+    type: string
+    default: 'VersionPrefix=$(GitVersion.MajorMinorPatch);VersionSuffix='
+  - name: 'condition'
+
+steps:
+  - task: DotNetCoreCLI@2
+    displayName: 'Pack ${{ parameters.name }}'
+    condition: '${{ parameters.condition }}'
+    inputs:
+      command: 'pack'
+      packagesToPack: '$(Project)'
+      nobuild: true
+      arguments: '--configuration $(buildConfiguration) --no-restore'
+      buildProperties: '${{ parameters.buildProperties }}'
+      packDirectory: '$(Build.ArtifactStagingDirectory)'
+      verbosityPack: Normal
