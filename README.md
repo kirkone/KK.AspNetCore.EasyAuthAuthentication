@@ -167,7 +167,7 @@ This is a slightly special provider. This provider cannot be configured and does
 
 ### `EasyAuthForAuthorizationTokenService`
 
-This provider is for the case you have a Azure Web App that is not only be used by humans. so maybe you want access your app with an Service Principal (SPN). If you enabled this provider you can access your app with Azure Ad Service Principals (SPN).
+ Use this provider if you have a Azure Web App, that is not only be used by humans. For instance if you want to access your app with a Service Principal (SPN). 
 
 To create an Service Principal (SPN) that can have access to your EasyAuth protected Application you must change the app manifest for you application in your Azure AD. Thanks to [Suzuko123](https://github.com/Suzuko123) for the following sample:
 
