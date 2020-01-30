@@ -7,15 +7,15 @@ Begin {
 
 Process {
     Write-Verbose "Running GitVersion ..."
-    $gitversionoutput = & "$PSScriptRoot/gitversion/dotnet-gitversion" $PWD /updateassemblyinfo AssemblyInfo.cs /ensureassemblyinfo /output json
+    $gitversionoutput = & "$PSScriptRoot/gitversion/dotnet-gitversion*" $PWD /updateassemblyinfo AssemblyInfo.cs /ensureassemblyinfo /output json
     Write-Verbose "    Done"
 
     $jsonObj = "$gitversionoutput" | ConvertFrom-Json
 
     Write-Verbose "Writing variables ..."
     foreach ($property in $jsonObj.PSObject.Properties) {
-        Write-Verbose "    GitVersion.$($property.Name): $($property.Value)"
-        Write-Output "##vso[task.setvariable variable=GitVersion.$($property.Name);]$($property.Value)"
+        Write-Verbose "    GitVersion_$($property.Name): $($property.Value)"
+        Write-Output "##vso[task.setvariable variable=GitVersion_$($property.Name);]$($property.Value)"
     }
     Write-Verbose "    Done"
 }
