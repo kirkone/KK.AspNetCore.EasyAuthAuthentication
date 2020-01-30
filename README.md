@@ -163,7 +163,7 @@ There are some predefined providers in this package. If you need your own or wan
 
 ### `EasyAuthWithAuthMeService` (always on)
 
-This is a little bit special provider. That provider can't be configured and it isn't implementing `IEasyAuthAuthentificationService`. This provider is for the development case, so a developer can create a JSON with the content of the `/.auth/me` endpoint of an EasyAuth Azure Web App. So you don't need a internet connection or azure for development and can use only local things.
+This is a slightly special provider. This provider cannot be configured and does not implement the 'IEasyAuthAuthentificationService'. This provider is for development. A developer can create a JSON with the content of the `/.auth/me` endpoint of an EasyAuth Azure Web App. So you don't need a connection to the internet or azure for development and just use your local things.
 
 ### `EasyAuthForAuthorizationTokenService`
 
@@ -211,4 +211,3 @@ This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md
 ## Acknowledgments
 
 -   Inspired by this [StackOverflow post](https://stackoverflow.com/a/42402163/6526640) and this [GitHub](https://github.com/lpunderscore/azureappservice-authentication-middleware) repo
-
