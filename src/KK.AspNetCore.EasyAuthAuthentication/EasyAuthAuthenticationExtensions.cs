@@ -87,7 +87,7 @@ namespace KK.AspNetCore.EasyAuthAuthentication
         {
             var options = new EasyAuthAuthenticationOptions
             {
-                AuthEndpoint = configuration.GetValue<string>("easyAuthOptions:AuthEndpoint"),
+                AuthEndpoint = configuration.GetValue<string>("easyAuthOptions:AuthEndpoint"),                
                 ProviderOptions = configuration
                 .GetSection("easyAuthOptions:providerOptions")
                 .GetChildren()
@@ -99,6 +99,10 @@ namespace KK.AspNetCore.EasyAuthAuthentication
                     return providerOptions;
                 }).ToList()
             };
+            if (string.IsNullOrWhiteSpace(options.AuthEndpoint))
+            {
+                throw new ArgumentNullException("The 'AuthEndpoint' in the configuraiton for easy auth can't be empty! please add the setting to your configuration providers.");
+            }
             return builder.AddEasyAuth(authenticationScheme, displayName, o =>
             {
                 o.AuthEndpoint = options.AuthEndpoint;
