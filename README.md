@@ -169,7 +169,7 @@ This is a slightly special provider. This provider cannot be configured and does
 
  Use this provider if you have a Azure Web App, that is not only be used by humans. For instance if you want to access your app with a Service Principal (SPN). 
 
-To create an Service Principal (SPN) that can have access to your EasyAuth protected Application you must change the app manifest for you application in your Azure AD. Thanks to [Suzuko123](https://github.com/Suzuko123) for the following sample:
+To create a Service Principal (SPN), which get access to your EasyAuth protected Application. You have to change the app manifest for you application in your Azure AD. Thanks to [Suzuko123](https://github.com/Suzuko123) for the following sample:
 
 ```json
 "appRoles": [
