@@ -78,19 +78,19 @@ stages:
             parameters:
               name: 'PR'
               condition: and(succeeded(), eq(variables['Build.Reason'], 'PullRequest'))
-              buildProperties: 'VersionPrefix=$(GitVersion.MajorMinorPatch);VersionSuffix=pre-$(Build.BuildNumber);PackageId=PR-$(System.PullRequest.pullRequestNumber)-KK.AspNetCore.EasyAuthAuthentication'
+              buildProperties: 'VersionPrefix=$(GitVersion_MajorMinorPatch);VersionSuffix=pre-$(Build.BuildNumber);PackageId=PR-$(System.PullRequest.pullRequestNumber)-KK.AspNetCore.EasyAuthAuthentication'
 
           - template: templates/NuGet.Pack.yaml
             parameters:
               name: 'Internal'
               condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
-              buildProperties: 'VersionPrefix=$(GitVersion.MajorMinorPatch);VersionSuffix=pre-$(Build.BuildNumber)'
+              buildProperties: 'VersionPrefix=$(GitVersion_MajorMinorPatch);VersionSuffix=pre-$(Build.BuildNumber)'
 
           - template: templates/NuGet.Pack.yaml
             parameters:
               name: 'Release'
               condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
-              buildProperties: 'VersionPrefix=$(GitVersion.MajorMinorPatch);VersionSuffix='
+              buildProperties: 'VersionPrefix=$(GitVersion_MajorMinorPatch);VersionSuffix='
 
           - task: PublishBuildArtifacts@1
             displayName: 'Publish Artifact'
