@@ -46,7 +46,7 @@ namespace KK.AspNetCore.EasyAuthAuthentication.Services
             this.defaultOptions.ChangeModel(options);
 
             var tokenJson = this.GetTokenJson(context.Request.Headers[AuthorizationHeader].FirstOrDefault());
-            var claims = this.BuildFromApplicationAuth(tokenJson, this.defaultOptions);
+            var claims = this.BuildFromAuthToken(tokenJson, this.defaultOptions);
             var identityProviderClaim = tokenJson[IdentityProviderKey]?.ToString();
             if (identityProviderClaim == null)
             {
@@ -68,7 +68,7 @@ namespace KK.AspNetCore.EasyAuthAuthentication.Services
             IsHeaderSet(httpContext.Request.Headers, AuthorizationHeader) &&
             httpContext.Request.Headers[AuthorizationHeader].FirstOrDefault().Contains(JWTIdentifier);
 
-        private IEnumerable<AADClaimsModel> BuildFromApplicationAuth(JObject xMsClientPrincipal, ProviderOptions options)
+        private IEnumerable<AADClaimsModel> BuildFromAuthToken(JObject xMsClientPrincipal, ProviderOptions options)
         {
             this.logger.LogDebug($"payload was {xMsClientPrincipal[this.defaultOptions.RoleClaimType].ToString()}");
 
@@ -80,7 +80,13 @@ namespace KK.AspNetCore.EasyAuthAuthentication.Services
                 .Select(claimToken => new AADClaimsModel { Typ = claimToken.Name, Values = claimToken.Value.ToString() })
                 .ToList();
             claims.AddRange(otherClaims);
-            claims.Add(new AADClaimsModel { Typ = options.NameClaimType, Values = xMsClientPrincipal["appid"].ToString() });
+            claims.Add(new AADClaimsModel
+            {
+                Typ = options.NameClaimType,
+                Values = xMsClientPrincipal.ContainsKey("upn") ?
+                    xMsClientPrincipal["upn"].ToString() : // this appends if an user is using the auth token from the /.auth/me site on the website
+                    xMsClientPrincipal["appid"].ToString() // this appends if an applicaiton is try accessing the app.
+            });
             return claims;
         }
 
