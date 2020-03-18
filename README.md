@@ -1,6 +1,6 @@
 # KK.AspNetCore.EasyAuthAuthentication
 
-This helps getting azure appservice authentication working with asp.net core. 
+This helps getting azure appservice authentication working with asp.net core.
 
 ## NuGet
 
@@ -22,7 +22,7 @@ There are also access to packages from pull requests in another <a href="https:/
 
 ## Build
 
-The build environment for this project is on Azure DevOps and can be found here [dev.azure.com/kirkone/KK.AspNetCore.EasyAuthAuthentication](https://dev.azure.com/kirkone/KK.AspNetCore.EasyAuthAuthentication/_build). 
+The build environment for this project is on Azure DevOps and can be found here [dev.azure.com/kirkone/KK.AspNetCore.EasyAuthAuthentication](https://dev.azure.com/kirkone/KK.AspNetCore.EasyAuthAuthentication/_build).
 
 ### Nuget package build
 
@@ -136,7 +136,7 @@ The `NameClaimType` is the ClaimType of the value which one will be used to fill
 
 #### Local Debugging
 
-For debugging your application you can place a `me.json` in the `wwwroot/.auth` folder of your web app and add some configuration to the `AddEasyAuth` call.  
+For debugging your application you can place a `me.json` in the `wwwroot/.auth` folder of your web app and add some configuration to the `AddEasyAuth` call.
 For example:
 
 ```csharp
@@ -161,13 +161,18 @@ For example:
 
 There are some predefined providers in this package. If you need your own or want contribute to our existing providers you must implement the `IEasyAuthAuthentificationService`.
 
-### `EasyAuthWithAuthMeService` (always on)
+### `EasyAuthWithAuthMeService`
 
-This is a slightly special provider. This provider cannot be configured and does not implement the 'IEasyAuthAuthentificationService'. This provider is for development. A developer can create a JSON with the content of the `/.auth/me` endpoint of an EasyAuth Azure Web App. So you don't need a connection to the internet or azure for development and just use your local things.
+This is a slightly special provider. This provider cannot be configured. You can only turn it on or off. It also does **not** implement the 'IEasyAuthAuthentificationService'. This provider is for development. A developer can create a JSON with the content of the `/.auth/me` endpoint of an EasyAuth Azure Web App. So you don't need a connection to the internet or azure for development and just use your local things.
+You must only configure an Azure Web App with Authentification and browse the path:
+
+`https://hostnameOfYourWebSite/.auth/me`
+
+This endpoint return a json after the authentication. Put the content in a new file in your `wwwroot`folder. (create the same path like: `.auth/me.json`)
 
 ### `EasyAuthForAuthorizationTokenService`
 
- Use this provider if you have a Azure Web App, that is not only be used by humans. For instance if you want to access your app with a Service Principal (SPN). 
+ Use this provider if you have a Azure Web App, that is not only be used by humans. For instance if you want to access your app with a Service Principal (SPN).
 
 To create a Service Principal (SPN), which get access to your EasyAuth protected Application. You have to change the app manifest for you application in your Azure AD. Thanks to [Suzuko123](https://github.com/Suzuko123) for the following sample:
 
@@ -206,7 +211,7 @@ See also the list of [contributors](https://github.com/kirkone/KK.AspNetCore.Eas
 
 ## License
 
-This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details. 
+This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details.
 
 ## Acknowledgments
 
