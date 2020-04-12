@@ -112,6 +112,7 @@ Here are some notes to the JSON above:
 - each provider is disabled by default so you must enabled it
 - you can create own providers but there must implement `IEasyAuthAuthentificationService`. But you must also activate them here. (Don't put them in the DI. This package will do this by it's own.)
 - The `ProviderName` is the class name of the provider. that must be unique in your application.
+- The xClaimType property only define the property in the token that provide the requiered informations. Internaly that will always mapped to **name** and **role** claims.
 
 > A list of all providers can be found in the headline `Auth Provider`
 
