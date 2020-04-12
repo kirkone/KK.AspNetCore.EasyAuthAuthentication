@@ -10,6 +10,7 @@ namespace KK.AspNetCore.EasyAuthAuthentication
     using KK.AspNetCore.EasyAuthAuthentication.Services;
     using Microsoft.AspNetCore.Authentication;
     using Microsoft.AspNetCore.Http;
+    using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.Logging;
     using Microsoft.Extensions.Options;
 
@@ -24,13 +25,14 @@ namespace KK.AspNetCore.EasyAuthAuthentication
         private static readonly Func<IHeaderDictionary, string, bool> IsHeaderSet =
             (headers, headerName) => !string.IsNullOrEmpty(headers[headerName].ToString());
 
-        private static readonly Func<IHeaderDictionary, ClaimsPrincipal, HttpRequest, EasyAuthAuthenticationOptions, bool> CanUseEasyAuthJson =
+        private static Func<IHeaderDictionary, ClaimsPrincipal, HttpRequest, EasyAuthAuthenticationOptions, bool> CanUseEasyAuthJson =
             (headers, user, request, options) =>
                 IsContextUserNotAuthenticated(user)
                 && !IsHeaderSet(headers, AuthTokenHeaderNames.AADIdToken)
                 && request.Path != "/" + $"{options.AuthEndpoint}";
 
         private readonly IEnumerable<IEasyAuthAuthentificationService> authenticationServices;
+        private readonly IConfiguration appConfiguration;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="EasyAuthAuthenticationHandler"/> class.
@@ -45,7 +47,31 @@ namespace KK.AspNetCore.EasyAuthAuthentication
             IEnumerable<IEasyAuthAuthentificationService> authenticationServices,
             ILoggerFactory logger,
             UrlEncoder encoder,
-            ISystemClock clock) : base(options, logger, encoder, clock) => this.authenticationServices = authenticationServices;
+            ISystemClock clock,
+            IConfiguration appConfiguration) : base(options, logger, encoder, clock)
+        {
+            this.authenticationServices = authenticationServices;
+            this.appConfiguration = appConfiguration;
+            this.SetupHandler();
+        }
+
+        private void SetupHandler()
+        {
+            var authEnabled = this.appConfiguration.GetValue<bool?>("APPSETTING_WEBSITE_AUTH_ENABLED");
+            var allowAnoymos = this.appConfiguration.GetValue<string?>("APPSETTING_WEBSITE_AUTH_UNAUTHENTICATED_ACTION") == "AllowAnonymous" ? true : false;
+            if(authEnabled == null || authEnabled == false)
+            {
+                // auth is turned of. So hopefully the user is in local debugging.
+                return;
+            }
+            if (allowAnoymos == true)
+            {
+                this.Logger.LogError("Don't allow anonymous requests! The easy auth extension don't check the token!");
+                throw new ArgumentException("Don't allow anonymous requests");
+            }
+            // disable the local auth.me json in azure.
+            CanUseEasyAuthJson = (h, u, r, o) => false;
+        }
 
         /// <inheritdoc/>
         protected override async Task<AuthenticateResult> HandleAuthenticateAsync()

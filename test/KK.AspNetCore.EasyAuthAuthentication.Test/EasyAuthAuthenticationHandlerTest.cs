@@ -15,6 +15,8 @@ namespace KK.AspNetCore.EasyAuthAuthentication.Test
     using Microsoft.AspNetCore.Authentication;
     using Microsoft.AspNetCore.Http;
     using Microsoft.AspNetCore.Http.Features;
+    using Microsoft.Extensions.Configuration;
+    using Microsoft.Extensions.Configuration.EnvironmentVariables;
     using Microsoft.Extensions.DependencyInjection;
     using Microsoft.Extensions.Logging;
     using Microsoft.Extensions.Logging.Abstractions;
@@ -35,6 +37,11 @@ namespace KK.AspNetCore.EasyAuthAuthentication.Test
         public async Task IfAnProviderIsEnabledUseEnabledProvider()
         {
             // Arrange
+            System.Environment.SetEnvironmentVariable("APPSETTING_WEBSITE_AUTH_ENABLED", "True");
+            System.Environment.SetEnvironmentVariable("APPSETTING_WEBSITE_AUTH_UNAUTHENTICATED_ACTION", "RedirectToLoginPage");            
+            var configBuilder = new ConfigurationBuilder();
+            configBuilder.AddEnvironmentVariables();
+            var config = configBuilder.Build();
             var options = new EasyAuthAuthenticationOptions();
             options.AddProviderOptions(new ProviderOptions("TestProvider") { Enabled = true });
                                                            
@@ -46,7 +53,7 @@ namespace KK.AspNetCore.EasyAuthAuthentication.Test
             var monitor = services.GetRequiredService<IOptionsMonitor<EasyAuthAuthenticationOptions>>();
 
 
-            var handler = new EasyAuthAuthenticationHandler(monitor, this.providers, this.loggerFactory, this.urlEncoder, this.clock);
+            var handler = new EasyAuthAuthenticationHandler(monitor, this.providers, this.loggerFactory, this.urlEncoder, this.clock, config);
             var schema = new AuthenticationScheme(EasyAuthAuthenticationDefaults.AuthenticationScheme, EasyAuthAuthenticationDefaults.DisplayName, typeof(EasyAuthAuthenticationHandler));            
             var httpContext = new DefaultHttpContext();
             await handler.InitializeAsync(schema, httpContext);
@@ -64,6 +71,11 @@ namespace KK.AspNetCore.EasyAuthAuthentication.Test
         public async Task IfAnProviderIsdisabledSkipProvider()
         {
             // Arrange
+            System.Environment.SetEnvironmentVariable("APPSETTING_WEBSITE_AUTH_ENABLED", "True");
+            System.Environment.SetEnvironmentVariable("APPSETTING_WEBSITE_AUTH_UNAUTHENTICATED_ACTION", "RedirectToLoginPage");
+            var configBuilder = new ConfigurationBuilder();
+            configBuilder.AddEnvironmentVariables();
+            var config = configBuilder.Build();
             var options = new EasyAuthAuthenticationOptions();
             options.AddProviderOptions(new ProviderOptions("TestProvider") { Enabled = false });
 
@@ -75,7 +87,7 @@ namespace KK.AspNetCore.EasyAuthAuthentication.Test
             var monitor = services.GetRequiredService<IOptionsMonitor<EasyAuthAuthenticationOptions>>();
 
 
-            var handler = new EasyAuthAuthenticationHandler(monitor, this.providers, this.loggerFactory, this.urlEncoder, this.clock);
+            var handler = new EasyAuthAuthenticationHandler(monitor, this.providers, this.loggerFactory, this.urlEncoder, this.clock, config);
             var schema = new AuthenticationScheme(EasyAuthAuthenticationDefaults.AuthenticationScheme, EasyAuthAuthenticationDefaults.DisplayName, typeof(EasyAuthAuthenticationHandler));           
             var context = new DefaultHttpContext();
             // If this header is set the fallback with the local authme.json isn't used.
@@ -92,6 +104,11 @@ namespace KK.AspNetCore.EasyAuthAuthentication.Test
         public async Task IfTheUserIsAlreadyAuthorizedTheAuthResultIsSuccess()
         {
             // Arrange
+            System.Environment.SetEnvironmentVariable("APPSETTING_WEBSITE_AUTH_ENABLED", "True");
+            System.Environment.SetEnvironmentVariable("APPSETTING_WEBSITE_AUTH_UNAUTHENTICATED_ACTION", "RedirectToLoginPage");
+            var configBuilder = new ConfigurationBuilder();
+            configBuilder.AddEnvironmentVariables();
+            var config = configBuilder.Build();
             var options = new EasyAuthAuthenticationOptions();
             options.AddProviderOptions(new ProviderOptions("TestProvider") { Enabled = false });
 
@@ -103,7 +120,7 @@ namespace KK.AspNetCore.EasyAuthAuthentication.Test
             var monitor = services.GetRequiredService<IOptionsMonitor<EasyAuthAuthenticationOptions>>();
 
 
-            var handler = new EasyAuthAuthenticationHandler(monitor, this.providers, this.loggerFactory, this.urlEncoder, this.clock);
+            var handler = new EasyAuthAuthenticationHandler(monitor, this.providers, this.loggerFactory, this.urlEncoder, this.clock,config);
             var schema = new AuthenticationScheme(EasyAuthAuthenticationDefaults.AuthenticationScheme, EasyAuthAuthenticationDefaults.DisplayName, typeof(EasyAuthAuthenticationHandler));
             var context = new DefaultHttpContext();
             // If this header is set the fallback with the local authme.json isn't used.
@@ -122,6 +139,11 @@ namespace KK.AspNetCore.EasyAuthAuthentication.Test
         public async Task DontCallTheFallBackIfTheRequestUrlEqualsTheAuthEndPoint()
         {
             // Arrange
+            System.Environment.SetEnvironmentVariable("APPSETTING_WEBSITE_AUTH_ENABLED", "True");
+            System.Environment.SetEnvironmentVariable("APPSETTING_WEBSITE_AUTH_UNAUTHENTICATED_ACTION", "RedirectToLoginPage");
+            var configBuilder = new ConfigurationBuilder();
+            configBuilder.AddEnvironmentVariables();
+            var config = configBuilder.Build();
             var options = new EasyAuthAuthenticationOptions();
             options.AddProviderOptions(new ProviderOptions("TestProvider") { Enabled = false });
 
@@ -133,7 +155,7 @@ namespace KK.AspNetCore.EasyAuthAuthentication.Test
             var monitor = services.GetRequiredService<IOptionsMonitor<EasyAuthAuthenticationOptions>>();
 
 
-            var handler = new EasyAuthAuthenticationHandler(monitor, this.providers, this.loggerFactory, this.urlEncoder, this.clock);
+            var handler = new EasyAuthAuthenticationHandler(monitor, this.providers, this.loggerFactory, this.urlEncoder, this.clock, config);
             var schema = new AuthenticationScheme(EasyAuthAuthenticationDefaults.AuthenticationScheme, EasyAuthAuthenticationDefaults.DisplayName, typeof(EasyAuthAuthenticationHandler));
             var context = new DefaultHttpContext();            
             
@@ -149,6 +171,11 @@ namespace KK.AspNetCore.EasyAuthAuthentication.Test
         public async Task CallTheFallBackIfTheRequestUrlNotEqualsTheAuthEndPoint()
         {
             // Arrange
+            System.Environment.SetEnvironmentVariable("APPSETTING_WEBSITE_AUTH_ENABLED", "True");
+            System.Environment.SetEnvironmentVariable("APPSETTING_WEBSITE_AUTH_UNAUTHENTICATED_ACTION", "RedirectToLoginPage");
+            var configBuilder = new ConfigurationBuilder();
+            configBuilder.AddEnvironmentVariables();
+            var config = configBuilder.Build();
             var options = new EasyAuthAuthenticationOptions();
             options.AddProviderOptions(new ProviderOptions("TestProvider") { Enabled = false });
 
@@ -160,7 +187,7 @@ namespace KK.AspNetCore.EasyAuthAuthentication.Test
             var monitor = services.GetRequiredService<IOptionsMonitor<EasyAuthAuthenticationOptions>>();
 
 
-            var handler = new EasyAuthAuthenticationHandler(monitor, this.providers, this.loggerFactory, this.urlEncoder, this.clock);
+            var handler = new EasyAuthAuthenticationHandler(monitor, this.providers, this.loggerFactory, this.urlEncoder, this.clock, config);
             var schema = new AuthenticationScheme(EasyAuthAuthenticationDefaults.AuthenticationScheme, EasyAuthAuthenticationDefaults.DisplayName, typeof(EasyAuthAuthenticationHandler));
             var context = new DefaultHttpContext();
 
@@ -170,13 +197,18 @@ namespace KK.AspNetCore.EasyAuthAuthentication.Test
             var result = await handler.AuthenticateAsync();
             // Assert
             Assert.False(result.Succeeded);
-            Assert.NotNull(result.Failure);
+            Assert.True(result.None);
         }
 
         [Fact]
         public async Task DontCallAProviderIfNotProviderIsRegistered()
         {
             // Arrange
+            System.Environment.SetEnvironmentVariable("APPSETTING_WEBSITE_AUTH_ENABLED", "True");
+            System.Environment.SetEnvironmentVariable("APPSETTING_WEBSITE_AUTH_UNAUTHENTICATED_ACTION", "RedirectToLoginPage");
+            var configBuilder = new ConfigurationBuilder();
+            configBuilder.AddEnvironmentVariables();
+            var config = configBuilder.Build();
             var options = new EasyAuthAuthenticationOptions();
             options.AddProviderOptions(new ProviderOptions("TestProvider") { Enabled = false });
 
@@ -188,7 +220,7 @@ namespace KK.AspNetCore.EasyAuthAuthentication.Test
             var monitor = services.GetRequiredService<IOptionsMonitor<EasyAuthAuthenticationOptions>>();
 
 
-            var handler = new EasyAuthAuthenticationHandler(monitor, new List<IEasyAuthAuthentificationService>(), this.loggerFactory, this.urlEncoder, this.clock);
+            var handler = new EasyAuthAuthenticationHandler(monitor, new List<IEasyAuthAuthentificationService>(), this.loggerFactory, this.urlEncoder, this.clock, config);
             var schema = new AuthenticationScheme(EasyAuthAuthenticationDefaults.AuthenticationScheme, EasyAuthAuthenticationDefaults.DisplayName, typeof(EasyAuthAuthenticationHandler));
             var context = new DefaultHttpContext();            
             // Act
@@ -196,6 +228,58 @@ namespace KK.AspNetCore.EasyAuthAuthentication.Test
             var result = await handler.AuthenticateAsync();
             // Assert
             Assert.False(result.Succeeded);            
+        }
+
+        [Fact]
+        public void ErrorIfTheAuthIsEnabledButAnonymousRequestsAreAllowed()
+        {
+            // Arrange
+            System.Environment.SetEnvironmentVariable("APPSETTING_WEBSITE_AUTH_ENABLED", "True");
+            System.Environment.SetEnvironmentVariable("APPSETTING_WEBSITE_AUTH_UNAUTHENTICATED_ACTION", "AllowAnonymous");
+            var configBuilder = new ConfigurationBuilder();
+            configBuilder.AddEnvironmentVariables();
+            var config = configBuilder.Build();
+            var options = new EasyAuthAuthenticationOptions();
+            options.AddProviderOptions(new ProviderOptions("TestProvider") { Enabled = false });
+
+
+            var services = new ServiceCollection().AddOptions()
+                .AddSingleton<IOptionsFactory<EasyAuthAuthenticationOptions>, OptionsFactory<EasyAuthAuthenticationOptions>>()
+                .Configure<EasyAuthAuthenticationOptions>(EasyAuthAuthenticationDefaults.AuthenticationScheme, o => o.ProviderOptions = options.ProviderOptions)
+                .BuildServiceProvider();
+            var monitor = services.GetRequiredService<IOptionsMonitor<EasyAuthAuthenticationOptions>>();
+
+            Assert.Throws<ArgumentException>(() => new EasyAuthAuthenticationHandler(monitor, new List<IEasyAuthAuthentificationService>(), this.loggerFactory, this.urlEncoder, this.clock, config));           
+        }
+
+        [Fact]
+        public async Task UseEasyAuthProviderIfAuthIsDisabled()
+        {
+            // Arrange
+            System.Environment.SetEnvironmentVariable("APPSETTING_WEBSITE_AUTH_ENABLED", "False");            
+            var configBuilder = new ConfigurationBuilder();
+            configBuilder.AddEnvironmentVariables();
+            var config = configBuilder.Build();
+            var options = new EasyAuthAuthenticationOptions();
+            options.AddProviderOptions(new ProviderOptions("TestProvider") { Enabled = false });
+
+
+            var services = new ServiceCollection().AddOptions()
+                .AddSingleton<IOptionsFactory<EasyAuthAuthenticationOptions>, OptionsFactory<EasyAuthAuthenticationOptions>>()
+                .Configure<EasyAuthAuthenticationOptions>(EasyAuthAuthenticationDefaults.AuthenticationScheme, o => o.ProviderOptions = options.ProviderOptions)
+                .BuildServiceProvider();
+            var monitor = services.GetRequiredService<IOptionsMonitor<EasyAuthAuthenticationOptions>>();
+
+            var handler = new EasyAuthAuthenticationHandler(monitor, new List<IEasyAuthAuthentificationService>(), this.loggerFactory, this.urlEncoder, this.clock, config);
+            var schema = new AuthenticationScheme(EasyAuthAuthenticationDefaults.AuthenticationScheme, EasyAuthAuthenticationDefaults.DisplayName, typeof(EasyAuthAuthenticationHandler));
+            var context = new DefaultHttpContext();
+            // Act
+            await handler.InitializeAsync(schema, context);
+            var result = await handler.AuthenticateAsync();
+            // Assert
+            Assert.False(result.Succeeded); // The EasyAuth me service is currently hard to test, so we only can check if it's fails
+            Assert.NotNull(result.Failure);
+            Assert.Equal("An invalid request URI was provided. The request URI must either be an absolute URI or BaseAddress must be set.", result.Failure.Message);
         }
 
         private class TestProvider : IEasyAuthAuthentificationService

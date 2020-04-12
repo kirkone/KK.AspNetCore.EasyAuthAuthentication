@@ -164,7 +164,9 @@ There are some predefined providers in this package. If you need your own or wan
 
 ### `EasyAuthWithAuthMeService`
 
-This is a slightly special provider. This provider cannot be configured. You can only turn it on or off. It also does **not** implement the 'IEasyAuthAuthentificationService'. This provider is for development. A developer can create a JSON with the content of the `/.auth/me` endpoint of an EasyAuth Azure Web App. So you don't need a connection to the internet or azure for development and just use your local things.
+This is a slightly special provider. This provider cannot be configured. You can only turn it on or off. It also does **not** implement the 'IEasyAuthAuthentificationService'. This provider is for development. 
+It automatic disable it selfes, if you has configured azure easy auth feature.
+A developer can create a JSON with the content of the `/.auth/me` endpoint of an EasyAuth Azure Web App. So you don't need a connection to the internet or azure for development and just use your local things.
 You must only configure an Azure Web App with Authentification and browse the path:
 
 `https://hostnameOfYourWebSite/.auth/me`
