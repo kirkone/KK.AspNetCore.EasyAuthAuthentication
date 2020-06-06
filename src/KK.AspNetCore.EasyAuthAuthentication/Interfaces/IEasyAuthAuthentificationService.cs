@@ -21,7 +21,7 @@ namespace KK.AspNetCore.EasyAuthAuthentication.Interfaces
         /// Try to create a <see cref="AuthenticateResult"/> out of the <see cref="HttpContext"/> from the incomming request.
         /// </summary>
         /// <param name="context">The <see cref="HttpContext"/> of the http request.</param>        
-        /// <returns>If the user can be authentificated it will returend a full <see cref="AuthenticateResult"/>. If not this will return a <see cref="AuthenticateResult.Fail(string)"/> result. (only the <see cref="EasyAuthWithAuthMeService"/> can return this.</returns>
+        /// <returns>If the user can be authentificated it will returend a full <see cref="AuthenticateResult"/>. If not this will return a <see cref="AuthenticateResult.Fail(string)"/> result. (only the <see cref="LocalAuthMeService"/> can return this.</returns>
         AuthenticateResult AuthUser(HttpContext context);
 
         /// <summary>
@@ -29,7 +29,7 @@ namespace KK.AspNetCore.EasyAuthAuthentication.Interfaces
         /// </summary>
         /// <param name="context">The <see cref="HttpContext"/> of the http request.</param>
         /// <param name="options">The <see cref="ProviderOptions"/> that can change the behavior of the <see cref="AuthUser(HttpContext, ProviderOptions)"/> method.</param>
-        /// <returns>If the user can be authentificated it will returend a full <see cref="AuthenticateResult"/>. If not this will return a <see cref="AuthenticateResult.Fail(string)"/> result. (only the <see cref="EasyAuthWithAuthMeService"/> can return this.</returns>
+        /// <returns>If the user can be authentificated it will returend a full <see cref="AuthenticateResult"/>. If not this will return a <see cref="AuthenticateResult.Fail(string)"/> result. (only the <see cref="LocalAuthMeService"/> can return this.</returns>
         AuthenticateResult AuthUser(HttpContext context, ProviderOptions options);
     }
 }

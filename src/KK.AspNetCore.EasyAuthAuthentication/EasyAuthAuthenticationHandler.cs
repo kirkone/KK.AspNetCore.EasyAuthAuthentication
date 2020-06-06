@@ -28,8 +28,7 @@ namespace KK.AspNetCore.EasyAuthAuthentication
         private static Func<IHeaderDictionary, ClaimsPrincipal, HttpRequest, EasyAuthAuthenticationOptions, bool> CanUseEasyAuthJson =
             (headers, user, request, options) =>
                 IsContextUserNotAuthenticated(user)
-                && !IsHeaderSet(headers, AuthTokenHeaderNames.AADIdToken)
-                && request.Path != "/" + $"{options.AuthEndpoint}";
+                && !IsHeaderSet(headers, AuthTokenHeaderNames.AADIdToken);
 
         private readonly IEnumerable<IEasyAuthAuthentificationService> authenticationServices;
         private readonly IConfiguration appConfiguration;
@@ -87,7 +86,12 @@ namespace KK.AspNetCore.EasyAuthAuthentication
             }
             else if (CanUseEasyAuthJson(this.Context.Request.Headers, this.Context.User, this.Context.Request, this.Options))
             {
-                return await EasyAuthWithAuthMeService.AuthUser(this.Logger, this.Context, this.Options);
+                var service = new LocalAuthMeService(this.Logger,
+                    this.Context.Request.Scheme,
+                    this.Context.Request.Host.ToString(),
+                    this.Context.Request.Cookies,
+                    this.Context.Request.Headers);
+                return await service.AuthUser(this.Context, this.Options.LocalProviderOption);
             }
             else
             {

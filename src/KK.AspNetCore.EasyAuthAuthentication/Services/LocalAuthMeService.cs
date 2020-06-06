@@ -5,6 +5,7 @@ namespace KK.AspNetCore.EasyAuthAuthentication.Services
     using System.Linq;
     using System.Net;
     using System.Net.Http;
+    using System.Security.Claims;
     using System.Threading.Tasks;
     using KK.AspNetCore.EasyAuthAuthentication.Models;
     using Microsoft.AspNetCore.Authentication;
@@ -13,31 +14,29 @@ namespace KK.AspNetCore.EasyAuthAuthentication.Services
     using Newtonsoft.Json;
     using Newtonsoft.Json.Linq;
 
-    internal class EasyAuthWithAuthMeService
+    internal class LocalAuthMeService
     {
-        private EasyAuthWithAuthMeService(
+        public LocalAuthMeService(
             ILogger logger,
             string httpSchema,
             string host,
             IRequestCookieCollection cookies,
-            IHeaderDictionary headers,
-            EasyAuthAuthenticationOptions options)
+            IHeaderDictionary headers)
         {
             this.HttpSchema = httpSchema;
             this.Host = host;
             this.Cookies = cookies;
             this.Headers = headers;
-            this.Options = options;
             this.Logger = logger;
         }
+
+        private readonly LocalProviderOption defaultOptions = new LocalProviderOption(".auth/me.json", ClaimTypes.Name, ClaimTypes.Role);
 
         private string Host { get; }
 
         private IRequestCookieCollection Cookies { get; }
 
         private IHeaderDictionary Headers { get; }
-
-        private EasyAuthAuthenticationOptions Options { get; }
 
         private ILogger Logger { get; }
 
@@ -51,22 +50,15 @@ namespace KK.AspNetCore.EasyAuthAuthentication.Services
         /// <param name="context">The http context with the missing user claim.</param>
         /// <param name="options">The <c>EasyAuthAuthenticationOptions</c> to use.</param>
         /// <returns>An <see cref="AuthenticateResult" />.</returns>
-        public static async Task<AuthenticateResult> AuthUser(ILogger logger, HttpContext context, EasyAuthAuthenticationOptions options)
+        public async Task<AuthenticateResult> AuthUser(HttpContext context, LocalProviderOption? options)
         {
+            this.defaultOptions.ChangeModel(options);
             try
             {
-                var authService = new EasyAuthWithAuthMeService(
-                    logger,
-                    context.Request.Scheme,
-                    context.Request.Host.ToString(),
-                    context.Request.Cookies,
-                    context.Request.Headers,
-                    options);
-
-                var ticket = await authService.CreateUserTicket();
-                logger.LogInformation("Set identity to user context object.");
+                var ticket = await this.CreateUserTicket();
+                this.Logger.LogInformation("Set identity to user context object.");
                 context.User = ticket.Principal;
-                logger.LogInformation("identity build was a success, returning ticket");
+                this.Logger.LogInformation("identity build was a success, returning ticket");
                 return AuthenticateResult.Success(ticket);
             }
             catch (Exception ex)
@@ -84,7 +76,6 @@ namespace KK.AspNetCore.EasyAuthAuthentication.Services
 
             // build up identity from json...
             var ticket = this.BuildIdentityFromEasyAuthMeJson((JObject)payload[0]);
-
             this.Logger.LogInformation("Set identity to user context object.");
             return ticket;
         }
@@ -98,7 +89,7 @@ namespace KK.AspNetCore.EasyAuthAuthentication.Services
             return AuthenticationTicketBuilder.Build(
                     JsonConvert.DeserializeObject<IEnumerable<AADClaimsModel>>(payload["user_claims"].ToString()),
                     providerName,
-                    this.Options.ProviderOptions.First(d => d.ProviderName == typeof(EasyAuthWithAuthMeService).Name)
+                    this.defaultOptions.GetProviderOptions()
                 );
         }
 
@@ -108,6 +99,7 @@ namespace KK.AspNetCore.EasyAuthAuthentication.Services
             using (var client = new HttpClient(handler))
             {
                 var response = await client.SendAsync(httpRequest);
+                
                 if (!response.IsSuccessStatusCode)
                 {
                     this.Logger.LogDebug("auth endpoint was not successful. Status code: {0}, reason {1}", response.StatusCode, response.ReasonPhrase);
@@ -132,7 +124,7 @@ namespace KK.AspNetCore.EasyAuthAuthentication.Services
 
         private HttpRequestMessage CreateAuthRequest(ref CookieContainer cookieContainer)
         {
-            this.Logger.LogInformation($"identity not found, attempting to fetch from auth endpoint '/{this.Options.AuthEndpoint}'");
+            this.Logger.LogInformation($"identity not found, attempting to fetch from auth endpoint '/{this.defaultOptions.AuthEndpoint}'");
 
             var uriString = $"{this.HttpSchema}://{this.Host}";
 
@@ -152,13 +144,13 @@ namespace KK.AspNetCore.EasyAuthAuthentication.Services
 
             // fetch value from endpoint
             string authMeEndpoint;
-            if (this.Options.AuthEndpoint.StartsWith("http"))
+            if (this.defaultOptions.AuthEndpoint.StartsWith("http"))
             {
-                authMeEndpoint = this.Options.AuthEndpoint; // enable pulling from places like storage account private blob container
+                authMeEndpoint = this.defaultOptions.AuthEndpoint; // enable pulling from places like storage account private blob container
             }
             else
             {
-                authMeEndpoint = $"{uriString}/{this.Options.AuthEndpoint}"; // localhost relative path, e.g. wwwroot/.auth/me.json
+                authMeEndpoint = $"{uriString}/{this.defaultOptions.AuthEndpoint}"; // localhost relative path, e.g. wwwroot/.auth/me.json
             }
 
             var request = new HttpRequestMessage(HttpMethod.Get, authMeEndpoint);

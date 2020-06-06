@@ -1,4 +1,4 @@
-﻿namespace KK.AspNetCore.EasyAuthAuthentication
+namespace KK.AspNetCore.EasyAuthAuthentication
 {
     using System;
     using System.Collections;
@@ -13,16 +13,13 @@
     /// </summary>
     public class EasyAuthAuthenticationOptions : AuthenticationSchemeOptions
     {
-        /// <summary>
-        /// The endpoint where to look for the <c>JSON</c> with the authentification information.
-        /// </summary>
-        /// <value>A relative path to the <c>wwwroot</c> folder.</value>
-        public string AuthEndpoint { get; set; } = ".auth/me";
 
         /// <summary>
         /// A list of all provider options that should be used by easy auth.
         /// </summary>
         public IList<ProviderOptions> ProviderOptions { get; set; } = new List<ProviderOptions>();
+
+        public LocalProviderOption? LocalProviderOption { get; set; } = null;
 
         /// <summary>
         /// Adds a new options object to the provider pipeline.

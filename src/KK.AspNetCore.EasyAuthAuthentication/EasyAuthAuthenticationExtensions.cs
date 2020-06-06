@@ -29,7 +29,7 @@ namespace KK.AspNetCore.EasyAuthAuthentication
         /// <param name="authenticationScheme">The schema for the Easy Auth handler.</param>
         /// <returns>A reference to this instance after the operation has completed.</returns>
         public static AuthenticationBuilder AddEasyAuth(this AuthenticationBuilder builder, string authenticationScheme)
-            => builder.AddEasyAuth(authenticationScheme, configureOptions: (d) => {});
+            => builder.AddEasyAuth(authenticationScheme, configureOptions: (d) => { });
 
         /// <summary>
         /// Adds the <see cref="EasyAuthAuthenticationHandler"/> for authentication.
@@ -86,26 +86,25 @@ namespace KK.AspNetCore.EasyAuthAuthentication
             string displayName)
         {
             var options = new EasyAuthAuthenticationOptions
-            {
-                AuthEndpoint = configuration.GetValue<string>("easyAuthOptions:AuthEndpoint"),                
+            {                
                 ProviderOptions = configuration
-                .GetSection("easyAuthOptions:providerOptions")
-                .GetChildren()
-                .Select(d =>
-                {
-                    var name = d.GetValue<string>("ProviderName");
-                    var providerOptions = new ProviderOptions(name);
-                    d.Bind(providerOptions);
-                    return providerOptions;
-                }).ToList()
-            };
-            if (string.IsNullOrWhiteSpace(options.AuthEndpoint))
-            {
-                throw new ArgumentNullException("The 'AuthEndpoint' in the configuraiton for easy auth can't be empty! please add the setting to your configuration providers.");
-            }
+                    .GetSection("easyAuthOptions:providerOptions")
+                    .GetChildren()
+                    .Select(d =>
+                    {
+                        var name = d.GetValue<string>("ProviderName");
+                        var providerOptions = new ProviderOptions(name);
+                        d.Bind(providerOptions);
+                        return providerOptions;
+                    }).ToList(),
+                LocalProviderOption = configuration
+                    .GetSection("easyAuthOptions:localProviderOption")
+                    .Get<LocalProviderOption>()
+                    
+            };            
             return builder.AddEasyAuth(authenticationScheme, displayName, o =>
             {
-                o.AuthEndpoint = options.AuthEndpoint;
+                o.LocalProviderOption = options.LocalProviderOption;
                 o.ProviderOptions = options.ProviderOptions;
             });
         }
@@ -119,9 +118,9 @@ namespace KK.AspNetCore.EasyAuthAuthentication
         /// <param name="configureOptions">A callback to configure <see cref="EasyAuthAuthenticationOptions"/>.</param>
         /// <returns>A reference to this instance after the operation has completed.</returns>
         public static AuthenticationBuilder AddEasyAuth(
-            this AuthenticationBuilder builder, 
-            string authenticationScheme, 
-            string displayName, 
+            this AuthenticationBuilder builder,
+            string authenticationScheme,
+            string displayName,
             Action<EasyAuthAuthenticationOptions> configureOptions)
         {
             var allAuthServicesToRegister = AppDomain.CurrentDomain.GetAssemblies().SelectMany(x => x.GetTypes())

@@ -146,6 +146,7 @@ namespace KK.AspNetCore.EasyAuthAuthentication.Test
             var config = configBuilder.Build();
             var options = new EasyAuthAuthenticationOptions();
             options.AddProviderOptions(new ProviderOptions("TestProvider") { Enabled = false });
+            options.LocalProviderOption = new LocalProviderOption(".auth/me", string.Empty, string.Empty);
 
 
             var services = new ServiceCollection().AddOptions()
@@ -159,7 +160,7 @@ namespace KK.AspNetCore.EasyAuthAuthentication.Test
             var schema = new AuthenticationScheme(EasyAuthAuthenticationDefaults.AuthenticationScheme, EasyAuthAuthenticationDefaults.DisplayName, typeof(EasyAuthAuthenticationHandler));
             var context = new DefaultHttpContext();            
             
-            context.Request.Path = "/" + options.AuthEndpoint;
+            context.Request.Path = "/" + options.LocalProviderOption.AuthEndpoint;
             // Act
             await handler.InitializeAsync(schema, context);
             var result = await handler.AuthenticateAsync();
