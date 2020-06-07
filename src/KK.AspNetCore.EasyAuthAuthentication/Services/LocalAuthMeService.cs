@@ -51,8 +51,12 @@ namespace KK.AspNetCore.EasyAuthAuthentication.Services
         /// <param name="options">The <c>EasyAuthAuthenticationOptions</c> to use.</param>
         /// <returns>An <see cref="AuthenticateResult" />.</returns>
         public async Task<AuthenticateResult> AuthUser(HttpContext context, LocalProviderOption? options)
-        {
+        {           
             this.defaultOptions.ChangeModel(options);
+            if (context.Request.Path.ToString() == this.defaultOptions.AuthEndpoint || context.Request.Path.ToString() == $"/{this.defaultOptions.AuthEndpoint}")
+            {
+                return AuthenticateResult.Fail($"The path {this.defaultOptions.AuthEndpoint} doesn't exsists or don't contain a valid auth json.");
+            }
             try
             {
                 var ticket = await this.CreateUserTicket();
@@ -98,7 +102,16 @@ namespace KK.AspNetCore.EasyAuthAuthentication.Services
             JArray? payload = null;
             using (var client = new HttpClient(handler))
             {
-                var response = await client.SendAsync(httpRequest);
+                HttpResponseMessage? response;
+                try
+                {
+                    response = await client.SendAsync(httpRequest);
+                }
+                catch (Exception ex)
+                {
+                    throw ex;
+                }
+                
                 
                 if (!response.IsSuccessStatusCode)
                 {
