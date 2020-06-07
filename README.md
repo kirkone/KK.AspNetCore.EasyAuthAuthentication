@@ -219,7 +219,7 @@ All providers can be configured with the following section in the `appsettings.j
     ],
     // the following is optional
     "localProviderOption": {
-      "AuthEndpoint": ".auth/me",
+      "AuthEndpoint": ".auth/me.json",
       "NameClaimType": "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress",
       "RoleClaimType": "http://schemas.microsoft.com/ws/2008/06/identity/claims/role"
     }
