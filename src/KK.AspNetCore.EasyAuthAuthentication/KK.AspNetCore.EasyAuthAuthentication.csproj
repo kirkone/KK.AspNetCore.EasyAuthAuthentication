@@ -9,6 +9,15 @@
     <PackageProjectUrl>https://github.com/kirkone/KK.AspNetCore.EasyAuthAuthentication</PackageProjectUrl>
     <RepositoryUrl>https://github.com/kirkone/KK.AspNetCore.EasyAuthAuthentication</RepositoryUrl>
     <Description>This helps getting azure appservice authentication working with asp.net core</Description>
+    <releaseNotes>
+      - Add support for azure ad application
+      - clean up configuration
+      - make it easy to add own providers
+      - make it easy to map claims
+      - add a new quickstart guide
+      - add errors if the azure app service is configured wrong
+      - add test so we avoid breaking changes
+    </releaseNotes>
     <Copyright>MIT</Copyright>
     <LangVersion>8.0</LangVersion>
     <Nullable>enable</Nullable>
