@@ -150,10 +150,10 @@ To configure you providers you simple add the following to your `appsettings.jso
 
 Here are some notes to the JSON above:
 
-- each provider is disabled by default so you must enabled it
-- you can create own providers but there must implement `IEasyAuthAuthentificationService`. But you must also activate them here. (Don't put them in the DI. This package will do this by it's own.)
-- The `ProviderName` is the class name of the provider. that must be unique in your application.
-- The xClaimType property only define the property in the token that provide the required information. Internally that will always mapped to **name** and **role** claims.
+-   each provider is disabled by default so you must enabled it
+-   you can create own providers but there must implement `IEasyAuthAuthentificationService`. But you must also activate them here. (Don't put them in the DI. This package will do this by it's own.)
+-   The `ProviderName` is the class name of the provider. that must be unique in your application.
+-   The xClaimType property only define the property in the token that provide the required information. Internally that will always mapped to **name** and **role** claims.
 
 > A list of all providers can be found in the headline `Auth Provider`
 
@@ -283,6 +283,7 @@ This is the most common auth provider. You can use it to work with Azure Active 
 -   **Christoph Sonntag** - _Made things even more uber_ - [Compufreak345](https://github.com/Compufreak345)
 -   **myusrn** - _Dropped some knowledge about making IsInRoles work_ - [myusrn](https://github.com/myusrn)
 -   **Suzuko123** - _Dropped some knowledge about Service Principals with easy auth_ - [Suzuko123](https://github.com/Suzuko123)
+- **MaximRouiller** - _Dropped the idea to check if the app service is configured right. .[MaximRouiller](https://github.com/MaximRouiller)
 
 See also the list of [contributors](https://github.com/kirkone/KK.AspNetCore.EasyAuthAuthentication/graphs/contributors) who participated in this project.
 
