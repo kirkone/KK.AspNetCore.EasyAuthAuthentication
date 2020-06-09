@@ -63,9 +63,10 @@ namespace KK.AspNetCore.EasyAuthAuthentication.Samples.Web
 
             // Add Authentication middleware before MVC to get it working for MVC routes
             _ = app.UseAuthentication();
+            
 
             _ = app.UseRouting();
-
+            _ = app.UseAuthorization();
             _ = app.UseEndpoints(
                 endpoints => endpoints.MapControllerRoute(
                     name: "default",
