@@ -9,7 +9,7 @@
       "type": "process",
       "args": [
         "build",
-        "${workspaceFolder}/src/KK.AspNetCore.EasyAuthAuthentication.Sample/KK.AspNetCore.EasyAuthAuthentication.Sample.csproj"
+        "${workspaceFolder}/samples/KK.AspNetCore.EasyAuthAuthentication.Samples.Web/KK.AspNetCore.EasyAuthAuthentication.Samples.Web.csproj"
       ],
       "problemMatcher": "$msCompile",
       "group": {
@@ -26,7 +26,7 @@
         "env": {
           "ASPNETCORE_ENVIRONMENT": "Production"
         },
-        "cwd": "${workspaceFolder}/src/KK.AspNetCore.EasyAuthAuthentication.Sample"
+        "cwd": "${workspaceFolder}/src/KK.AspNetCore.EasyAuthAuthentication.Samples.Web"
       },
       "problemMatcher": []
     }
