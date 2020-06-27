@@ -27,7 +27,7 @@ namespace KK.AspNetCore.EasyAuthAuthentication.Models
         public ProviderOptions(string providerName, string nameClaimType)
         {
             this.ProviderName = providerName;
-            this.NameClaimType = nameClaimType;            
+            this.NameClaimType = nameClaimType;
         }
 
         /// <summary>
@@ -41,20 +41,20 @@ namespace KK.AspNetCore.EasyAuthAuthentication.Models
         {
             this.ProviderName = providerName;
             this.NameClaimType = nameClaimType;
-            this.RoleClaimType  = roleNameClaimType;
+            this.RoleClaimType = roleNameClaimType;
         }
 
         /// <summary>
         /// The <c>ClaimType</c> for the Idendity User.
         /// </summary>
         /// <value>The Claim Type to use for the User. Default is <c>ClaimType</c> of the auth provider.</value>
-        public string NameClaimType { get; set; } = ClaimTypes.Name;
+        public string NameClaimType { get; set; } = string.Empty;
 
         /// <summary>
         /// The <c>ClaimType</c> for the Idendity Role.
         /// </summary>
         /// <value>The Claim Type to use for the Roles. Default is <c>ClaimType</c> of the auth provider.</value>
-        public string RoleClaimType { get; set; } = ClaimTypes.Role;
+        public string RoleClaimType { get; set; } = string.Empty;
 
         /// <summary>
         /// The provider name for this options object.
@@ -71,7 +71,7 @@ namespace KK.AspNetCore.EasyAuthAuthentication.Models
         /// </summary>
         /// <param name="options">The provider options model with the new options.</param>
         public void ChangeModel(ProviderOptions? options)
-        {            
+        {
             if (options == null)
             {
                 return;

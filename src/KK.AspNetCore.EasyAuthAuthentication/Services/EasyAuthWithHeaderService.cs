@@ -15,35 +15,39 @@ namespace KK.AspNetCore.EasyAuthAuthentication.Services
     /// <summary>
     /// A service that can be used to authentificat a user principal in the <see cref="EasyAuthAuthenticationHandler"/>.
     /// </summary>
-    public class EasyAuthWithHeaderService : IEasyAuthAuthentificationService
+    public abstract class EasyAuthWithHeaderService<T> : IEasyAuthAuthentificationService where T : IEasyAuthAuthentificationService
     {
         private const string PrincipalObjectHeader = "X-MS-CLIENT-PRINCIPAL";
-        private const string PrincipalIdpHeaderName = "X-MS-CLIENT-PRINCIPAL-IDP";
+        protected const string PrincipalIdpHeaderName = "X-MS-CLIENT-PRINCIPAL-IDP";
 
         private static readonly Func<ClaimsPrincipal, bool> IsContextUserNotAuthenticated =
             user => user == null || user.Identity == null || user.Identity.IsAuthenticated == false;
 
-        private static readonly Func<IHeaderDictionary, string, bool> IsHeaderSet =
+        protected static readonly Func<IHeaderDictionary, string, bool> IsHeaderSet =
             (headers, headerName) => !string.IsNullOrEmpty(headers[headerName].ToString());
 
-        private readonly ProviderOptions defaultOptions = new ProviderOptions(typeof(EasyAuthWithHeaderService).Name, ClaimTypes.Email, ClaimTypes.Role);
+#pragma warning disable IDE1006 // Naming Styles rule is broken
+        protected ProviderOptions defaultOptions = new ProviderOptions(typeof(T).Name, ClaimTypes.Email, ClaimTypes.Role);
+#pragma warning restore IDE1006 // Naming Styles
+
+
 
         /// <summary>
         /// Initializes a new instance of the <see cref="EasyAuthWithHeaderService"/> class.
         /// </summary>
         /// <param name="logger">The logger for this service.</param>
         public EasyAuthWithHeaderService(
-            ILogger<EasyAuthWithHeaderService> logger) => this.Logger = logger;
+            ILogger<EasyAuthWithHeaderService<T>> logger) => this.Logger = logger;
 
-        private ILogger Logger { get; }
+        protected ILogger Logger { get; }
 
         /// <inheritdoc/>
         public bool CanHandleAuthentification(HttpContext httpContext)
         {
             var headers = httpContext.Request.Headers;
             var user = httpContext.User;
-            return IsContextUserNotAuthenticated(user) &&
-                IsHeaderSet(headers, AuthTokenHeaderNames.AADIdToken);
+            return IsContextUserNotAuthenticated(user);
+                
         }
 
         /// <summary>

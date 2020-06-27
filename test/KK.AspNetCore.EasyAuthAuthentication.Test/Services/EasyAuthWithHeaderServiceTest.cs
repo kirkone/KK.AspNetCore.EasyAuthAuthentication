@@ -20,9 +20,10 @@ namespace KK.AspNetCore.EasyAuthAuthentication.Test.Services
         public void IfTheAADIdTokenHeaderIsSetTheCanUseMethodMustReturnTrue()
         {
             // Arrange
-            var handler = new EasyAuthWithHeaderService(this.loggerFactory.CreateLogger<EasyAuthWithHeaderService>());
+            var handler = new EasyAuthAzureAdService(this.loggerFactory.CreateLogger<EasyAuthAzureAdService>());
             var httpcontext = new DefaultHttpContext();
             httpcontext.Request.Headers.Add("X-MS-TOKEN-AAD-ID-TOKEN", "blup");
+            httpcontext.Request.Headers.Add("X-MS-CLIENT-PRINCIPAL-IDP", "aad");
             // Act
             var result = handler.CanHandleAuthentification(httpcontext);
             // Arrange
@@ -33,7 +34,7 @@ namespace KK.AspNetCore.EasyAuthAuthentication.Test.Services
         public void IfTheAuthorizationHeaderIsNotSetTheCanUseMethodMustReturnFalse()
         {
             // Arrange
-            var handler = new EasyAuthWithHeaderService(this.loggerFactory.CreateLogger<EasyAuthWithHeaderService>());
+            var handler = new EasyAuthAzureAdService(this.loggerFactory.CreateLogger<EasyAuthAzureAdService>());
             var httpcontext = new DefaultHttpContext();
             // Act
             var result = handler.CanHandleAuthentification(httpcontext);
@@ -45,7 +46,7 @@ namespace KK.AspNetCore.EasyAuthAuthentication.Test.Services
         public void IfAValidJwtTokenIsInTheHeaderTheResultIsSuccsess()
         {
             // Arrange
-            var handler = new EasyAuthWithHeaderService(this.loggerFactory.CreateLogger<EasyAuthWithHeaderService>());
+            var handler = new EasyAuthAzureAdService(this.loggerFactory.CreateLogger<EasyAuthAzureAdService>());
             var httpcontext = new DefaultHttpContext();
             var inputObject = new InputJson()
             {
