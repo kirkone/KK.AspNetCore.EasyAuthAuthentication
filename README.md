@@ -65,7 +65,7 @@ The last thing is to add the following section in the `appsettings.json` to enab
         "Enabled": true
       },
       {
-        "ProviderName": "EasyAuthWithHeaderService",
+        "ProviderName": "EasyAuthAzureAdService",
         "Enabled": true
       }
   ]
@@ -139,7 +139,7 @@ To configure you providers you simple add the following to your `appsettings.jso
         "RoleClaimType": "roles" // optional
       },
       {
-        "ProviderName": "EasyAuthWithHeaderService",
+        "ProviderName": "EasyAuthAzureAdService",
         "Enabled": true,
         "NameClaimType": "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress", //optional
         "RoleClaimType": "http://schemas.microsoft.com/ws/2008/06/identity/claims/role" //optional
@@ -211,10 +211,28 @@ All providers can be configured with the following section in the `appsettings.j
         "RoleClaimType": "roles" // optional
       },
       {
-        "ProviderName": "EasyAuthWithHeaderService", // type name of the provider
-        "Enabled": true,
-        "NameClaimType": "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress", //optional
-        "RoleClaimType": "http://schemas.microsoft.com/ws/2008/06/identity/claims/role" //optional
+        "ProviderName": "EasyAuthForAuthorizationTokenService",
+        "Enabled": true
+      },
+      {
+        "ProviderName": "EasyAuthAzureAdService",
+        "Enabled": true
+      },
+      {
+        "ProviderName": "EasyAuthMicrosoftService",
+        "Enabled": true
+      },
+      {
+        "ProviderName": "EasyAuthFacebookService",
+        "Enabled": true
+      },
+      {
+        "ProviderName": "EasyAuthTwitterService",
+        "Enabled": true
+      },
+      {
+        "ProviderName": "EasyAuthGoogleService",
+        "Enabled": true
       }
     ],
     // the following is optional
@@ -272,9 +290,25 @@ To create a Service Principal (SPN), which get access to your EasyAuth protected
 
 This will allow a spn to get the role `SystemAdmin` in your protected application. The default `User.Identity.Name` of an SPN is the SPN Guid.
 
-### `EasyAuthWithHeaderService`
+### `EasyAuthAzureAdService`
 
 This is the most common auth provider. You can use it to work with Azure Active Directory Users in your easy auth application.
+
+### EasyAuthMicrosoftService
+
+If your users only has personal accounts because your app isn't a bushiness application, use this provider.
+
+### EasyAuthFacebookService
+
+If your users are primary come from facebook use this provider.
+
+### EasyAuthTwitterService
+
+If your users are primary come from twitter use this provider.
+
+### EasyAuthGoogleService
+
+If your users are primary come from twitter use this provider.
 
 ## Authors
 
