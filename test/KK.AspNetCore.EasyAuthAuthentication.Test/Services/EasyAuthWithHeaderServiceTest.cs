@@ -53,7 +53,7 @@ namespace KK.AspNetCore.EasyAuthAuthentication.Test.Services
                 Claims = new List<InputClaims>()
                 {
                     new InputClaims() {Typ=  "x", Value= "y"},
-                    new InputClaims() {Typ=  ClaimTypes.Email, Value= "PrincipalName"},
+                    new InputClaims() {Typ=  "name", Value= "PrincipalName"},
                     new InputClaims() {Typ = ClaimTypes.Role, Value = "Admin"}
                 }
             };
