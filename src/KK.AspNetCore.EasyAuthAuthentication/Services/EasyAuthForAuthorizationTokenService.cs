@@ -74,7 +74,7 @@ namespace KK.AspNetCore.EasyAuthAuthentication.Services
 
             if (xMsClientPrincipal.ContainsKey(this.defaultOptions.RoleClaimType))
             {
-                this.logger.LogDebug($"payload was {xMsClientPrincipal[this.defaultOptions.RoleClaimType].ToString()}");
+                this.logger.LogDebug($"payload was {xMsClientPrincipal[this.defaultOptions.RoleClaimType]}");
 
                 claims.AddRange(JsonConvert.DeserializeObject<IEnumerable<string>>(xMsClientPrincipal[this.defaultOptions.RoleClaimType].ToString())
                         .Select(r => new AADClaimsModel { Typ = this.defaultOptions.RoleClaimType, Values = r }));
