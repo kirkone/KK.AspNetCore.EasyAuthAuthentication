@@ -96,5 +96,21 @@ namespace KK.AspNetCore.EasyAuthAuthentication.Test.Services
             // Act && Arrange
             Assert.Throws<ArgumentException>(() => handler.AuthUser(httpcontext));
         }
+
+        [Fact]
+        public void IfAValidJwtTokenWithoutTheClaimPropertyIsInTheHeaderItsNotThrowAnError()
+        {
+            // Arrange
+            var handler = new EasyAuthForAuthorizationTokenService(this.loggerFactory.CreateLogger<EasyAuthForAuthorizationTokenService>());
+            var httpcontext = new DefaultHttpContext();
+            var jwtWithoutIdpProperty = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiIwN2Q2ZDE1YS1jZTg5LTQ4MmMtOTcxYi01NDMxYjc1MTkxNjciLCJpc3MiOiJodHRwczovL3N0cy53aW5kb3dzLm5ldC9lOTgxZGNhZi05MTk3LTQ3N2YtYmQwNi0wZTU3MmIwYjMzNDcvIiwiaWF0IjoxNTYyNjk4ODc2LCJuYmYiOjE1NjI2OTg4NzYsImV4cCI6MTU2MjcwMjc3NiwiYWlvIjoiNDJaZ1lPQmZzRzd0ZEg1ZVBpSHZvNU9QdDdyT0J3QT0iLCJhcHBpZCI6ImQzMTViZmFmLTYzMDQtNGY5Zi04MjFjLTU0NmJkYzAwYjViMCIsImFwcGlkYWNyIjoiMSIsIm9pZCI6ImY1ZjlmYTg2LTQ0MTQtNDRjNy04MGY4LWY3ODBhZTBhYmYyMSIsInN1YiI6ImY1ZjlmYTg2LTQ0MTQtNDRjNy04MGY4LWY3ODBhZTBhYmYyMSIsInRpZCI6ImU5ODFkY2FmLTkxOTctNDc3Zi1iZDA2LTBlNTcyYjBiMzM0NyIsInV0aSI6ImhDSnUzb2g3d1VlWmFpNVFKT1lBQUEiLCJ2ZXIiOiIxLjAifQ.HFVt3Moojs3G7J5CoqfJ8lDtxUf3SsO1bGb8_9O-314";
+            httpcontext.Request.Headers.Add("Authorization", jwtWithoutIdpProperty);
+
+            // Act
+            var result = handler.AuthUser(httpcontext);
+            // Arrange
+            Assert.True(result.Succeeded);
+            Assert.Equal(this.testJwtAppId, result.Principal.Identity.Name);
+        }
     }
 }

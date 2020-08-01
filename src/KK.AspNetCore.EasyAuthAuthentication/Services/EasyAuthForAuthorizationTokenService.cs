@@ -70,11 +70,15 @@ namespace KK.AspNetCore.EasyAuthAuthentication.Services
 
         private IEnumerable<AADClaimsModel> BuildFromAuthToken(JObject xMsClientPrincipal, ProviderOptions options)
         {
-            this.logger.LogDebug($"payload was {xMsClientPrincipal[this.defaultOptions.RoleClaimType].ToString()}");
+            var claims = new List<AADClaimsModel>();
 
-            var claims = JsonConvert.DeserializeObject<IEnumerable<string>>(xMsClientPrincipal[this.defaultOptions.RoleClaimType].ToString())
-                    .Select(r => new AADClaimsModel { Typ = this.defaultOptions.RoleClaimType, Values = r })
-                    .ToList();
+            if (xMsClientPrincipal.ContainsKey(this.defaultOptions.RoleClaimType))
+            {
+                this.logger.LogDebug($"payload was {xMsClientPrincipal[this.defaultOptions.RoleClaimType]}");
+
+                claims.AddRange(JsonConvert.DeserializeObject<IEnumerable<string>>(xMsClientPrincipal[this.defaultOptions.RoleClaimType].ToString())
+                        .Select(r => new AADClaimsModel { Typ = this.defaultOptions.RoleClaimType, Values = r }));
+            }
             var otherClaims = xMsClientPrincipal.Properties()
                 .Where(claimToken => claimToken.Name != this.defaultOptions.RoleClaimType)
                 .Select(claimToken => new AADClaimsModel { Typ = claimToken.Name, Values = claimToken.Value.ToString() })
