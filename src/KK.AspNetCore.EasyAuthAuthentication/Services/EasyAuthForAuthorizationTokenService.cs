@@ -84,13 +84,30 @@ namespace KK.AspNetCore.EasyAuthAuthentication.Services
                 .Select(claimToken => new AADClaimsModel { Typ = claimToken.Name, Values = claimToken.Value.ToString() })
                 .ToList();
             claims.AddRange(otherClaims);
+
+            string nameClaimValue;
+            if (xMsClientPrincipal.ContainsKey("upn")) // AAD "upn" user auth claim
+            {
+                nameClaimValue = xMsClientPrincipal["upn"].ToString();
+            }
+            else if (xMsClientPrincipal.ContainsKey("appid")) // AAD "appid" application auth claim
+            {
+                nameClaimValue = xMsClientPrincipal["appid"].ToString();
+            }
+            else if (xMsClientPrincipal.ContainsKey("sub")) // JWT standard "sub"ject claim
+            {
+                nameClaimValue = xMsClientPrincipal["sub"].ToString();
+            }
+            else
+            {
+                throw new ArgumentException("Provided JWT token is missing a subject, user ID, or app ID claim", nameof(xMsClientPrincipal));
+            }
             claims.Add(new AADClaimsModel
             {
                 Typ = options.NameClaimType,
-                Values = xMsClientPrincipal.ContainsKey("upn") ?
-                    xMsClientPrincipal["upn"].ToString() : // this appends if an user is using the auth token from the /.auth/me site on the website
-                    xMsClientPrincipal["appid"].ToString() // this appends if an applicaiton is try accessing the app.
+                Values = nameClaimValue
             });
+
             return claims;
         }
 
