@@ -87,14 +87,23 @@ namespace KK.AspNetCore.EasyAuthAuthentication.Services
         private AuthenticationTicket BuildIdentityFromEasyAuthMeJson(JObject payload)
         {
             var providerName = payload["provider_name"].Value<string>();
+            var providerOptions = this.defaultOptions.GetProviderOptions();
+
             this.Logger.LogDebug($"payload was fetched from easyauth me json, provider: {providerName}");
 
             this.Logger.LogInformation("building claims from payload...");
-            return AuthenticationTicketBuilder.Build(
+            var ticket = AuthenticationTicketBuilder.Build(
                     JsonConvert.DeserializeObject<IEnumerable<AADClaimsModel>>(payload["user_claims"].ToString()),
                     providerName,
-                    this.defaultOptions.GetProviderOptions()
+                    providerOptions
                 );
+
+            var name = ticket.Principal.Claims.FirstOrDefault(c => c.Type == providerOptions.NameClaimType);
+            var roles = ticket.Principal.Claims.Where(c => c.Type == providerOptions.RoleClaimType);
+
+            this.Logger.LogInformation($"identity name: '{name?.Value ?? "" }' with roles: [{ string.Join(", ", roles.Select(r => r.Value)) }]");
+
+            return ticket;
         }
 
         private async Task<JArray> GetAuthMe(HttpClientHandler handler, HttpRequestMessage httpRequest)
