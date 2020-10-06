@@ -87,7 +87,6 @@ namespace KK.AspNetCore.EasyAuthAuthentication.Services
         private AuthenticationTicket BuildIdentityFromEasyAuthMeJson(JObject payload)
         {
             var providerName = payload["provider_name"].Value<string>();
-            var providerOptions = this.defaultOptions.GetProviderOptions();
 
             this.Logger.LogDebug($"payload was fetched from easyauth me json, provider: {providerName}");
 
@@ -95,11 +94,11 @@ namespace KK.AspNetCore.EasyAuthAuthentication.Services
             var ticket = AuthenticationTicketBuilder.Build(
                     JsonConvert.DeserializeObject<IEnumerable<AADClaimsModel>>(payload["user_claims"].ToString()),
                     providerName,
-                    providerOptions
+                    this.defaultOptions.GetProviderOptions()
                 );
 
-            var name = ticket.Principal.Claims?.FirstOrDefault(c => c.Type == providerOptions.NameClaimType)?.Value ?? string.Empty;
-            var roles = ticket.Principal.Claims?.Where(c => c.Type == providerOptions.RoleClaimType);
+            var name = ticket.Principal.Claims?.FirstOrDefault(c => c.Type == ClaimTypes.Name)?.Value ?? string.Empty;
+            var roles = ticket.Principal.Claims?.Where(c => c.Type == ClaimTypes.Role);
             var rolesString = string.Join(", ", roles.Select(r => r.Value)) ?? string.Empty;
 
             this.Logger.LogInformation($"identity name: '{ name }' with roles: [{ rolesString }]");
