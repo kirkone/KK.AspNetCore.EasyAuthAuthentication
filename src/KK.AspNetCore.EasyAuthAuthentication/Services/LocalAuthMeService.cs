@@ -98,10 +98,11 @@ namespace KK.AspNetCore.EasyAuthAuthentication.Services
                     providerOptions
                 );
 
-            var name = ticket.Principal.Claims.FirstOrDefault(c => c.Type == providerOptions.NameClaimType);
-            var roles = ticket.Principal.Claims.Where(c => c.Type == providerOptions.RoleClaimType);
+            var name = ticket.Principal.Claims?.FirstOrDefault(c => c.Type == providerOptions.NameClaimType)?.Value ?? string.Empty;
+            var roles = ticket.Principal.Claims?.Where(c => c.Type == providerOptions.RoleClaimType);
+            var rolesString = string.Join(", ", roles.Select(r => r.Value)) ?? string.Empty;
 
-            this.Logger.LogInformation($"identity name: '{name?.Value ?? "" }' with roles: [{ string.Join(", ", roles.Select(r => r.Value)) }]");
+            this.Logger.LogInformation($"identity name: '{ name }' with roles: [{ rolesString }]");
 
             return ticket;
         }
