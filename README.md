@@ -120,6 +120,41 @@ The result of the request is a json with the authentication information of your 
 
 If you want to add roles to the `User` property you can have a look in `Transformers/ClaimsTransformer.cs` in the Sample project. There you can see an example how to get started with this.
 
+### Adding App Roles and receiving them in the token
+
+Azure AD supports [adding custom App Roles](https://docs.microsoft.com/en-us/azure/active-directory/develop/howto-add-app-roles-in-azure-ad-apps) to your application manifest, assigning users or groups to the App Roles and [receiving user membership (direct or via groups) in the token as `roles` claims](https://docs.microsoft.com/en-us/azure/active-directory/develop/howto-add-app-roles-in-azure-ad-apps#receive-roles-in-tokens).
+
+When you've extended your app manifest with your App Roles, you will see the `roles` claims appear in the token when requesting the Azure URL: `https://yourAzureAppServiceUrl/.auth/me`
+
+They'll appear like this:
+
+```json
+     {
+        "typ":"roles",
+        "val":"Test_Reader"
+     },
+     {
+        "typ":"roles",
+        "val":"Test_Admin"
+     },
+     {
+        "typ":"roles",
+        "val":"Test_Expert"
+     },
+```
+
+If they do not appear, it is possibly because the logged in user is not assigned to any of the App Roles, via group or direct membership.
+
+**Important note**: When using this approach and debugging locally, you must configure the `LocalAuthMeService` to use `roles` as claim type for appending the roles to the `AuthenticationTicket`.
+
+Add the following to `appsettings.json` inside the `easyAuthOptions` property:
+
+```json
+    "localProviderOption": {
+        "RoleClaimType": "roles"
+    }
+```
+
 ### Configure options via configuration (recommended)
 
 You can use the default behavior of asp.net core to configure EasyAuth. You must only change in your `Startup.cs` the `.AddEasyAuth()` to `.AddEasyAuth(this.Configuration)`.
