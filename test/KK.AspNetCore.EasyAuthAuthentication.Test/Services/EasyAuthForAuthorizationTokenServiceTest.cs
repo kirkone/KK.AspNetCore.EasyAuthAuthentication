@@ -18,6 +18,7 @@ namespace KK.AspNetCore.EasyAuthAuthentication.Test.Services
         // Extremely simple JWT with very few claims: no roles claim, only NameIdentifier claim is the "sub" claim (no "upn" or "appid" claim)
         private readonly string testJwtSimple = @"Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwczovL2V4YW1wbGViMmMuYjJjbG9naW4uY29tLzg1NmJhZGNlLTUwZjEtNDhlNC05MWIyLTZjYzExZTdkYTFlMi92Mi4wLyIsImV4cCI6MTU5ODA0NjY0NywibmJmIjoxNTk4MDQzMDQ3LCJhdWQiOiJlYmY1YzIyYi05YTk1LTQwYmItOGU2YS0zYTM5OWRmNTE0YTEiLCJzdWIiOiIxMWY0NWUwNy1iMmZlLTQ2OWQtYTQyZS02ZmJkOGNiZWQ1NTgiLCJuYW1lIjoiVGVzdCBVc2VyIiwiZW1haWxzIjpbInRlc3RAZXhhbXBsZS5jb20iXSwidGZwIjoiQjJDXzFfU2lnbnVwU2lnbmluIiwibm9uY2UiOiJmYjE4NDg4YzQxOTg0MTM4ODkyYzMwYWY1OWY3YWNlOV8yMDIwMDgyMTIwNTUyNyIsInNjcCI6InJlYWQiLCJhenAiOiJlYmY1YzIyYi05YTk1LTQwYmItOGU2YS0zYTM5OWRmNTE0YTEiLCJ2ZXIiOiIxLjAiLCJpYXQiOjE1OTgwNDMwNDd9.2u4GOF8V_dTKMYOehg4HQHbe5-S0KCsnSBoecrBBeiU";
         private readonly string testJwtUserId = "11f45e07-b2fe-469d-a42e-6fbd8cbed558";
+        private readonly string testJwtEmail = "test@example.com";
 
         [Fact]
         public void IfTheAuthorizationHeaderIsSetTheCanUseMethodMustReturnTrue()
@@ -84,6 +85,7 @@ namespace KK.AspNetCore.EasyAuthAuthentication.Test.Services
             // Arrange
             Assert.True(result.Succeeded);
             Assert.Equal(this.testJwtUserId, result.Principal.Identity.Name);
+            Assert.Equal(this.testJwtEmail, result.Principal.FindFirst("emails").Value);
         }
 
         [Fact]

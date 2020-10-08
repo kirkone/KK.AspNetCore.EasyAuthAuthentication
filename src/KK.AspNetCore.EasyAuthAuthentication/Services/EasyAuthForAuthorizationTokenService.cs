@@ -70,20 +70,22 @@ namespace KK.AspNetCore.EasyAuthAuthentication.Services
 
         private IEnumerable<AADClaimsModel> BuildFromAuthToken(JObject xMsClientPrincipal, ProviderOptions options)
         {
-            var claims = new List<AADClaimsModel>();
-
-            if (xMsClientPrincipal.ContainsKey(this.defaultOptions.RoleClaimType))
-            {
-                this.logger.LogDebug($"payload was {xMsClientPrincipal[this.defaultOptions.RoleClaimType]}");
-
-                claims.AddRange(JsonConvert.DeserializeObject<IEnumerable<string>>(xMsClientPrincipal[this.defaultOptions.RoleClaimType].ToString())
-                        .Select(r => new AADClaimsModel { Typ = this.defaultOptions.RoleClaimType, Values = r }));
-            }
-            var otherClaims = xMsClientPrincipal.Properties()
-                .Where(claimToken => claimToken.Name != this.defaultOptions.RoleClaimType)
-                .Select(claimToken => new AADClaimsModel { Typ = claimToken.Name, Values = claimToken.Value.ToString() })
+            var claims = xMsClientPrincipal.Properties()
+                .SelectMany(claimToken => claimToken.Value.Type switch
+                {
+                    JTokenType.Array => claimToken.Value.Children().Select(subtoken => new AADClaimsModel
+                    {
+                        Typ = claimToken.Name,
+                        Values = subtoken.ToString()
+                    }),
+                    _ => new[] {
+                        new AADClaimsModel {
+                            Typ = claimToken.Name,
+                            Values = claimToken.Value.ToString()
+                        }
+                    },
+                })
                 .ToList();
-            claims.AddRange(otherClaims);
 
             string nameClaimValue;
             if (xMsClientPrincipal.ContainsKey("upn")) // AAD "upn" user auth claim
