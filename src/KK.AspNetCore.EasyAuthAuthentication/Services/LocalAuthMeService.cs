@@ -99,7 +99,7 @@ namespace KK.AspNetCore.EasyAuthAuthentication.Services
 
             var name = ticket.Principal.Claims?.FirstOrDefault(c => c.Type == ClaimTypes.Name)?.Value ?? string.Empty;
             var roles = ticket.Principal.Claims?.Where(c => c.Type == ClaimTypes.Role);
-            var rolesString = string.Join(", ", roles.Select(r => r.Value)) ?? string.Empty;
+            var rolesString = string.Join(", ", roles?.Select(r => r.Value)) ?? string.Empty;
 
             this.Logger.LogInformation($"identity name: '{ name }' with roles: [{ rolesString }]");
 
