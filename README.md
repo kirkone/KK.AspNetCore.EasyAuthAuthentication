@@ -121,6 +121,7 @@ The result of the request is a json with the authentication information of your 
 If you want to add roles to the `User` property you can have a look in `Transformers/ClaimsTransformer.cs` in the Sample project. There you can see an example how to get started with this.
 
 ### Adding App Roles and receiving them in the token
+
 Azure AD supports [adding custom App Roles](https://docs.microsoft.com/en-us/azure/active-directory/develop/howto-add-app-roles-in-azure-ad-apps) to your application manifest, assigning users or groups to the App Roles and [receiving user membership (direct or via groups) in the token as `roles` claims](https://docs.microsoft.com/en-us/azure/active-directory/develop/howto-add-app-roles-in-azure-ad-apps#receive-roles-in-tokens).
 
 When you've extended your app manifest with your App Roles, you will see the `roles` claims appear in the token when requesting the Azure URL: `https://yourAzureAppServiceUrl/.auth/me`
